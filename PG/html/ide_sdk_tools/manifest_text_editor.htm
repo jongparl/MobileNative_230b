@@ -1,0 +1,72 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+<title>Manifest Text Editor</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>Manifest Text Editor</h1> 
+  <p>A Tizen native application package consists of exactly 1 manifest file, called <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span>. The manifest file is composed of XML elements, which include the root <a href="manifest_element.htm">&lt;manifest&gt;</a> element and its child elements representing application information, such as  <span style="font-family: Courier New,Courier,monospace;">&lt;version&gt;</span>, and <span style="font-family: Courier New,Courier,monospace;">&lt;privileges&gt;</span>. The <a href="manifest_element_hierarchy.htm">child elements are organized into a specific hierarchy</a>.</p>
+<p>The manifest file information can be edited using the <a href="../app_dev_process/setting_app_manifest.htm">manifest editor</a>, or you can modify the XML structure directly using the text editor. To open the manifest editor, double-click the <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span> file in the <strong>Project Explorer</strong> view of the IDE. To use the text editor, right-click the <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span> file in the <strong>Project Explorer</strong> view and select <strong>Open with &gt; Text Editor</strong>.</p>
+  
+  <table class="note"><tbody>
+<tr>
+<th class="note">Note</th> 
+      </tr>
+<tr>
+<td class="note">The <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span> file must conform to both the standard XML file format and the Tizen native application specification requirements. Editing the manifest file XML structure with the text editor is intended for advanced users only.</td> 
+      </tr>
+</tbody></table>
+<p>The following example illustrates the content and structure of a <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span> file:</p>
+<pre class="prettyprint">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;manifest xmlns=&quot;http://tizen.org/ns/packages&quot; package=&quot;org.tizen.uiapp&quot; version=&quot;1.0.0&quot;&gt;
+&nbsp;&nbsp;&nbsp;&lt;author author=&quot;testauthor&quot; email=&quot;testemail&quot; website=&quot;testwebsite&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;description&gt;testdescriptions&lt;/description&gt;
+&nbsp;&nbsp;&nbsp;&lt;description xml:lang=&quot;eng-GB&quot;&gt;testdesc&lt;/description&gt;
+&nbsp;&nbsp;&nbsp;&lt;ui-application appid=&quot;org.tizen.uiapp&quot; auto-restart=&quot;false&quot; exec=&quot;uiapp&quot; multiple=&quot;false&quot; nodisplay=&quot;false&quot; on-boot=&quot;true&quot; taskmanage=&quot;true&quot; type=&quot;capp&quot;&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;label&gt;uiapplication&lt;/label&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;label xml:lang=&quot;eng-GB&quot;&gt;testlang&lt;/label&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;icon&gt;uiapp.png&lt;/icon&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;app-control&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;operation name=&quot;http://tizen.org/appcontrol/operation/dial&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mime name=&quot;application/vnd.ms-excel&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/app-control&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;category name=&quot;http://tizen.org/category/homeapp&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;metadata key=&quot;testkey&quot; value=&quot;testvalue&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;datacontrol access=&quot;ReadOnly&quot; providerid=&quot;http://uiapp.com/datacontrol/provider/uiapp&quot; type=&quot;Sql&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;/ui-application&gt;
+&nbsp;&nbsp;&nbsp;&lt;privileges&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;privilege&gt;http://tizen.org/privilege/account.write&lt;/privilege&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;privilege&gt;http://tizen.org/privilege/bookmark.admin&lt;/privilege&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;privilege&gt;http://tizen.org/privilege/application.admin&lt;/privilege&gt;
+&nbsp;&nbsp;&nbsp;&lt;/privileges&gt;
+&nbsp;&nbsp;&nbsp;&lt;feature name=&quot;http://tizen.org/feature/camera.front.flash&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;feature name=&quot;http://tizen.org/feature/data.encryption&quot;/&gt;
+&lt;/manifest&gt;
+</pre>
+
+  <h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="native_ide.htm">Native IDE</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1">
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

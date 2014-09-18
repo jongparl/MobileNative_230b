@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Using Cairo</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Using Cairo</h1> 
+  
+<p>EFL and Evas are optimized and designed with bitmaps in mind. Displaying vectorial images with EFL is more complicated. There is an SVG loader for Evas which loads vectorial files as Evas object images, such as pixels. To create graphics, you need an external library. This guide explains how to link this external library to Evas.</p>
+
+<p>The external library used is Cairo, which is an open source library for 2D graphics. Evas and EFL have many same features as Cairo, but Cairo is better for displaying Bézier curves on screen.</p>
+
+<p>Evas and Cairo have difference concepts. Evas knows the state of each object on the screen, and is able to manipulate the state. When you create something, such as a rectangle using the <span style="font-family: Courier New,Courier,monospace;">evas_object_rectangle_add()</span> function, it is not rendered on the screen. This can also be the case after the rendition has been launched; it is possible that the rectangle never renders on the canvas, as it can be overlaid by , for example, an opaque image.</p>
+
+<p>Cairo works differently. Imagine that you have a sheet of paper. You take a pencil and then move the pencil to the point where you want to start writing. When you move the pencil on the paper and once something is written on the surface, it is rendered on the screen. Cairo is especially useful for drawing charts.</p>
+
+<p>The following example code creates a PNG file containing a rectangle with black borders:</p>
+
+<pre class="prettyprint">gcc -o cairo-ex1 cairo-ex1.c pkg-config cairo --cflags --libs</pre>
+
+<!-- <p class="figure">Figure: </p> 
+<p style="text-align:center;"><img alt="" src="../../images/cairo-ex1.png" /></p> 
+ 
+ The image is missing, it is not on the original page either. 
+
+<p>To create a temperature graphic, render this graphic on a PNG file.</p> -->
+  
+<p>To create an axis, use the <span style="font-family: Courier New,Courier,monospace;">cairo_move_to()</span> function to move from the current point to a new point without creating lines between them. Use the <span style="font-family: Courier New,Courier,monospace;">cairo_line_to()</span> function to create a line between the current point and the new point.</p>
+  
+<p>To use the Cairo buffer with an Evas object image, use functions, such as <span style="font-family: Courier New,Courier,monospace;">cairo_image_surface_get_data()</span> or <span style="font-family: Courier New,Courier,monospace;">evas_object_image_data_set()</span>.</p>
+
+<p>For more information, see the <a href="http://cairographics.org/documentation/" target="_blank">Cairo Reference</a>.</p>
+ 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="evas_guide.htm">Evas Rendering</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

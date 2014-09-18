@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Model Details</title> 
+  </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Application Model Details</h1>
+ 
+<p>The following sections describe the various application model details you need to consider when porting applications.</p>
+
+<h2 id="launch" name="launch">Application Launch and Termination</h2>
+
+<p>The process of launching a 2.2.1 native API application can be found <a href="https://developer.tizen.org/dev-guide/2.2.1/org.tizen.native.appprogramming/html/basics_tizen_programming/tizen_app_model/launching_applications.htm" target="_blank">here</a>. A native application can also be launched from the Launcher or by another application.</p>
+<p>The process of terminating a 2.2.1 native API application is described <a href="https://developer.tizen.org/dev-guide/2.2.1/org.tizen.native.appprogramming/html/basics_tizen_programming/tizen_app_model/terminating_applications.htm" target="_blank">here.</a> The possible scenarios for terminating the 2.3 native API application are the same as in the 2.2.1 API:</p>
+<ul>
+<li>Application calls the <span style="font-family: Courier New,Courier,monospace">app_exit()</span> function to terminate the main event loop.</li>
+<li>Low Memory Killer terminates the application to free memory.</li>
+</ul>
+
+<h2 id="ui" name="ui">UI Applications</h2>
+<p>The main difference in creating UI applications is that the whole Tizen::Ui API has been replaced with the EFL. To create powerful applications for the Tizen platform, study the <a href="http://web.enlightenment.org/p.php?p=docs&l=en" target="_blank">EFL documentation</a>.</p>
+
+<h2 id="service" name="service">Service Applications</h2>
+<p>The new native API has the same idea of service applications as the 2.2.1 version.</p>
+<p>The guide for creating service applications in the 2.2.1 version can be found <a href="https://developer.tizen.org/documentation/dev-guide/2.2.1" target="_blank">here</a>, under <strong>Tizen Native App Programming &gt; Programming Guide &gt; App: Controlling Your Application &gt; Service Application Fundamentals</strong>. Also, the tutorial for the 2.2.1 version is under <strong>Tizen Native App Programming &gt; Tutorials &gt; App Tutorial &gt; Task: Multi Proc Service App</strong>.</p>
+
+<p>The tutorial for the new 2.3 version is <a href="../tutorials/app_tutorial/service_app_tutorial.htm">here</a>.</p>
+
+<h2 id="io" name="io">I/O Overview</h2>
+<p>In the old Tizen 2.2.1 applications, the operations related to accessing the file system and managing input and output were all defined in the <a href="https://developer.tizen.org/dev-guide/2.2.1/org.tizen.native.apireference/namespaceTizen_1_1Io.html" target="_blank">Tizen::Io</a> namespace. Now, all the functionalities of this namespace have been discarded in favor of open source libraries and other modules of the native API. To provide the same functionality as the previous Tizen::Io namespace, the current version of the Tizen platform uses sqlite3 and glibc open libraries. It also uses the Message Port and Storage (a System submodule) from the native API, so handle I/O operations using these libraries and API modules.</p>
+
+<h2 id="object" name="object">Object Ownership Policy</h2>
+<p>In the native API, the &#39;N&#39; postfix for functions that return a new instance of an object with its ownership is no more supported. In this API, use the <span style="font-family: Courier New,Courier,monospace">object_create()</span> function, and free the memory with a function, such as <span style="font-family: Courier New,Courier,monospace">object_destroy()</span>. The following example is taken from the App Control module:</p>
+<pre calss="prettyprint">
+static app_control_h app_control;
+
+int error_code = app_control_create(&amp;app_control);
+
+error_code = app_control_destroy(app_control);
+</pre>
+
+<p>Check from the function documentation whether you have to free the resource you are using. There are many other functions, such as <span style="font-family: Courier New,Courier,monospace">get_something()</span>, which usually allocates memory to store an object or a value that is obtained. For example:</p>
+<pre class="prettyprint">
+char *uri;
+
+error_code = app_control_get_uri(app_control, &amp;uri);
+
+if(uri != NULL)
+{
+   free(uri);
+   uri = NULL;
+}
+</pre>
+
+<p>In those cases, free memory as well. To be sure whether you need to release the resources to avoid memory leaks, check the API documentation.</p>
+
+<h2 id="low" name="low">Low Memory Level Events</h2>
+<p>When the memory levels in the system are extremely low, the system terminates the application and removes it from the memory. However, it is possible to save the application state or context right before this happens. In the 2.2.1 version, it was done using the <span style="font-family: Courier New,Courier,monospace">Tizen::App::IAppCheckpointEventListener</span> interface. In the new native API, every time when the low level memory situation occurs on the device and the system wants to terminate some application, the <span style="font-family: Courier New,Courier,monospace">app_low_memory_cb()</span> callback in that application is called. When you create your application, remember to place the code that must be executed in case of a low memory level in this callback and set the callback in the structure used to initialize the application (<span style="font-family: Courier New,Courier,monospace">app_event_callback_s</span>).</p>
+
+<h2 id="scene" name="scene">Scene Transitions</h2>
+<p>In the old 2.2.1 model, the UI scene transitions were handled by specific listeners, such as the <span style="font-family: Courier New,Courier,monospace">Tizen::Ui::Controls::IFormBackEventListener</span> and its <span style="font-family: Courier New,Courier,monospace">OnFormBackRequested()</span> event handler to listen to the <strong>Back </strong>key events for a backward scene transition. In the 2.3 model, all such actions are handled using the EFL. It has its own view manager for applications, called naviframe. A naviframe is a stack which considers views or pages as its items. When another view is launched, it is pushed on the top of the stack. Only the topmost view is displayed. The old views are stored on the stack. Every time the user presses the <strong>Back</strong> key, the current view is removed from the stack and the view that was right under it becomes the topmost view and is displayed. The transition animation between views is handled by the EFL and depends on the theme applied to the widget.</p>
+
+<h2 id="keys" name="keys">Hardware Keys</h2>
+<p>With the arrival of the EFL, handling the hardware key events has changed. Until now, the 2.2.1 model provided the <a href="https://developer.tizen.org/dev-guide/2.2.1/org.tizen.native.apireference/classTizen_1_1Ui_1_1Controls_1_1IFormMenuEventListener.html" target="_blank">Tizen::Ui::Controls::IFormMenuEventListener</a>. This interface delivered an <span style="font-family: Courier New,Courier,monospace">OnFormMenuRequested()</span> event handler to listen to the hardware <strong>Menu</strong> key events. Now, all this functionality is obtained using the EFL. In the documentation for the <a href="../../../org.tizen.mobile.native.apireference/group__Evas__Keys.html">Key Input Functions</a>, find functions which enable you to manipulate the key modifiers. Use them to add handling for the hardware key events. For better understanding, see the <a href="../../../org.tizen.mobile.native.apireference/Example_Evas_Events.html">example</a>.</p>
+
+
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="porting.htm">Porting Guide</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

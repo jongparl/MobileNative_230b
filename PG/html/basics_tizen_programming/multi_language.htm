@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Creating multilingual applications</title>
+</head>
+
+<body onload="prettyPrint()">
+  
+
+<h1>Creating Multilingual Applications</h1>
+<p>Tizen provides localized resources to make your application usable for different countries. The localization is based on the <a href="../../../org.tizen.mobile.native.apireference/group__CAPI__BASE__UTILS__I18N__MODULE.html">i18n API</a>, which makes strings translatable and places them  in <span style="font-family: Courier New,Courier,monospace">.po</span> (portable object) files.</p> 
+<p>Depending on the device&#39;s locale information, your application must load the proper resource set. If no matching resource set is found for the device&#39;s current locale, the default resource set is used</p>		  
+
+<p>To get the localized value of a string, use the <span style="font-family: Courier New,Courier,monospace">MsgID</span> shown in the PO File Editor, prefaced with <span style="font-family: Courier New,Courier,monospace">_</span>, for example: <span style="font-family: Courier New,Courier,monospace">_ (&lt;MsgID&gt;)</span>. The underlying implementation calls the <span style="font-family: Courier New,Courier,monospace">i18n_get_text()</span> function to retrieve the localized value:</p>
+
+<pre class="prettyprint">
+char *hello_text = i18n_get_text(&quot;Hello&quot;);
+</pre>
+<p>The <span style="font-family: Courier New,Courier,monospace">hello_text</span> variable is set to the localized text for &quot;Hello&quot; for the current locale of the device:</p>
+<pre class="prettyprint">
+#include &lt;app.h&gt;
+ 
+static void update_text_set(Evas_Object *ly) 
+{
+&nbsp;&nbsp;&nbsp;char *lang;
+&nbsp;&nbsp;&nbsp;char button_txt[PATH_MAX];
+ 
+&nbsp;&nbsp;&nbsp;if (ly == NULL)
+&nbsp;&nbsp;&nbsp;return;
+ 
+&nbsp;&nbsp;&nbsp;edje_object_part_text_set(elm_layout_edje_get(ly), &quot;txt_title&quot;, _(&quot;Hello&quot;));
+ 
+&nbsp;&nbsp;&nbsp;lang = getenv(&quot;LANG&quot;);
+&nbsp;&nbsp;&nbsp;snprintf(button_txt, sizeof(button_txt), &quot;Click to exit! (%s)&quot;, lang);
+&nbsp;&nbsp;&nbsp;edje_object_part_text_set(elm_layout_edje_get(ly), &quot;txt_lang&quot;, button_txt);
+}
+</pre>
+<p>When you change the language setting on the device, you can see the text changed in the application according to the current language.
+	</p>
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

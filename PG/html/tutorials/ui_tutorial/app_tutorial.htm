@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+
+<head>
+ <script type="text/javascript" src="../../snippet.js"></script>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+ <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+ <title>Application Framework Tutorial</title>
+</head>
+
+<body onload="prettyPrint()">
+
+<!--<div id="banner">Tizen</div>-->
+
+<h1>Application Framework Tutorial</h1>
+
+<p>This tutorial demonstrates how you can implement applications based on the Application Framework, which handles interactions between applications and the operating system.</p>
+
+
+<p>To learn about the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application</a> and <a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL</a> API features, see the <a href="../../guide/app/application.htm">Application Framework Programming Guide</a> and <a href="../../guide/ui/ui.htm">UI Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#start">Starting an Application</a>
+<p>Start the application.</p></li>
+<li><a href="#manage">Managing the Application Life-cycle</a>
+	<p>Manage the application life-cycle and system callbacks.</p></li>
+<li><a href="#handle">Handling Launch Requests</a>
+	<p>Handle launch requests.</p></li>
+</ul>
+
+<h2 id="start" name="start">Starting an Application</h2>
+
+<p>An application starts with the <span style="font-family: Courier New,Courier,monospace">main()</span> function. The function simply initializes and starts the Application Framework.</p>
+
+<p>The following example code shows a minimal application using the Application Framework. The application simply starts and runs.</p>
+
+<pre class="prettyprint">// Include &lt;app.h&gt; to use Application Framework functions
+#include &lt;app.h&gt;
+int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;// Create an app_event_callback_s object and initialize its contents to 0
+&nbsp;&nbsp;&nbsp;app_event_callback_s event_callback = { 0 };
+&nbsp;&nbsp;&nbsp;// Run the application
+&nbsp;&nbsp;&nbsp;return app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, NULL);
+}</pre>
+
+<h2 id="manage" name="manage">Managing the Application Life-cycle</h2>
+
+<p>The Application Framework is based on callbacks, which are grouped into 2 classes: application life-cycle callbacks and system callbacks.</p>
+
+<p>The application life-cycle callbacks include:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">create</span>: Triggered after the <span style="font-family: Courier New,Courier,monospace">app_efl_main()</span> call. Use this callback to initialize the application.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">control</span>: Triggered when the application is launched to perform an action. This callback can be called several times during the application's life-cycle to handle requested actions.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">terminate</span>: Triggered when the application exits. Use this callback to save any work and release all resources.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">pause</span>: Triggered when the application window becomes invisible. Use this callback to switch to an operating mode that uses fewer resources.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">resume</span>: Triggered when the application window becomes visible. Use this callback to switch back to normal operating mode.</li>
+</ul>
+
+<p>You must implement all application life-cycle callbacks.</p>
+
+<p>The system callbacks include:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">low_memory</span>: Triggered when the system is running low on memory. Use this callback to save any work and release resources. If enough resources are not  released, some applications are killed.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">low_battery</span>: Triggered when the system is running low on battery power (less than 5%). Use this callback to save any work. Avoid battery-draining workloads.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">device_orientation</span>: Triggered when the screen orientation changes. Use this callback to adapt the application UI to the new orientation.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">language_changed</span>: Triggered when the language of the system changes. Use this callback to localize the application UI for the new language.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">region_format_changed</span>: Triggered when the region format changes.</li>
+</ul>
+
+<p>To implement a basic application and the Application Framework callbacks:p>
+
+<pre class="prettyprint">#include &lt;app.h&gt;
+// Structure to store the data for your application&#39;s logic; it is passed to
+// each callback invoked through the Application Framework
+typedef struct appdata
+{
+&nbsp;&nbsp;&nbsp;char *several;
+&nbsp;&nbsp;&nbsp;char *fields;
+}
+appdata_s;
+static bool
+app_create(void *data)
+{
+&nbsp;&nbsp;&nbsp;// Take the necessary actions before the main event loop starts; this
+&nbsp;&nbsp;&nbsp;// usually means initializing the UI and the application&#39;s data (the &quot;data&quot;
+&nbsp;&nbsp;&nbsp;// parameter for this function)
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;create_gui(ad);
+&nbsp;&nbsp;&nbsp;// If this function returns true, the main loop starts
+&nbsp;&nbsp;&nbsp;// If this function returns false, the application is terminated
+&nbsp;&nbsp;&nbsp;return true;
+}
+static void
+app_control(app_control_h app_control, void *data)
+{
+&nbsp;&nbsp;&nbsp;// Handle the launch request, show the user the requested action through
+&nbsp;&nbsp;&nbsp;// the &quot;app_control&quot; parameter
+}
+static void
+app_pause(void *data)
+{
+&nbsp;&nbsp;&nbsp;// Take the necessary actions when the application becomes invisible
+}
+static void
+app_resume(void *data)
+{
+&nbsp;&nbsp;&nbsp;// Take the necessary actions when the application becomes visible
+}
+static void
+app_terminate(void *data)
+{
+&nbsp;&nbsp;&nbsp;// Release all resources
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;if (!ad)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;destroy_gui(ad);
+}
+static void
+app_device_orientation(void *data)
+{
+&nbsp;&nbsp;&nbsp;// Take the necessary actions when the device orientation changes
+}
+int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;appdata_s ad = { 0 };
+&nbsp;&nbsp;&nbsp;app_event_callback_s event_callback = { 0 };
+&nbsp;&nbsp;&nbsp;// Set the callbacks for the application&#39;s logic
+&nbsp;&nbsp;&nbsp;event_callback.create = app_create;
+&nbsp;&nbsp;&nbsp;event_callback.terminate = app_terminate;
+&nbsp;&nbsp;&nbsp;event_callback.pause = app_pause;
+&nbsp;&nbsp;&nbsp;event_callback.resume = app_resume;
+&nbsp;&nbsp;&nbsp;event_callback.app_control = app_control;
+&nbsp;&nbsp;&nbsp;// For the system callbacks, only set the device orientation callback
+&nbsp;&nbsp;&nbsp;event_callback.low_memory = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.low_battery = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.device_orientation = app_device_orientation;
+&nbsp;&nbsp;&nbsp;event_callback.language_changed = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.region_format_changed = NULL;
+&nbsp;&nbsp;&nbsp;// Note the &amp;ad parameter; it passes the "appdata" structure to the callbacks
+&nbsp;&nbsp;&nbsp;return app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, &amp;ad);
+}</pre>
+
+<h2 id="handle" name="handle">Handling Launch Requests</h2>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">app_control()</span> callback provides the application with additional information about why it was launched and with what parameters. The callback returns a handle to an <span style="font-family: Courier New,Courier,monospace">app_control</span> object and data related to the requested action:</p>
+
+<pre class="prettyprint">app_control_cb(app_control_h app_control, void *user_data);</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">app_control_h</span> type is opaque. You can extract information from it only through the functions of the SDK.</p>
+
+<p>The most relevant functions are:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">app_control_get_operation()</span>: Retrieves a string describing for which operation the application was launched.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">app_control_get_mime()</span>: Retrieves the MIME type of the data, such as <span style="font-family: Courier New,Courier,monospace">image/jpg</span>.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">app_control_get_category()</span>: Retrieves the category.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">app_control_get_app_id()</span>: Retrieves the application ID.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">app_control_get_app_extra_data()</span>: Retrieves the string value associated with the given key. Before calling this function, use the <span style="font-family: Courier New,Courier,monospace">app_control_is_extra_data_array()</span> function to check whether the data associated with the key is an array.</li>
+</ul>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="ui_tutorial.htm">UI Tutorials</a></li>
+ <li><a href="../../guide/ui/ui.htm">UI Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application API Reference</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL API Reference</a></li>
+</ul>
+
+<div id="footer">
+ <hr size="1" />
+ <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+</div>
+
+<!--start-->
+
+<script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-25976949-1']);
+ _gaq.push(['_trackPageview']);
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>
+
+<!--end-->
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application States and Transitions</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+ 
+<h1>Application States and Transitions</h1>
+
+<p>The Tizen native application can be in one of several different states. Typically, the application is launched by the user from the Launcher, or by another application. As the application is starting, the <span style="font-family: Courier New,Courier,monospace">app_create_cb()</span> callback is executed and the main event loop starts. The application now normally becomes the frontmost window, with focus. When the application loses the frontmost or focus status, the <span style="font-family: Courier New,Courier,monospace">app_pause_cb()</span> callback is invoked and your application goes into a pause state. The pause state means that the application is not terminated but is running in the background. The application can go into a pause state because:</p>
+<ul>
+  <li>A new application is launched from the request of your application.</li>
+  <li>The user requests to go to the Home screen.</li>
+  <li>A system event occurs and causes a resident application with a higher priority (such as an incoming phone call) to become active and hide your application temporarily.</li>
+  <li>An alarm is triggered for another application, which becomes the top-most window and hides your application.</li>
+</ul> 
+<p>When your application becomes visible again, the <span style="font-family: Courier New,Courier,monospace">app_resume_cb()</span> callback is invoked. This happens because:</p>
+<ul>
+  <li>Another application requests your application to run (perhaps the Task Navigator, which shows all running applications and lets the user select any application to run).</li>
+  <li>All applications on top of your application in the window stack finish.</li>
+  <li>An alarm is triggered for your application, so it becomes the top-most window and hides other applications.</li>
+</ul>
+
+<p>When your application starts exiting, the <span style="font-family: Courier New,Courier,monospace">app_terminate_cb()</span> callback is invoked. Your application terminates because:</p>
+<ul>
+  <li>Your application itself requests to exit by calling the <span style="font-family: Courier New,Courier,monospace">app_exit()</span> function to terminate the event loop.</li>
+  <li>The Low Memory Killer is killing your application in a low memory situation.</li>
+</ul>
+<p>The application state changes are managed by the underlying framework. The following figure and table illustrate the application states.</p>
+
+    <p class="figure">Figure: Application states</p> 
+  <p style="text-align:center;"><img alt="Application state transitions" src="../../images/app_states.png" /></p>  
+  
+  <table> 
+   <caption>
+     Table: Application states
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>State</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">READY</span></td> 
+     <td>Application is launched.</td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">CREATED</span></td> 
+     <td>Application starts the main loop.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNNING</span></td> 
+     <td>Application is running and visible to the user.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">PAUSED</span></td> 
+     <td>Application is running but invisible to the user.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">TERMINATED</span></td> 
+     <td>Application is terminated.</td> 
+    </tr> 
+   </tbody> 
+  </table>   
+  
+  <p>The Application API defines 5 states with corresponding transition handlers. The state transition is notified through a state transition callback function, whether the application is created, running, paused, resumed, or terminated. The application must react to each state change appropriately.</p>
+  
+     <p class="figure">Figure: Application state transitions</p> 
+  <p style="text-align:center;"><img alt="Application state transitions" src="../../images/app_state_transitions.png" /></p>  
+  
+
+
+  <h2>Where to Go Next</h2>
+<ul>
+<li><a href="fundamentals.htm">Application Fundamentals</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

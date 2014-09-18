@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Message Port Tutorial</title> 
+ </head> 
+ 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Message Port Tutorial</h1> 
+  
+  <p>This tutorial demonstrates how you can register, unregister, and check the message port, and send messages through the message port.</p>
+  <p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;message_port.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MESSAGE__PORT__MODULE.html">Message Port API</a>.
+  <p>To learn about the Message Port API features, see the <a href="../../guide/app/message_port.htm">Message Port Communication Programming Guide</a>.</p>
+ 
+  <p>This tutorial consists of the following parts:</p>
+  <ul>
+   <li><a href="#init">Initialization and Prerequisites</a></li>
+   <li><a href="#uni">Using Uni-directional Message Port Communication</a>
+  	<p>Send and receive messages using uni-directional message port communication between Tizen native applications.</p>
+   </li>
+   <li><a href="#bi">Using Bi-directional Message Port Communication</a>
+    <p>Send and receive messages using bi-directional message port communication between Tizen native applications.</p>
+   </li>
+   <li><a href="#trusted">Using Trusted Message Port Communication</a>
+    <p>Send and receive messages using trusted message port communication between Tizen native applications.</p>
+   </li>
+  </ul>
+  
+  <h2 id="init" name="init">Initialization and Prerequisites</h2>
+  
+  <p>You need 2 applications to communicate with each other through the message port.</p>
+  
+  <p>To use trusted message port communication, create an author certificate, register the certificate to the IDE, and grant permissions by the application certificate in the manifest editor.</p>
+
+  <h2 id="uni" name="uni">Using Uni-directional Message Port Communication</h2>
+   
+  <p class="figure">Figure: Uni-directional message port communication</p> 
+  <p style="text-align:center;"><img alt="Uni-directional message port communication" src="../../images/message_port_uni-directional_communication.png" /></p> 
+     
+<ul>
+ <li>Application 2 receives messages using the <span style="font-family: Courier New,Courier,monospace">message_port_register_local_port()</span> function.</li>
+ <li>Application 1 checks whether the message port of Application 2 (a remote application) is registered using the <span style="font-family: Courier New,Courier,monospace">message_port_check_remote_port()</span> function.</li>
+ <li>Application 1 sends messages to Application 2 using the <span style="font-family: Courier New,Courier,monospace">message_port_send_message()</span> function.</li>
+</ul>
+
+<ol>
+
+<li>
+<p>In Application 2, register the local port:</p>
+
+<pre class="prettyprint">int message_port_register_local_port(const char * local_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message_port_message_cb callback)
+
+void message_port_cb(int local_port_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_app_id,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool trusted_remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bundle *message)
+{
+&nbsp;&nbsp;&nbsp;char *command = NULL;
+&nbsp;&nbsp;&nbsp;char *data = NULL;
+&nbsp;&nbsp;&nbsp;bundle_get_str(message, &quot;command&quot;, &amp;command);
+&nbsp;&nbsp;&nbsp;bundle_get_str(message, &quot;data&quot;, &amp;data);
+	
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG,
+&nbsp;&nbsp;&nbsp;&quot;Message from %s, command: %s data: %s&quot;, remote_app_id, command, data);
+}
+
+int port_id = message_port_register_local_port (local_port, message_port_cb);
+</pre>
+
+</li>
+
+<li>
+
+<p>In Application 1, check the remote port:</p>
+
+<pre class="prettyprint">int message_port_check_remote_port(const char * remote_app_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char * remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool * exist)
+
+bool test_check_remote_port() 
+{
+&nbsp;&nbsp;&nbsp;int ret;
+&nbsp;&nbsp;&nbsp;bool found;
+
+&nbsp;&nbsp;&nbsp;ret = message_port_check_remote_port (remote_app_id, remote_port, &amp;found);
+&nbsp;&nbsp;&nbsp;// Error handling	   
+
+&nbsp;&nbsp;&nbsp;return found;
+}
+</pre>
+
+</li>
+
+<li>
+
+<p>In Application 1, send a message to the remote port:</p>
+
+<pre class="prettyprint">int message_port_send_message(const char * remote_app_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char * remote_port,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bundle * message);
+
+void SendMessage(void)
+{
+&nbsp;&nbsp;&nbsp;message_port_error_e res;
+&nbsp;&nbsp;&nbsp;const gchar remote_app_id[128];
+&nbsp;&nbsp;&nbsp;bundle *b = bundle_create ();
+&nbsp;&nbsp;&nbsp;bundle_add (b, &quot;command&quot;, &quot;begin&quot;);
+&nbsp;&nbsp;&nbsp;bundle_add (b, &quot;data&quot;, &quot;dummy&quot;);
+
+&nbsp;&nbsp;&nbsp;sprintf (remote_app_id, &quot;%d&quot;, getppid());
+&nbsp;&nbsp;&nbsp;res = message_port_send_message (remote_app_id, remote_port, b);
+&nbsp;&nbsp;&nbsp;bundle_free (b);
+
+&nbsp;&nbsp;&nbsp;return TRUE;
+}</pre>
+
+</li>
+
+</ol>
+
+<h2 id="bi" name="bi">Using Bi-directional Message Port Communication</h2>
+
+  <p class="figure">Figure: Bi-directional message port communication</p> 
+  <p style="text-align:center;"><img alt="Bi-directional message port communication" src="../../images/message_port_bi-directional_communication.png" /></p>
+  
+<ul>
+ <li>Application 2 receives messages using the <span style="font-family: Courier New,Courier,monospace">message_port_register_local_port()</span> function.</li>
+ <li>Application 1 checks whether the message port of Application 2 (a remote application) is registered using the <span style="font-family: Courier New,Courier,monospace">message_port_check_remote_port()</span> function.</li>
+ <li>Application 1 sends messages and local message port information to Application 2 using the <span style="font-family: Courier New,Courier,monospace">message_port_send_message_with_local_port()</span> function.</li>
+</ul>
+
+<ol>
+
+<li>
+<p>In Application 2, register the local port and implement a callback:</p>
+
+<pre class="prettyprint">int port_id = message_port_register_local_port (local_port_2, __message_port_cb);</pre>
+
+<pre class="prettyprint">void __message_port_cb(int local_port_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_app_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_port,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool trusted_remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bundle *message)
+{
+&nbsp;&nbsp;&nbsp;int ret;
+&nbsp;&nbsp;&nbsp;char *command = NULL;
+&nbsp;&nbsp;&nbsp;char *data = NULL;
+&nbsp;&nbsp;&nbsp;bundle_get_str(message, &quot;command&quot;, &amp;command);
+&nbsp;&nbsp;&nbsp;bundle_get_str(message, &quot;data&quot;, &amp,data);
+
+&nbsp;&nbsp;&nbsp;// Callback
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Message from %s, command: %s data: %s&quot;, remote_app_id, command, data);
+
+&nbsp;&nbsp;&nbsp;bundle *reply = bundle_create ();
+&nbsp;&nbsp;&nbsp;bundle_add_str (reply, &quot;result&quot;, &quot;GOT_IT&quot;);
+&nbsp;&nbsp;&nbsp;ret = message_port_send_message (remote_app_id, remote_port, reply);
+&nbsp;&nbsp;&nbsp;bundle_free (reply);
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+
+</li>
+
+<li>
+
+<p>In Application 1, register the local port and check the remote port:</p>
+
+<pre class="prettyprint">int local_port_id = message_port_register_local_port (local_port_1, __message_port_cb);</pre>
+<pre class="prettyprint">void message_port_cb(int local_port_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_app_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool trusted_remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bundle *message) 
+{
+&nbsp;&nbsp;&nbsp;char *result = NULL;
+&nbsp;&nbsp;&nbsp;bundle_get_str(message, &quot;result&quot;, &amp;result);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Message from %s, result: %s &quot;, remote_app_id, result);
+
+}
+
+int local_port_id = message_port_register_local_port (local_port, message_port_cb);
+if (local_port_id &lt; 0) 
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}
+else 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, "port_id : %d", port_id);
+} </pre>
+
+</li>
+
+<li>
+
+<p>In Application 1, send a message with the local port ID:</p>
+
+<pre class="prettyprint">int message_port_send_message_with_local_port(const char * remote_app_id, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char * remote_port, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bundle * message, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int local_port_id)
+
+void send_message_with_local_port(int local_port_id) 
+{
+&nbsp;&nbsp;&nbsp;int ret;
+&nbsp;&nbsp;&nbsp;bundle *b = bundle_create ();
+&nbsp;&nbsp;&nbsp;bundle_add_str (b, &quot;command&quot;, &quot;begin&quot;);
+&nbsp;&nbsp;&nbsp;bundle_add_str (b, &quot;data&quot;, &quot;dummy&quot;);
+
+&nbsp;&nbsp;&nbsp;ret = message_port_send_message_with_local_port(remote_app_id, remote_port, b, local_port_id);
+&nbsp;&nbsp;&nbsp;if (ret != MESSAGE_PORT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, TAG, &quot;message_port_check_remote_port error : %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Send message done&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;bundle_free (b);
+}
+</pre>
+
+</li>
+
+</ol>
+
+<h2 id="trusted" name="trusted">Using Trusted Message Port Communication</h2>
+
+  <p class="figure">Figure: Trusted uni-directional message port communication</p> 
+  <p style="text-align:center;"><img alt="Trusted uni-directional message port communication" src="../../images/message_port_trusted_uni-directional_comm.png" /></p>
+  
+  <p>To use the trusted message port communication, create the author certificate and register the created certificate to the IDE and give permissions by the application certificate in the manifest editor.</p>
+  
+  <p>During trusted message port communication, only applications signed with the same certificate can communicate with each other.</p>
+  
+  <p>The usage is similar to normal Message Port API implementation, however, you must use trusted functions instead of normal functions.</p>
+  
+<ul>
+ <li>Application 2 receives messages using the <span style="font-family: Courier New,Courier,monospace">message_port_register_trusted_local_port()</span> function.</li>
+ <li>Application 1 checks whether the trusted message port of Application 2 (a remote application) is registered using the <span style="font-family: Courier New,Courier,monospace">message_port_check_trusted_remote_port()</span> function.</li>
+ <li>Application 1 sends messages to Application 2 using the <span style="font-family: Courier New,Courier,monospace">message_port_send_trusted_message()</span> function.</li>
+</ul>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/message_port.htm">Message Port Communication Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MESSAGE__PORT__MODULE.html">Message Port API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

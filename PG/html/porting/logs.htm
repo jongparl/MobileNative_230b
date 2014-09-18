@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Logs and Exceptions</title> 
+  </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Logs and Exceptions</h1>
+
+  <p>The following sections describe the log and exception details you need to consider when porting applications.</p>
+  
+<h2>Exceptions</h2>
+<p>Normally in the 2.3 API version, the exceptions model functions return an integer which indicates an error value. Usually, the value is 0 if there are no errors and the name format for this value is MODULE_NAME_ERROR_NONE. As in 2.2.1, the current API provides functions to get and set the last error value in the thread. In the 2.3 version, this functionality and the error enumerations are in the Base module. The following example shows how the current native API returns errors.</p>
+<pre class="prettyprint">
+int error_code = app_control_create(&app_control);
+if (error_code != APP_CONTROL_ERROR_NONE) // Error occurred
+</pre>
+
+<h2>Logs</h2>
+<p>The 2.3 native API provides a new method for managing logs. The dlog module is now responsible for these actions. It provides 2 functions to send data to the log output. It supports priority and tags, which can be used to easily filter log messages. The new logging system makes it easier to manage logs, since there are no multiple functions for dealing with different log levels. Set the priority (whether the log is an error or maybe a warning, info, or debug message) and filter the output logs according to the priority levels.</p>
+
+<table>
+<caption>Table: Priority levels</caption>
+<tbody>
+<tr>
+ <th>Priority</th>
+ <th>Description</th>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">DLOG_DEBUG</span></td>
+ <td>Debug message.
+<p>Log message which the developer want to check.</p></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">DLOG_INFO</span></td>
+ <td>Information message.
+<p>Normal operational messages. Logs above this priority are always logged.</p></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">DLOG_WARN</span></td>
+ <td>Warning message.
+<p>Not an error, but an indication that an error occurs in the future if no action is taken.</p></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">DLOG_ERROR</span></td>
+ <td>Error message.
+<p>Indicates an error.</p></td>
+</tr>
+</tbody>
+</table>
+
+<p>You can use the <span style="font-family: Courier New,Courier,monospace">dlogutil</span> command to view and follow the content of the log buffers:</p>
+<pre class="prettyprint">
+dlogutil [<option>] ... [<filter-spec>] ...  
+</pre>
+
+<p>Every log message has a tag and a priority associated with it. A filter expression follows the tag:priority format. The tag indicates the tag of interest and the priority indicates the minimum level of priority to report for that tag. Add any number of tag:priority specifications in a single filter expression. The tag of a log message indicates the system component from which the message originates. The priority is one of the following character values, ordered from lowest to highest priority:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace">D</span> - Debug</li>
+<li><span style="font-family: Courier New,Courier,monospace">I</span> - Info</li>
+<li><span style="font-family: Courier New,Courier,monospace">W</span> - Warning</li>
+<li><span style="font-family: Courier New,Courier,monospace">E</span> - Error</li>
+</ul>
+
+<p>For example, to see the <span style="font-family: Courier New,Courier,monospace">MY_APP</span> tag with the debug priority:</p>
+<pre class="prettyprint"># dlogutil MY_APP:D</pre>
+
+<p>To see all log messages above the info priority:</p>
+<pre class="prettyprint"># dlogutil *:I</pre>	 
+
+<table>
+<caption>Table: List of logutil command options</caption>
+<tbody>
+<tr>
+ <th>Option</th>
+ <th>Description</th>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-b &lt;buffer&gt;</span></td>
+ <td>Alternate log buffer. The main buffer is used by the default buffer.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-c</span></td>
+ <td>Clears the entire log and exits.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-d</span></td>
+ <td>Dumps the log and exits.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-f &lt;filename&gt;</span></td>
+ <td>Writes a log to the filename. The default is stdout.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-g</span></td>
+ <td>Prints the size of the specified log buffer and exits.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-n &lt;count&gt;</span></td>
+ <td>Sets the maximum number of rotated logs to count. The default value is 4. Requires the -r option.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-r &lt;Kbytes&gt;</span></td>
+ <td>Rotates the log file every Kbytes of output. The default value is 16. Requires the -f option.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-s</span></td>
+ <td>Sets the default filter spec to silent.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">-v &lt;format&gt;</span></td>
+ <td>Sets the output format for log messages. The default is the brief format.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="porting.htm">Porting Guide</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

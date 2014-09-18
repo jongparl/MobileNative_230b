@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Multi-threaded Application and Synchronization Analysis</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Multi-threaded Application and Synchronization Analysis</h1> 
+  <p>Understanding the thread execution in multi-threaded applications can be challenging. The GDB (GNU Debugger) supports the process of debugging multi-threaded applications, but since it uses synchronization objects, the debugging can be quite difficult. 
+  	The dynamic analyzer, on the other hand, provides effective thread analysis features.</p> 
+  <p>You can use the dynamic analyzer to:</p> 
+  <ul> 
+   <li><a href="#life">Analyze thread life-cycle</a></li> 
+   <li><a href="#concurrency">Analyze thread concurrency</a></li> 
+   <li><a href="#sync">Analyze synchronization</a></li> 
+  </ul> 
+  <h2 id="life" name="life">Analyzing Thread Life-cycle</h2> 
+  <p>Testing threads is difficult as they are nondeterministic. Visualizing the thread life-cycle is an effective method for analyzing the thread life-cycle. </p> 
+  <p>The dynamic analyzer has 3 types of user threads:</p> 
+  <ul> 
+   <li><strong>Main thread</strong> created from the system for running applications</li> 
+   <li><strong>Tizen threads</strong> including worker threads and event-driven threads</li> 
+   <li><strong>pthread</strong></li> 
+  </ul> 
+  <p>In the thread chart, the thread life-cycle is displayed as follows:</p> 
+  <ul> 
+   <li><strong>Thread creation</strong>: When an API is called to create the thread, a yellow bar is displayed and a new chart item is created with a <span style="font-family: Courier New,Courier,monospace">tid</span> arrow. <p class="figure">Figure: Creating a thread</p> <p style="text-align:center;"><img align="center" alt="thread create" src="../images/thread_create.png" /></p></li> 
+   <li><strong>Thread exiting</strong>: When a thread exits, a purple bar is displayed with a joined <span style="font-family: Courier New,Courier,monospace">tid</span> arrow. If another thread calls the API of the exited thread, a yellow bar is displayed. <p class="figure">Figure: Exiting a thread</p> <p style="text-align:center;"><img align="center" alt="thread exit" src="../images/thread_exit.png" /></p></li> 
+  </ul> 
+  <p>A new thread is created in a joinable state. Otherwise, memory and resource leaks can occur until the process ends. To make the process faster, set the thread to the detach state, or call the detach API. You can check the state of the thread on the <strong>Thread</strong> tab.</p> 
+  <h2 id="concurrency" name="concurrency">Analyzing Thread Concurrency</h2> 
+  <p>The number of live threads and their resource usage can be used to determine an efficient thread concurrency.</p> 
+  <p>The thread chart displays the relationship and progress between threads and allows you to check the number of live threads. The CPU load of a thread is also displayed.</p> 
+  <h2 id="sync" name="sync">Analyzing Synchronization</h2> 
+  <p>When multiple threads access the same resources, data race occurs. To avoid this, threads must be synchronized.</p> 
+  <p>The synchronization chart in the dynamic analyzer has the following synchronization objects:</p> 
+  <ul> 
+   <li>Tizen mutex</li> 
+   <li>Tizen monitor</li> 
+   <li>Tizen semaphore</li> 
+   <li>pthread mutex</li> 
+   <li>pthread condition variable</li> 
+  </ul> 
+  <p>You can view the synchronization chart based on the thread, or the synchronization status:</p> 
+  <ul> 
+   <li> To view the child of each thread chart item, select <strong>Thread</strong> in the synchronization chart combo box. </li> 
+   <li>To view the parent item with the thread for each usage showing the child items, select <strong>Sync</strong>.</li> 
+  </ul> 
+  <p class="figure">Figure: Synchronization chart types</p> 
+  <p style="text-align:center;"><img align="center" alt="Synchronization chart types" src="../images/sync_chart.png" /></p> 
+  <p>A synchronization object can be checked using the synchronization chart. When a synchronization object acquires a lock, the thread enters the critical section. The dynamic analyzer analyzes the critical section duration and waiting time. </p> 
+  <p>If the critical section duration increases, the thread stops working concurrently and affects the performance. If a thread acquires a lock, the critical section waiting time of the other threads increases. To avoid potential dead lock, reduce the waiting time.</p> 
+  <p class="figure">Figure: Dead lock warning</p> 
+  <p style="text-align:center;"><img align="center" alt="Dead lock warning" src="../images/dead_lock_warning.png" /></p> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_analysis_result.htm">Using the Analysis Result</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

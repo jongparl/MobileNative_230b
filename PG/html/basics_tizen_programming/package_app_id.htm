@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+  <link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Package ID and Application ID</title>
+</head>
+<body onload="prettyPrint()">
+
+<h1>Package ID and Application ID</h1>
+
+<p>When developing a Tizen application, you must define a package and application ID:</p>
+<ul>
+<li>Package ID
+<p>The package ID, such as <span style="font-family: Courier New,Courier,monospace;">com.samsung.message</span> or <span style="font-family: Courier New,Courier,monospace;">com.samsung.call</span>, is the application package identifier.</p>
+
+<p>You can use the package ID as a directory name to create a unique property, such as  <span style="font-family: Courier New,Courier,monospace;">/opt/usr/apps/com.samsung.message/bin</span>.</p>
+<p>The package ID is functions as a unit for package installation, uninstallation, and upgrades. It is also the unit of the application package DRM, sandboxing, and privilege.</p></li>
+
+<li>Application ID
+<p>The application ID (<span style="font-family: Courier New,Courier,monospace;">appid</span>) is the application identifier. Multiple applications are allowed in a package and the application ID is used to identify the different applications.</p>
+
+<p>The application ID can be the same as the package ID, such as <span style="font-family: Courier New,Courier,monospace;">com.samsung.message</span> or <span style="font-family: Courier New,Courier,monospace;">com.samsung.message.consumer</span>.</p>
+<p>The application ID functions as a unit for launching and terminating applications, and for App Control.</p>
+</li>
+</ul>
+
+<p>The following figure shows how to use the package and application ID.</p>
+
+    <p class="figure">Figure: Package ID and application ID</p> 
+  <p><img src="../images/package_id.png" alt="Package ID and application ID" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="native_app_model.htm">Native Application Model</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

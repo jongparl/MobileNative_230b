@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+
+<head>
+ <script type="text/javascript" src="../../snippet.js"></script>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+ <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+ <title>Panes Widget Tutorial</title>
+</head>
+
+<body onload="prettyPrint()">
+
+<!--<div id="banner">Tizen</div>-->
+
+<h1>Panes Widget Tutorial</h1>
+
+<p>This tutorial explains how you can use Panes in your application.</p>
+
+<p>To learn about the <a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL</a> API features, see the <a href="../../guide/ui/ui.htm">UI Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+ <li><a href="#init">Initializing the Application</a>
+ <p>Start the application.</p></li>
+ <li><a href="#pane">Creating Panes</a>
+ <p>Create panes.</p></li>
+ <li><a href="#conf">Configuring Panes</a>
+ <p>Configure the pane properties.</p></li>
+ <li><a href="#signal">Handling Signals</a>
+ <p>Handle pane signals.</p></li>
+</ul>
+
+<h2 id="init" name="init">Initializing the Application</h2>
+
+<p>Start an elementary application:</p>
+
+<pre class="prettyprint">#include &lt;Elementary.h&gt;
+EAPI_MAIN int
+elm_main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *win, *conformant, *naviframe, *panes, *panes_h, *bt;
+&nbsp;&nbsp;&nbsp;Elm_Object_Item *nav_it;
+&nbsp;&nbsp;&nbsp;elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+&nbsp;&nbsp;&nbsp;win = elm_win_util_standard_add(&quot;panes&quot;, &quot;Panes tutorial&quot;);
+&nbsp;&nbsp;&nbsp;elm_win_autodel_set(win, EINA_TRUE);
+
+&nbsp;&nbsp;&nbsp;// Add elm_conformant
+&nbsp;&nbsp;&nbsp;conformant = elm_conformant_add(win);
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(win, conformant);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(conformant, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;evas_object_show(conformant);
+
+&nbsp;&nbsp;&nbsp;// Add naviframe to conformant
+&nbsp;&nbsp;&nbsp;naviframe = elm_naviframe_add(conformant);
+&nbsp;&nbsp;&nbsp;elm_object_content_set(conformant, naviframe);
+&nbsp;&nbsp;&nbsp;evas_object_show(naviframe);
+&nbsp;&nbsp;&nbsp;evas_object_resize(win, 320, 400);
+&nbsp;&nbsp;&nbsp;evas_object_show(win);
+&nbsp;&nbsp;&nbsp;elm_run();
+&nbsp;&nbsp;&nbsp;elm_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+ELM_MAIN()</pre>
+
+<p>The code creates a <strong>Panes tutorial</strong> window, composed of a conformant widget that contains a naviframe widget. You can add a new Panes object in it.</p>
+
+<h2 id="pane" name="pane">Creating Panes</h2>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">elm_panes</span> widget adds a draggable bar between 2 contents. When dragged, this bar resizes the contents&#39; size. Create a new Panes into an Elementary object using the <span style="font-family: Courier New,Courier,monospace">elm_panes_add()</span> function. The following example creates a Panes object and adds it to the main window:</p>
+
+<pre class="prettyprint">
+// Add an elm_panes
+panes = elm_panes_add(naviframe);
+evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+elm_win_resize_object_add(win, panes);
+evas_object_show(panes);
+</pre>
+
+<h2 id="conf" name="conf">Configuring Panes</h2>
+
+<p>By default, the orientation of the Panes is vertical. Modify the orientation using the <span style="font-family: Courier New,Courier,monospace">elm_panes_horizontal_set()</span> function:</p>
+
+<pre class="prettyprint">// Add a horizontal elm_panes
+panes_h = elm_panes_add(naviframe);
+elm_panes_horizontal_set(panes_h, EINA_TRUE);</pre>
+
+<p>The previous code creates a Panes object and sets its orientation to horizontal. To add content in a panes, use the <span style="font-family: Courier New,Courier,monospace">elm_object_part_content_set()</span> function. The following example adds the horizontal Panes (<span style="font-family: Courier New,Courier,monospace">panes_h</span>) to the left part of the first created Panes (<span style="font-family: Courier New,Courier,monospace">panes</span>).</p>
+
+<pre class="prettyprint">elm_object_part_content_set(panes, &quot;left&quot;, panes_h);</pre>
+
+<p>Set a button object to the right side of a vertical Panes widget:</p>
+
+<pre class="prettyprint">// Create a button object
+bt = elm_button_add(naviframe);
+elm_object_text_set(bt, &quot;Right&quot;);
+evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+evas_object_show(bt);
+
+// Set it to the &quot;right&quot; part of the vertical Panes
+elm_object_part_content_set(panes, &quot;right&quot;, bt);</pre>
+
+<p>The content of the horizontal Panes is set with up and down button objects. When populating a vertical Panes, the left-side content is placed at the top, and the right-side content is placed at the bottom.</p>
+
+<pre class="prettyprint">// Create a &quot;Up&quot; button
+bt = elm_button_add(naviframe);
+elm_object_text_set(bt, &quot;Up&quot;);
+evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+evas_object_show(bt);
+elm_object_part_content_set(panes_h, &quot;left&quot;, bt);
+
+// Create a &quot;Down&quot; button
+bt = elm_button_add(naviframe);
+elm_object_text_set(bt, &quot;Down&quot;);
+evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+evas_object_show(bt);
+elm_object_part_content_set(panes_h, &quot;right&quot;, bt);</pre>
+
+<p>Drag the <span style="font-family: Courier New,Courier,monospace">elm_panes</span> with the mouse. The proportion can also be set using the <span style="font-family: Courier New,Courier,monospace">elm_panes_content_left_size_set()</span> and <span style="font-family: Courier New,Courier,monospace">elm_panes_content_right_size_set()</span> functions. The following example sets the left size of both panes to 80%:</p>
+
+<pre class="prettyprint">// Set the proportion of the panes to 80%
+elm_panes_content_left_size_set(panes, 0.8);
+elm_panes_content_left_size_set(panes_h, 0.8);</pre>
+
+<p>The Panes proportions can also be fixed using the <span style="font-family: Courier New,Courier,monospace">elm_panes_fixed_set()</span> function. In this case, the user is not able to drag it at all.</p>
+
+<pre class="prettyprint">// Fix the Panes proportion
+elm_panes_fixed_set(panes_h, EINA_TRUE);</pre>
+
+<h2 id="signal" name="signal">Handling Signals</h2>
+
+<p>Panes widgets emit 4 different signals, depending on the interaction with the draggable bar:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">press</span>
+  <p>The panes has been pressed.</p></li>
+ <li><span style="font-family: Courier New,Courier,monospace">unpressed</span>
+  <p>The panes was released after being pressed.</p></li>
+ <li><span style="font-family: Courier New,Courier,monospace">clicked</span>
+  <p>The panes has been clicked.</p></li>
+ <li><span style="font-family: Courier New,Courier,monospace">clicked,double</span>
+  <p>The panes has been double-clicked.</p></li>
+</ul>
+
+<p>To add a callback function for each of them:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace">press</span>
+
+<p>The callback function for the <span style="font-family: Courier New,Courier,monospace">press</span> signal also prints &quot;Pressed&quot; to the standard output:</p>
+
+<pre class="prettyprint">// Press callback
+static void
+_press_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Pressed\n&quot;);
+}</pre>
+
+<p>Register the callback to the vertical panes:</p>
+
+<pre class="prettyprint">evas_object_smart_callback_add(panes, &quot;press&quot;, _press_cb, panes);</pre>
+</li>
+
+<li><span style="font-family: Courier New,Courier,monospace">unpressed</span>
+
+<p>For the <span style="font-family: Courier New,Courier,monospace">unpress</span> signal, get the proportion size of the left-side content and print it to the standard output. This is achieved using the <span style="font-family: Courier New,Courier,monospace">elm_panes_content_left_size_get()</span> function.</p>
+
+<pre class="prettyprint">// Unpress callback
+static void
+_unpress_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Unpressed, size : %f\n&quot;, elm_panes_content_left_size_get(obj));
+}</pre>
+
+<p>As the other signals, the callback has to be registered to the desired Panes:</p>
+
+<pre class="prettyprint">evas_object_smart_callback_add(panes, &quot;unpress&quot;, _unpress_cb, panes);</pre>
+</li>
+
+<li><span style="font-family: Courier New,Courier,monospace">clicked</span>
+
+<p>The callback function for the clicked signal just prints &quot;Clicked&quot; to the standard output.</p>
+
+<pre class="prettyprint">// Clicked callback
+static void
+_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Clicked\n&quot;);
+}</pre>
+
+<p>The following example registers this callback function to the vertical panes:</p>
+
+<pre class="prettyprint">evas_object_smart_callback_add(panes, &quot;clicked&quot;, _clicked_cb, panes);</pre>
+</li>
+
+<li><span style="font-family: Courier New,Courier,monospace">clicked,double</span>
+
+<p>With the <span style="font-family: Courier New,Courier,monospace">clicked,double</span> signal you can hide the left part of the Panes widget, setting the left proportion to 0.0. Restore the left part proportion by double-clicking on the hidden part of the Panes widget. To achieve this, use the <span style="font-family: Courier New,Courier,monospace">elm_panes_content_left_size_get()</span> and <span style="font-family: Courier New,Courier,monospace">elm_panes_content_left_size_set()</span> functions, and a variable to store the value of the current proportion.</p>
+
+<pre class="prettyprint">// Double-clicked callback
+static void
+_clicked_double_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;static double size = 0.0;
+&nbsp;&nbsp;&nbsp;double tmp_size = 0.0;
+&nbsp;&nbsp;&nbsp;tmp_size = elm_panes_content_left_size_get(obj);
+&nbsp;&nbsp;&nbsp;if (tmp_size &gt; 0)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_panes_content_left_size_set(obj, 0.0);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Double clicked, hiding.\n&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_panes_content_left_size_set(obj, size);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Double clicked, restoring size.\n&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;size = tmp_size;
+}</pre>
+
+<p>Add the callback function to the panes:</p>
+
+<pre class="prettyprint">evas_object_smart_callback_add(panes, &quot;clicked,double&quot;, _clicked_double_cb, panes);</pre>
+
+<p>The window of the full example resembles the following figure.</p>
+
+<p class="figure">Figure: Panes tutorial in action</p>
+<p style="text-align:center;"><img alt="Panes tutorial in action" src="../../images/pane_tuto.png" /></p>
+</li>
+</ul>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="ui_tutorial.htm">UI Tutorials</a></li>
+ <li><a href="../../guide/ui/ui.htm">UI Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__Panes.html">UI EFL Panes API Reference</a></li>
+</ul>
+
+<div id="footer">
+ <hr size="1" />
+ <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+</div>
+
+<!--start-->
+
+<script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-25976949-1']);
+ _gaq.push(['_trackPageview']);
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>
+
+<!--end-->
+
+</body>
+
+</html>

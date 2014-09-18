@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Debugging Overview</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Debugging Overview</h1> 
+  <p>Debugging your application enables you to understand its flow of control. With the Tizen IDE, you can use various <a href="debugging_app_methods.htm">application debugging methods</a>. However, remember that the best way to debug an application is to not make bugs in the first place, so learn how to <a href="debugging_logs.htm">prevent bugs by using logs</a>.</p> 
+  <p>The debugging environment uses <a href="http://www.gnu.org/software/gdb/gdb.html" target="_blank">GDB</a> (GNU Debugger) for debugging with the Emulator and a target device. GDB can debug both locally and <a href="debugging_remote.htm">remotely</a>. To ease the debugging process, you can set <a href="debugging_break_points.htm">break points</a> and <a href="debugging_watch_points.htm">watch points</a>, step in, step out, and step over break points, and watch variables to track the changes in their values in the <strong>Debug</strong> view.</p> 
+  <p>Debugging native applications with Tizen IDE is same as with Eclipse CDT. For more information, see <a href="../../../org.eclipse.cdt.doc.user/tasks/cdt_o_debug.htm">Debugging</a> in Eclipse Help Contents.</p> 
+  <h2 id="debug" name="debug">Debug View</h2> 
+  <p>The <strong>Debug</strong> view provides debug control buttons that help you to track source code easily.</p> 
+  <!--
+  <p class="figure">Figure: Debug view</p> 
+  <p style="text-align:center;"><img alt="Debug view" src="../images/ide_debug_view.png" /></p> 
+  -->
+  <p>You can control debug execution in various ways. After a break point suspends the program execution, you can step through your program or suspend the program by force. To control the execution, use the following control buttons in the <strong>Debug</strong> view.</p> 
+  <table> 
+   <caption>
+     Table: Debug view control buttons 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Button</th> 
+     <th>Shortcut key</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><img alt="Resume" src="../images/debug_view_resume.png" /></td> 
+     <td>F8</td> 
+     <td>Resumes a suspended thread.</td> 
+    </tr> 
+    <tr> 
+     <td><img alt="Step Into" src="../images/debug_view_stepinto.png" /></td> 
+     <td>F5</td> 
+     <td>Steps into the highlighted statement. <p>Executes the current line, and if the line contains a method, steps into the method.</p></td> 
+    </tr> 
+    <tr> 
+     <td><img alt="Step Over" src="../images/debug_view_stepover.png" /></td> 
+     <td>F6</td> 
+     <td>Steps over the highlighted statement. <p>Executes the current line, and if the line contains a method, executes the method without entering it.</p></td> 
+    </tr> 
+    <tr> 
+     <td><img alt="Step Return" src="../images/debug_view_stepreturn.png" /></td> 
+     <td>F7</td> 
+     <td>Step out of the current method.</td> 
+    </tr> 
+    <tr> 
+     <td><img alt="Suspend" src="../images/debug_view_suspend.png" /></td> 
+     <td>-</td> 
+     <td>Suspends the selected thread.</td> 
+    </tr> 
+    <tr> 
+     <td><img alt="Terminate" src="../images/debug_view_terminate.png" /></td> 
+     <td>Ctrl + F2</td> 
+     <td>Terminates the selected debug target.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="debugging_app.htm">Running and Debugging Applications</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

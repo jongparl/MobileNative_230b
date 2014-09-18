@@ -1,0 +1,368 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Message Sender Sample Overview</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Message Sender Sample Overview</h1> 
+<p>The Message Sender sample demonstrates how to implement messaging application with ability to send SMS, search for messages within the SMS storage, retrieve the SMS count, attach objects, such as images and documents, and send MMS. Additionally, the Message Sender sample shows how to develop an email application and use an email service to send emails.</p>
+
+<p>The following figure illustrates the main screen of the Message Sender application.</p>
+
+<p class="figure">Figure: Message Sender main view</p> 
+<p style="text-align:center;"><img alt="Message Sender main view" src="../images/messagesender_main.png" /></p> 
+
+<p>Each form contains appropriate controls to enter required data, such as phone number, message content and buttons to send messages or emails.</p>
+
+<h2>Implementation</h2>
+<p>To send messages:</p>
+<ul>
+<li>
+<p>The <strong>Send SMS</strong> view allows the user to enter a phone number and text and send an SMS to a selected recipient. Internally, when all fields are filled and the <strong>Send</strong> button is pressed, the <span style="font-family: Courier New,Courier,monospace;">send_sms_button_cb</span> callback is called and the <span style="font-family: Courier New,Courier,monospace;">send_sms</span> method executed:</p>
+
+<p class="figure">Figure: Sending an SMS</p> 
+<p style="text-align:center;"><img alt="Sending an SMS" src="../images/messagesender_send_sms.png" /></p> 
+
+
+<pre class="prettyprint">
+void send_sms(messages_service_h message_handle, const char *number, const char *message_text)
+{
+&nbsp;&nbsp;&nbsp;RETM_IF(!message_handle, &quot;messages_handle is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!number, &quot;number is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!message_text, &quot;message_text is NULL&quot;);
+
+&nbsp;&nbsp;&nbsp;const char *replaced_message_text = elm_entry_markup_to_utf8(message_text);
+&nbsp;&nbsp;&nbsp;RETM_IF(!replaced_message_text, &quot;replaced_message_text was not allocated&quot;);
+
+&nbsp;&nbsp;&nbsp;messages_message_h message = NULL;
+&nbsp;&nbsp;&nbsp;int error = messages_create_message(MESSAGES_TYPE_SMS, &amp;message);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_create_message error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = messages_set_text(message, replaced_message_text);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_set_text error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+
+&nbsp;&nbsp;&nbsp;error = messages_add_address(message, number, MESSAGES_RECIPIENT_TO);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_add_address error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = messages_send_message(message_handle, message, true, NULL, NULL);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_add_address error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+}
+</pre>
+</li>
+
+<li>
+<p>The <strong>Send MMS</strong> view allows the user to enter a phone number and text with attachments and send an MMS to s selected recipient. Internally, when all the fields are filled up, and the <strong>Send</strong> button is pressed, the <span style="font-family: Courier New,Courier,monospace;">send_mms_button_cb</span> callback is called and the <span style="font-family: Courier New,Courier,monospace;">send_mms</span> method executed:</p>
+
+<p class="figure">Figure: Sending an MMS</p> 
+<p style="text-align:center;"><img alt="Sending an MMS" src="../images/messagesender_send_mms.png" /></p> 
+
+<pre class="prettyprint">
+void send_mms(messages_service_h msg_handle, const char *number_to, const char *subject, const char *message_text, char ** attachment_list, int attachment_list_size)
+{
+&nbsp;&nbsp;&nbsp;RETM_IF(!msg_handle, &quot;msg_handle is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!number_to, &quot;number_to is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!subject, &quot;subject is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!message_text, &quot;message_text is NULL&quot;);
+
+&nbsp;&nbsp;&nbsp;const char *replaced_message_text = elm_entry_markup_to_utf8(message_text);
+&nbsp;&nbsp;&nbsp;RETM_IF(!replaced_message_text, &quot;replaced_message_text was not allocated&quot;);
+
+&nbsp;&nbsp;&nbsp;messages_message_h message = NULL;
+&nbsp;&nbsp;&nbsp;int error = messages_create_message(MESSAGES_TYPE_MMS, &amp;message);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_create_message error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = messages_set_text(message, replaced_message_text);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_set_text error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;free((void*)replaced_message_text);
+
+&nbsp;&nbsp;&nbsp;error = messages_add_address(message, number_to, MESSAGES_RECIPIENT_TO);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_set_text error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = messages_mms_set_subject(message, subject);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_mms_set_subject error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;int i = 0;
+&nbsp;&nbsp;&nbsp;for (; i &lt; attachment_list_size; ++i)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error = messages_mms_add_attachment(message, MESSAGES_MEDIA_IMAGE, attachment_list[i]);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_mms_add_attachment error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = messages_send_message(msg_handle, message, true, NULL, NULL);
+&nbsp;&nbsp;&nbsp;if (error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;messages_send_message error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;messages_destroy_message(message);
+}
+</pre>
+</li>
+
+<li>
+<p>The <strong>Send email</strong> view allows the user to enter an email address and text with attachments and send the email to a selected recipient. Internally, when all the fields are filled up, and the <strong>Send</strong> button is pressed, the <span style="font-family: Courier New,Courier,monospace;">send_email_button_cb</span> callback is called and the <span style="font-family: Courier New,Courier,monospace;">send_email</span> method executed.</p>
+
+<p class="figure">Figure: Sending emails</p> 
+<p style="text-align:center;"><img alt="Sending emails" src="../images/messagesender_send_emails.png" /></p> 
+
+<pre class="prettyprint">
+int send_email(const char *address_to, const char *address_cc, const char *address_bcc, const char *subject, const char *message_text, char ** attachment_list, unsigned int attachment_list_size)
+{
+&nbsp;&nbsp;&nbsp;RETVM_IF(!address_to, ERROR_PARAMETER_INVALID, &quot;address_to is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETVM_IF(strlen(address_to) == 0, ERROR_PARAMETER_INVALID, &quot;address_to is empty&quot;);
+&nbsp;&nbsp;&nbsp;RETVM_IF(!address_cc, ERROR_PARAMETER_INVALID, &quot;address_cc is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETVM_IF(!address_bcc, ERROR_PARAMETER_INVALID, &quot;address_bcc is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETVM_IF(!subject, ERROR_PARAMETER_INVALID, &quot;subject is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETVM_IF(!message_text, ERROR_PARAMETER_INVALID, &quot;message_text is NULL&quot;);
+
+&nbsp;&nbsp;&nbsp;email_h email = NULL;
+&nbsp;&nbsp;&nbsp;int error = email_create_message(&amp;email);
+&nbsp;&nbsp;&nbsp;RETVM_IF(error != EMAILS_ERROR_NONE, ERROR_UNKNOWN, &quot;messages_create_message error %d&quot;, error);
+
+&nbsp;&nbsp;&nbsp;error = email_set_subject(email, subject);
+&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_set_subject error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = email_set_body(email, message_text);
+&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_set_body error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = email_add_recipient(email, EMAIL_RECIPIENT_TYPE_TO, address_to);
+&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_add_recipient error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;int i = 0;
+&nbsp;&nbsp;&nbsp;for (; i &lt; attachment_list_size; ++i)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error = email_add_attach(email, attachment_list[i]);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_add_attach error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = email_save_message(email);
+&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_save_message error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error = email_send_message(email, true);
+&nbsp;&nbsp;&nbsp;if (error != EMAILS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;email_send_message error %d&quot;, error);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ERROR_UNKNOWN;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;email_destroy_message(email);
+&nbsp;&nbsp;&nbsp;return ERROR_NONE;
+}
+</pre>
+</li>
+<li>
+<p>The <strong>Get the SMS total count</strong> option allows the user to show the total count of sent or received SMS.</p>
+<p>When the <strong>Get SMS Total Count</strong> button is pressed, the <span style="font-family: Courier New,Courier,monospace;">get_sms_count_cb</span> callback is called and the popup with the folder selection is shown. By selecting the required folder it calls the appropriate method to retrieve the SMS count and shows it in a message box.</p>
+
+<p class="figure">Figure: Getting the SMS total count</p> 
+<p style="text-align:center;"><img alt="Getting the SMS total count" src="../images/messagesender_total_count.png" /></p> 
+
+<pre class="prettyprint">
+static void get_sms_count(void *data, messages_message_box_e message_box_type)
+{
+&nbsp;&nbsp;&nbsp;RETM_IF(!data, &quot;data is NULL&quot;);
+&nbsp;&nbsp;&nbsp;app_data *application_data = (app_data *)data;
+
+&nbsp;&nbsp;&nbsp;if (!_get_message_handle(&amp;application_data-&gt;message_handle))
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;msg_handle is NULL&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;int sms_count = 0;
+&nbsp;&nbsp;&nbsp;int error = messages_get_message_count(application_data-&gt;message_handle, message_box_type, MESSAGES_TYPE_SMS, &amp;sms_count);
+
+&nbsp;&nbsp;&nbsp;char text[BUFSIZ] = { &#39;\0&#39; };
+&nbsp;&nbsp;&nbsp;if (sms_count &lt; 0 &amp;&amp; error != MESSAGES_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(text, BUFSIZ, &quot;Message count FAILED:&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(text, BUFSIZ, &quot;Message count: %d&quot;, sms_count);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;show_popup(data, text);
+}
+</pre>
+
+</li>
+
+<li>
+<p>The SMS search option allows the user to search within SMS folder and find specified keywords. When the <strong>Search SMS in</strong> button is pressed, the <span style="font-family: Courier New,Courier,monospace;">search_sms_on search_cb</span> callback is called and the <span style="font-family: Courier New,Courier,monospace;">search_sms</span> method executed:</p>
+
+<p class="figure">Figure: Search SMS</p> 
+<p style="text-align:center;"><img alt="Search SMS" src="../images/messagesender_search_sms.png" /></p> 
+
+<pre class="prettyprint">
+void search_sms(messages_service_h msg_handle, const char *keyword, const char *sender_address, int index, int count, Eina_List **eina_msg_ids_list)
+{
+&nbsp;&nbsp;&nbsp;RETM_IF(!keyword, &quot;keyword is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!sender_address, &quot;sender_address is NULL&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(index &lt; 0, &quot;index less ZERO&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(count &lt; 0, &quot;count less ZERO&quot;);
+&nbsp;&nbsp;&nbsp;RETM_IF(!msg_handle, &quot;msg_handle is NULL&quot;);
+
+&nbsp;&nbsp;&nbsp;messages_message_h *message_array = NULL;
+&nbsp;&nbsp;&nbsp;int length = 0;
+&nbsp;&nbsp;&nbsp;int total = 0;
+&nbsp;&nbsp;&nbsp;messages_search_message(msg_handle, MESSAGES_MBOX_ALL, MESSAGES_TYPE_SMS, keyword, sender_address, 0,0, &amp;message_array, &amp;length, &amp;total);
+
+&nbsp;&nbsp;&nbsp;char *message_text = NULL;
+&nbsp;&nbsp;&nbsp;unsigned int array_index = 0;
+&nbsp;&nbsp;&nbsp;for ( ; array_index &lt; length; array_index++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_get_text(message_array[array_index], &amp;message_text);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*eina_msg_ids_list = eina_list_append(*eina_msg_ids_list, message_text);
+&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+</li>
+
+<li>
+<p>You can register an SMS message listener for message service notification events:</p>
+
+<pre class="prettyprint">
+void register_unregister_sms_cb(void *data, Evas_Object *ob, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;RETM_IF(data == NULL, &quot;data is NULL&quot;);
+
+&nbsp;&nbsp;&nbsp;app_data *application_data = (app_data *)data;
+&nbsp;&nbsp;&nbsp;static Eina_Bool is_registered = EINA_FALSE;
+
+&nbsp;&nbsp;&nbsp;if (!application_data-&gt;message_handle)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(!open_msg_handle(&amp;application_data-&gt;message_handle))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERR(&quot;Open msg handle FAILED&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;if (is_registered)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_unset_message_incoming_cb(application_data-&gt;message_handle);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is_registered = EINA_FALSE;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages_set_message_incoming_cb(application_data-&gt;message_handle, sms_msg_storage_change_cb, data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is_registered = EINA_TRUE;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;button_register_unregister_switch_text(application_data-&gt;main_window_data.message_listener_button, is_registered);
+}
+</pre>
+
+</li>
+</ul>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul>
+   <li><a href="sample_descriptions.htm">Native Sample Applications</a></li> 
+  </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

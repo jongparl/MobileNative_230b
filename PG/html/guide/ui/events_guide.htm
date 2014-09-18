@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Event Handling</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Event Handling</h1> 
+  
+<p>EFL relies on events and callbacks. When an event, such as a key press, a mouse click, or battery running low, takes place, the so-called main loop calls the callback functions that have been associated with that event. After the callbacks have finished, the main loop takes over again and waits for new events upon which the callbacks are triggered.</p>
+
+<p>It is important to only do light work in the callbacks and to return to the main loop relatively quickly. If there is heavy work to do, it is best to use an asynchronous mechanism, such as <span style="font-family: Courier New,Courier,monospace;">Ecore_con</span> for network input and output or threads for CPU-intensive tasks. Failure to quickly return to the main loop blocks the application UI and makes it appear frozen.</p>
+  
+<h2 id="eventtypes" name="eventtypes">EFL Event Types</h2>
+
+<p>The following list contains the different EFL event types, organized from the lowest to the highest level. The event type you want to use depends on the level of the event.</p>
+
+<ul>
+<li><a href="events_guide_ecore.htm">Ecore events</a>
+<p>The lowest-level events, coming directly from the system. They are only useful for application-wide shortcuts.</p></li>
+<li><a href="events_guide_evas.htm">Evas events</a>
+<p>Events on the graphical canvas as a whole. They are also quite low-level  and mostly useful when drawing directly on the canvas.</p></li>
+<li><a href="events_guide_evas_objects.htm">Evas object events</a>
+<p>These events happen on objects that have been put on the canvas.</p></li>
+<li><a href="events_guide_evas_smart_objects.htm">Evas smart object events</a>
+<p>The most commonly used events. These events happen on collections of Evas objects, such as the objects that are usually handled. They are called smart objects, because they have an internal logic and can define their own events, whereas other event types are fixed.</p></li>
+</ul>
+
+<p class="figure">Figure: EFL event types</p> 
+<p style="text-align:center;"><img alt="EFL event types" src="../../images/events_scope.png" /></p> 
+  
+<h2 id="basiceventsflow" name="basiceventsflow">Basic Event Flow</h2>
+<p>As an example of a realistic scenario involving various types of events, consider an application showing a button which triggers the download of a file to be processed. The application includes progress bars for the operations.</p>
+
+<p>The event flow proceeds as follows:</p>
+
+<ol><li><p>Create the window as usual, and create a vertical box and add a button and the 2 progress bars.</p>
+<p>At first, only the button is fully visible.</p></li>
+
+<li><p>When the user clicks on the button, an Evas smart object event called <span style="font-family: Courier New,Courier,monospace;">clicked</span> is emitted.</p>
+<p>The event callback starts the download in <span style="font-family: Courier New,Courier,monospace;">Ecore_con</span>, displays the first progress bar, and adds a callback to monitor the download progress. When the download progress changes, the callback updates the progress bar.</p></li>
+
+<li><p>When the download is finished, the second progress bar is displayed and the file processing is off-loaded to another thread through <span style="font-family: Courier New,Courier,monospace;">Ecore_thread</span>.</p>
+<p>The processing function regularly updates the progress bar. It is wrapped in the <span style="font-family: Courier New,Courier,monospace;">ecore_main_loop_thread_safe_call_async()</span> function, because GUI operations are not thread-safe.</p></li></ol>
+
+<p>Because events are used, all the operations mentioned above that take more than a few milliseconds are done outside the main loop, and therefore do not block UI redraws.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="ui.htm">UI Programming Guide</a></li> 
+	  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

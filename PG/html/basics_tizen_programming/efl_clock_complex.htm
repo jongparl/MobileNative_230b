@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Clock Sample: Complex View</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+
+<h1>Clock Sample: Complex View</h1> 
+  
+<p>This sample creates a complex clock view. The sample demonstrates how to organize a basic layout using boxes. The application includes the following widgets:</p>
+
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_window</span>: Basic canvas for rendering the screen</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_conformant</span>: Support indicator area</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_naviframe</span>: View manager widget</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_box</span>: Container widget for layouting other widgets</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_label</span>: Basic widget for showing text with a tag</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_genlist</span>: List widget</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_button</span>: Simple push button</li>
+</ul> 
+  
+<p>The following figure illustrates the main view of the complex clock sample application and its wireframe structure.</p>
+  
+  <p class="figure">Figure: Complex clock screen</p>
+<p style="text-align:center;"><img alt="Complex clock screen" src="../images/efl_complex_clock.png" /></p>
+
+<h2>Basic GUI</h2> 
+
+<p>The basic clock is implemented in the <span style="font-family: Courier New,Courier,monospace">world_clock.c</span> file. In this application, the data structure for application is following:</p>
+
+<pre class="prettyprint">typedef struct appdata
+{
+&nbsp;&nbsp;&nbsp;// Save the window
+&nbsp;&nbsp;&nbsp;Evas_Object *win;
+} 
+appdata_s;
+</pre>
+
+<p>The information in <span style="font-family: Courier New,Courier,monospace">appdata</span> is used for the entire system. In this sample application, the information is related to handling the HW back key.</p> 
+
+<p>The  single callback function for application handling is <span style="font-family: Courier New,Courier,monospace">app_create</span>, and it only creates the basic GUI:</p>
+
+<pre class="prettyprint">int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = {0,};
+&nbsp;&nbsp;&nbsp;app_event_callback_s event_callback = {0,};
+&nbsp;&nbsp;&nbsp;int ret = 0;
+
+&nbsp;&nbsp;&nbsp;event_callback.create = app_create;
+&nbsp;&nbsp;&nbsp;event_callback.terminate = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.pause = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.resume = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.app_control = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.language_changed = NULL;
+
+&nbsp;&nbsp;&nbsp;event_callback.low_memory = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.low_battery = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.device_orientation = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.region_format_changed = NULL;
+
+&nbsp;&nbsp;&nbsp;ret = app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, &amp;ad);
+&nbsp;&nbsp;&nbsp;if (ret != APP_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGE(&quot;app_efl_main() is failed. err = %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return ret;
+}
+
+static bool
+app_create(void *data)
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;create_base_gui(ad);
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre>
+
+<p>The base GUI of the application contains the following elements:</p>
+
+<ul>
+<li>Clock</li>
+<li>List</li>
+<li>Main layout with buttons</li>
+</ul>
+
+<h2>Clock</h2> 
+
+ <p>The clock element contains 3 labels. The labels are packed as a single box widget, which is part of the main layout.</p> 
+<pre class="prettyprint">static Evas_Object *
+create_clock(Evas_Object *nf)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *box, *label1, *label2, *label3;
+
+&nbsp;&nbsp;&nbsp;// Box
+&nbsp;&nbsp;&nbsp;box = elm_box_add(nf);
+
+&nbsp;&nbsp;&nbsp;label1 = elm_label_add(box);
+&nbsp;&nbsp;&nbsp;elm_object_text_set(label1, &quot;&lt;font_size=110&gt;&lt;color=#000000&gt;07:26&lt;/color&gt;&lt;/font_size&gt;&quot;);
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(box, label1);
+&nbsp;&nbsp;&nbsp;evas_object_show(label1);
+
+&nbsp;&nbsp;&nbsp;...
+
+&nbsp;&nbsp;&nbsp;evas_object_show(box);
+&nbsp;&nbsp;&nbsp;return box;
+}
+</pre>
+
+<h2>List</h2> 
+
+<p>This element contains a list of cities. The widget used is <span style="font-family: Courier New,Courier,monospace">genlist</span>, which is a complex list able to show information with various styles.</p> 
+<pre class="prettyprint">static Evas_Object *
+create_list(Evas_Object *nf)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object* list;
+&nbsp;&nbsp;&nbsp;Elm_Genlist_Item_Class *itc = NULL;
+&nbsp;&nbsp;&nbsp;int i, num_of_item;
+&nbsp;&nbsp;&nbsp;Elm_Object_Item *it;
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;list = elm_genlist_add(nf);
+</pre> 
+  
+<p>To add items to the list, use the <span style="font-family: Courier New,Courier,monospace">Elm_Genlist_Item_Class</span> class. After adding a new class, set callback function to detect, when the item is rendered. </p> 
+<pre class="prettyprint">itc = elm_genlist_item_class_new();
+&nbsp;&nbsp;&nbsp;itc-&gt;item_style = &quot;2line.top.4&quot;;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.text_get = gl_text_get_cb;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.content_get = NULL;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.del = NULL;
+</pre> 
+
+<p>In this application, all the list items are similar and use the same callback function (<span style="font-family: Courier New,Courier,monospace">gl_text_get_cb()</span>) for setting text, so only 1 item class is created:</p> 
+<pre class="prettyprint">static char*
+gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
+{
+&nbsp;&nbsp;&nbsp;item_data_s *id = data;
+&nbsp;&nbsp;&nbsp;char buf[1024];
+
+&nbsp;&nbsp;&nbsp;if (id-&gt;index == 0) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!strcmp(part, &quot;elm.text.main.left.top&quot;)) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(buf, 1023, &quot;%s&quot;, &quot;07:26&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return strdup(buf);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else if (!strcmp(part, &quot;elm.text.sub.right.top&quot;)) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(buf, 1023, &quot;%s&quot;, &quot;Cardiff&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return strdup(buf);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else if (!strcmp(part, &quot;elm.text.sub.left.bottom&quot;)) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(buf, 1023, &quot;%s&quot;, &quot;Wen, Jan 1&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return strdup(buf);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else if (!strcmp(part, &quot;elm.text.sub.right.bottom&quot;)) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snprintf(buf, 1023, &quot;%s&quot;, &quot;wales&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return strdup(buf);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;...
+
+&nbsp;&nbsp;&nbsp;return NULL;
+}
+</pre> 
+
+<p>Append items using the <span style="font-family: Courier New,Courier,monospace">elm_genlist_item_append()</span> function. In this application, 3 items are added:</p> 
+<pre class="prettyprint">num_of_item = 3;
+
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; num_of_item; i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item_data_s *id = calloc(sizeof(item_data_s), 1);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id-&gt;index = i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it = elm_genlist_item_append(list,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;itc,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELM_GENLIST_ITEM_NONE,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id-&gt;item = it;
+&nbsp;&nbsp;&nbsp;}
+</pre>
+ 
+ <h2>Main Layout with a Button</h2> 
+ 
+<p>In the main layout, the other layout elements are merged together and a button added. The following example describes handling the main layout:</p>
+
+<pre class="prettyprint">static void
+create_base_gui(appdata_s *ad)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *conform, *nf, *box, *clock, *layout, *rect, *button;
+&nbsp;&nbsp;&nbsp;// Window
+&nbsp;&nbsp;&nbsp;ad-&gt;win = elm_win_util_standard_add(PACKAGE, PACKAGE);
+&nbsp;&nbsp;&nbsp;elm_win_autodel_set(ad-&gt;win, EINA_TRUE);
+
+&nbsp;&nbsp;&nbsp;// Conformant
+&nbsp;&nbsp;&nbsp;conform = elm_conformant_add(ad-&gt;win);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(ad-&gt;win, conform);
+&nbsp;&nbsp;&nbsp;evas_object_show(conform);
+
+&nbsp;&nbsp;&nbsp;// Naviframe
+&nbsp;&nbsp;&nbsp;nf = elm_naviframe_add(conform);
+&nbsp;&nbsp;&nbsp;elm_object_content_set(conform, nf);
+&nbsp;&nbsp;&nbsp;evas_object_show(nf);
+}
+</pre> 
+
+<p>The box widget is used to organize the main layout. The box is expanded as much as possible to fill the entire view.</p> 
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Box
+&nbsp;&nbsp;&nbsp;box = elm_box_add(nf);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+</pre> 
+
+<p>The box contains the following elements:</p> 
+
+<ul>
+
+<li><p>The clock element contains 3 labels. The parameter for the <span style="font-family: Courier New,Courier,monospace">evas_object_size_hint_weight_set()</span> function is 0.1 meaning that the height of the clock box occupies 30% of the available area. </p> 
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;clock = create_clock(nf);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(clock, EVAS_HINT_EXPAND, 0.3);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(clock, EVAS_HINT_FILL, EVAS_HINT_FILL);
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(box, clock);
+</pre> 
+</li>
+
+<li><p>The list element is packed into the box. As the <span style="font-family: Courier New,Courier,monospace">genlist</span> elements does not have a determined size, its size depends on the <span style="font-family: Courier New,Courier,monospace">layout</span> parameter.</p> 
+<pre class="prettyprint">
+&nbsp;&nbsp;&nbsp;layout = elm_layout_add(box);
+&nbsp;&nbsp;&nbsp;elm_layout_theme_set(layout, &quot;layout&quot;, &quot;application&quot;, &quot;default&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+&nbsp;&nbsp;&nbsp;rect = create_list(nf);
+&nbsp;&nbsp;&nbsp;elm_layout_content_set(layout, &quot;elm.swallow.content&quot;, rect);
+&nbsp;&nbsp;&nbsp;evas_object_show(rect);
+&nbsp;&nbsp;&nbsp;evas_object_show(layout);
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(box, layout);
+</pre> 
+</li>
+
+<li><p>The button element has a callback function to detect, when the button is clicked.</p> 
+<pre class="prettyprint">button = elm_button_add(box);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(button, &quot;clicked&quot;, btn_clicked_cb, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0.1);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
+&nbsp;&nbsp;&nbsp;elm_object_text_set(button, &quot;Terminate&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_show(button);
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(box, button);
+</pre> 
+</li>
+</ul>
+
+<p>The following figure illustrates the widget hierarchy of the application.</p>
+
+  <p class="figure">Figure: Complex clock widgets</p>
+<p style="text-align:center;"><img alt="Complex clock widgets" src="../images/efl_complex_clock_tree.png" /></p>
+
+<p>Add the main layout to the naviframe, and set the HW key handler:</p> 
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Show the window after the base GUI is set up
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;win);
+
+&nbsp;&nbsp;&nbsp;ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, keydown_cb, NULL);
+</pre> 
+
+<p>After setting the callback function, the <span style="font-family: Courier New,Courier,monospace">keydown_cb</span> callback is invokes when a key is pressed. The <span style="font-family: Courier New,Courier,monospace">keydown_cb</span> callback checks, whether the event comes from the back key. If so, the window is hidden:</p> 
+<pre class="prettyprint">static Eina_Bool
+keydown_cb(void *data , int type , void *event)
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;Ecore_Event_Key *ev = event;
+&nbsp;&nbsp;&nbsp;if (!strcmp(ev-&gt;keyname, KEY_END)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Hide the window
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_win_lower(ad-&gt;win);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ECORE_CALLBACK_DONE;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return ECORE_CALLBACK_PASS_ON;
+}
+</pre> 
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

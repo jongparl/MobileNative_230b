@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Content: Managing Media Content</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Content: Managing Media Content</h1> 
+  <p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__BASE__FRAMEWORK.html">Content</a> API allows you to obtain or update data from the media database, which stores metadata for the media files (such as images, videos, and audio) in the device.</p>
+  
+    <p class="figure">Figure: Media content of the device</p> 
+  <p style="text-align:center;"><img alt="Media content of the device" src="../../images/content.png" /></p>   
+ 
+<p>The media files are updated using an application (by calling the Content API) or a media scanner. When updating the files in the media scanner, the following limitations apply:</p>
+<ul><li>SD card insertion and removal: Media files are updated only in the SD card.</li>
+<li>Rebooting the device: Media files are updated in the internal memory and SD card in the device.</li></ul>
+
+<p>Media content is available to only use the files located in the specific paths. You can get the paths by using the <span style="font-family: Courier New,Courier,monospace">int storage_get_directory(int storage_id, storage_directory_e type, char **path);</span> function. For more information, see <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__STORAGE__MODULE.html">Storage API Reference</a>.</p>
+
+
+<p>The main features of the Content module include:</p>
+<ul>
+<li><a href="download.htm">Download management</a>
+	     <p>You can create a new download process, configure the download URL or destination, and launch the process.</p></li>
+<li>Media content information
+<p>To obtain information from the media database, make sure you are connected to it. When the connection is no longer needed, remember to disconnect from the media database.</p>
+<p>You can update database details due to file (or directory) creation or deletion. If a received file (or directory) does not exist in the file system, it is removed from the database.</p>
+<p>You can also set an alarm to get notifications of media database changes.</p></li>
+<li>Media information
+<p>You can update the media database due to file creation, deletion, or update in the device.</p></li>
+<li>Media bookmarks
+<p>You can manage a bookmark of the video and audio files.</p></li>
+<li>Media playlists
+<p>You can add or delete a playlist of the video and audio files, and add media files to a created playlist.</p></li>
+<li>Media tags
+<p>You can manage tags of the media files.</p></li>
+<li>Media albums
+<p>You can manage an album of the audio file.</p></li></ul>
+
+
+<h2>Media Information</h2>
+
+<p>The following tables list the information available about the media files.</p>
+
+<table> 
+   <caption>
+     Table: General information 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Metadata name</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Added time</span></td> 
+     <td>Time when the media was added</td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Age rating</span></td> 
+     <td>Age rating of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Altitude</span></td> 
+     <td>Altitude of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Author</span></td> 
+     <td>Author of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Description</span></td> 
+     <td>Description of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">File path</span></td> 
+     <td>File path of the media in the device</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Longitude</span></td> 
+     <td>Longitude of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Media ID</span></td> 
+     <td>Media UUID of the media in the media database</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Media type</span></td> 
+     <td>Media type (Image, Video, Sound, Music, Other) of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Modified time</span></td> 
+     <td>Modification time of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Mime type</span></td> 
+     <td>Mime type of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Thumbnail path</span></td> 
+     <td>Thumbnail path of the media</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Title</span></td> 
+     <td>Title of the media</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+  
+  <table> 
+   <caption>
+     Table: Audio metadata (only for audio files)
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Metadata name</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Album</span></td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Album artist</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Artist</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Bit rate</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Channel</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Composer</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Copyright</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Duration</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Genre</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Sample rate</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Track number</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Year</span></td> 
+    </tr> 
+    
+   </tbody> 
+  </table> 
+  
+ <table> 
+   <caption>
+     Table: Image metadata (only for image files)
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Metadata name</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Date taken</span></td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Height</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Orientation</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Title</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Width</span></td> 
+    </tr> 
+    
+   </tbody> 
+  </table>  
+  
+  <table> 
+   <caption>
+     Table: Video metadata (only for video files)
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Metadata name</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Album</span></td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Album artist</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Artist</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Bit rate</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Channel</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Composer</span></td> 
+    </tr> 
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">Copyright</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Duration</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Height</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Width</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Track number</span></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">Year</span></td> 
+    </tr> 
+    
+   </tbody> 
+  </table> 
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+  <li><a href="../prog_guide.htm">Native Programming Guide</a></li>
+   <li><a href="../../tutorials/content_tutorial/content_tutorial.htm">Content Tutorials</a></li>  
+  </ul>  
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

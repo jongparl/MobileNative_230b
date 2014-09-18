@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Sensor Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Sensor Tutorial</h1> 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SENSOR__MODULE.html">Sensor API</a>. The Sensor API provides functions to make use of the device sensors. A variety of hardware sensors is typically available on a device. This API allows your application to start and stop sensors and receive information from them. Additionally, you can set an interval for the sensor event and some options. You can also check whether a particular sensor type is supported and get data specifications for a sensor.</p>
+
+<p>To learn about the Sensor API features, see the <a href="../../guide/system/sensor.htm">Sensors Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+<li><a href="#init">Initialization and Prerequisites</a></li>
+<li><a href="#sensor">Registering a Sensor Event</a>
+<p>Get a specific sensor using criteria such as vendor and name.</p></li>
+<li><a href="#accuracy">Registering the Accuracy Changed Callback</a>
+<p>Create an event which is called when the accuracy is changed.</p></li></ul>
+
+<h2 name="init" id="init">Initialization and Prerequisites</h2>
+<p>Declare the variables and get a sensor handle:</p>
+
+<ol>
+<li>To use the Sensors API, include the following header file:
+<pre class="prettyprint">
+#include &lt;sensor.h&gt;
+</pre>
+</li>
+<li>Check whether a sensor is supported:
+<pre class="prettyprint">
+int error;
+bool supported;
+sensor_type_e type = SENSOR_ACCELEROMETER;
+
+error = sensor_is_supported(type, &amp;supported);
+</pre>
+</li>
+<li>Get a handle of the default sensor or a sensor list:
+<pre class="prettyprint">
+int error;
+sensor_type_e type = SENSOR_ACCELEROMETER;
+sensor_h sensor;
+
+error = sensor_get_default_sensor(type, &amp;sensor);
+</pre>
+<pre class="prettyprint">
+int error;
+sensor_type_e type = SENSOR_ALL;
+sensor_h *list;
+
+error = sensor_get_default_sensor(type, &amp;list);
+
+// API caller must explicitly free this list after use
+// free(list);
+</pre>
+</li>
+</ol>
+
+<h2 name="sensor" id="sensor">Registering a Sensor Event</h2>
+<p>To set and unset callback functions for sensor events:</p>
+
+<ol>
+
+<li>Create an event listener:
+<pre class="prettyprint">
+sensor_h sensor;
+
+sensor_listener_h listener;
+error  = sensor_create_listener (sensor, &amp;listener);</pre>
+</li>
+<li>Register a callback: 
+<pre class="prettyprint">
+void on_sensor_event(sensor_h sensor, sensor_event_s *event, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;// Select a specific sensor with a sensor handle
+&nbsp;&nbsp;&nbsp;// This example uses sensor type, assuming there is only 1 sensor for each type
+&nbsp;&nbsp;&nbsp;sensor_type_e type;
+&nbsp;&nbsp;&nbsp;sensor_get_type(sensor, &amp;type);
+&nbsp;&nbsp;&nbsp;switch (type) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case SENSOR_ACCELEROMETER:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Use sensor information
+&nbsp;&nbsp;&nbsp;}
+}
+
+error = sensor_listener_set_event_cb(listener, 100, on_sensor_event, user_data);
+</pre>
+<p>The following example shows the use of <span style="font-family: Courier New,Courier,monospace">sensor_event_s</span>:</p>
+<pre class="prettyprint">
+// In sensor.h
+typedef struct                   
+{                                
+&nbsp;&nbsp;&nbsp;int accuracy;                
+&nbsp;&nbsp;&nbsp;unsigned long long timestamp;
+&nbsp;&nbsp;&nbsp;int value_count;             
+&nbsp;&nbsp;&nbsp;float values[MAX_VALUE_SIZE];
+}
+sensor_event_s;</pre>
+
+</li>
+<li>Reset the interval (in milliseconds) (optional): 
+<p>In case of the proximity sensor, the setting interval has no effect. The proximity event occurs when the value changes.</p>
+<pre class="prettyprint">
+error = sensor_listener_set_interval(listener, 100);
+</pre>
+
+</li>
+<li>Set the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SENSOR__MODULE.html#gaf517b61e58b872f985fc2fc2a26aa56a">sensor option</a> (optional):
+<pre class="prettyprint">
+error = sensor_listener_set_option(listener, SENSOR_OPTION_ALWAYS_ON);
+</pre>
+
+
+</li>
+<li>Start a sensor listener: 
+<pre class="prettyprint">
+error = sensor_listener_start(listener);
+</pre>
+
+</li>
+<li>Read sensor data (optional).
+<p>In order to read sensor data, call the <span style="font-family: Courier New,Courier,monospace">sensor_listener_start()</span> function:</p>
+<pre class="prettyprint">
+sensor_event_s event;
+error = sensor_listener_read_data(listener, &amp;event);
+</pre>
+
+</li>
+<li>Unset the callback:
+<pre class="prettyprint">
+error = sensor_listener_unset_event_cb(listener);
+</pre>
+
+</li>
+<li>Stop the listener:
+<pre class="prettyprint">
+error = sensor_listener_stop(listener);
+</pre>
+
+</li>
+<li>Destroy the listener:
+<pre class="prettyprint">
+error = sensor_destroy_listener(listener);
+</pre>
+
+</li>
+<li>Read sensor details (optional):
+<pre class="prettyprint">
+char *name;
+char *vendor;
+sensor_type_e type;
+float min_range;
+float max_range;
+float resolution;
+int min_interval;
+
+error = sensor_get_name(listener, &amp;name);
+error = sensor_get_vendor(listener, &amp;vendor);
+error = sensor_get_type(listener, &amp;type);
+error = sensor_get_min_range(listener, &amp;min_range);
+error = sensor_get_max_range(listener, &amp;max_range);
+error = sensor_get_resolution(listener, &amp;resolution);
+error = sensor_get_min_interval(listener, &amp;min_interval);
+</pre>
+
+</li>
+</ol>
+
+<h2 name="accuracy" id="accuracy">Registering the Accuracy Changed Callback</h2>
+<p>The process is similar to registering a sensor event.</p>
+
+<ol>
+<li>Create an event listener:
+<pre class="prettyprint">
+sensor_h sensor;
+
+sensor_listener_h listener;
+error  = sensor_create_listener (sensor, &amp;listener);
+</pre>
+
+</li>
+<li>Register the accuracy changed callback: 
+<pre class="prettyprint">
+error = sensor_listener_set_accuracy_cb (listener, sensor_accuracy_changed_cb, user_data);
+void sensor_accuracy_changed_cb(sensor_h sensor, unsigned long long timestamp, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sensor_data_accuracy_e accuracy, void *data)
+{
+&nbsp;&nbsp;&nbsp;// Use the timestamp or accuracy from the sensor
+}</pre>
+</li>
+</ol>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="system_tutorial.htm">System Tutorials</a></li>
+	<li><a href="../../guide/system/sensor.htm">Sensors Programming Guide</a></li>
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SENSOR__MODULE.html">Sensor API Reference</a></li>    
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

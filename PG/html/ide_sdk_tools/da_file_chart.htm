@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>File Chart</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>File Chart</h1> 
+  <p>The file chart has a separated child and parent chart. There can be only 1 parent chart of each file, whereas multiple child charts are supported. Multiple child charts are separated by PID and TID. The parent chart records all the operations performed by the child charts.</p>
+  <p class="figure">Figure: File chart</p> 
+  <p style="text-align: center;"> <img alt="File chart" src="../images/file_chart.png" /> </p> 
+ <p>The file chart shows the following information:</p>
+  <ul>
+  <li>The open or closed state of the file is shown through the color of the graph bars:
+  <ul><li>Aqua area indicates the open area of the file.</li>
+<li>Teal area indicates that the file was opened and duplicated by other processes or threads.</li>
+</ul></li>
+
+  <li>The upper line in the bar on the child chart indicates the time of locking the file:
+  <ul><li>Violet area indicates the lock area of the file.</li>
+      <li>Purple area indicates the lock waiting of the file.</li></ul></li>
+
+  <li>The lower line in the bar indicates the time of reading and writing the file:
+  <ul><li>Sky blue area or line indicates the write or read area of the file.</li>
+      <li>Blue area or line indicates the concurrent writing or reading of the file without the lock.</li>
+	  <li>Red line indicates that the API has failed.</li></ul></li></ul> 
+
+ 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_file.htm">File Analysis</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

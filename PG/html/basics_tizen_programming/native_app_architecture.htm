@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Native Application Architecture</title>
+</head>
+
+<body onload="prettyPrint()">
+
+
+<h1>Native Application Architecture</h1> 
+<p>Tizen native applications are written using the <a href="../../../org.tizen.mobile.native.apireference/index.html">Tizen native API</a> modules.
+These APIs are a combination of Enlightenment Foundation Libraries (EFL) 
+for creating user interfaces, and other APIs for accessing device features. The native APIs are most suitable for developing light-weight, high-performance native applications.</p>
+
+<p>The current Tizen 2.3 release provides the Mobile profile; other profiles become available soon. Porting your application to the other profiles requires minimal effort, so after developing your application for the Mobile profile, you are also able to provide it for many other Tizen devices.</p>
+
+<p>Native applications are built into a package (<span style="font-family: Courier New,Courier,monospace;">.tpk</span>), which can be installed on a Tizen device. To understand native applications and APIs, you must get familiar with the Tizen architecture.</p>
+	
+<p class="figure">Figure: Tizen architecture</p> 
+<p style="text-align:center;"> <img alt="Tizen architecture" src="../images/tizen_architecture.png"/></p>	
+	
+<p>The Tizen architecture consists of the following subsystems:</p>	
+
+<ul>
+<li><strong>Web framework</strong>
+<p>The Web framework accommodates and leverages most up-to-date Web technologies. It provides a large number of HTML5 functionalities defined by W3C and other standardization groups, such as video, audio, form, 2D canvas, WebGL, CSS3, geolocation, vibration, Web socket, and Web worker.</p>
+<p>In addition, the Web framework defines various new device APIs, which enable you to access device functionalities, such as Bluetooth, near field communication (NFC), alarms, and messaging.</p>
+<p>The device functionalities are provided with a strict rule-based security control system that restricts the malicious use of the device APIs.</p>
+</li>
+
+<li><strong>Native subsystem</strong>
+<p>The native subsystem provides features required by the Web framework. It consists of open source libraries and an additional set of APIs to be effectively used by the upper layer subsystems.</p>
+    <table class="note"> 
+     <tbody> 
+      <tr> 
+       <th class="note">Note</th> 
+      </tr> 
+      <tr> 
+       <td class="note">Not all APIs in native subsystem are native APIs. This means that the native applications must use the listed native APIs, which are managed by subsystem maintainers in the Tizen project.</td> 
+      </tr> 
+     </tbody> 
+    </table>
+	</li>
+
+<li><strong>Kernel</strong>
+<p>The kernel subsystem contains the Linux kernel and device drivers.</p>
+</li>	
+</ul>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

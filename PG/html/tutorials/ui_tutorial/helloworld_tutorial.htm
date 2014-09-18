@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+
+<head>
+ <script type="text/javascript" src="../../snippet.js"></script>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+ <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+ <title>EFL Hello World Tutorial</title>
+</head>
+
+<body onload="prettyPrint()">
+
+<!--<div id="banner">Tizen</div>-->
+
+<h1>EFL Hello World Tutorial</h1>
+
+<p>This tutorial demonstrates how you can create a simple Hello World application UI using the Enlightenment Foundation Libraries (EFL).</p>
+
+
+<table class="note">
+ <tbody>
+  <tr>
+   <th class="note">Note</th>
+  </tr>
+  <tr>
+   <td class="note">The application presented in this tutorial is not a full Tizen application, since it does not use the Application Framework. The application simply starts and runs.</td>
+  </tr>
+ </tbody>
+</table>
+
+<p>To learn about the <a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL</a> API features, see the <a href="../../guide/ui/ui.htm">UI Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#init">Using the EFL</a>
+<p>Initialize the EFL use.</p></li>
+<li><a href="#ui">Creating the UI</a>
+	<p>Create the UI.</p></li>
+
+</ul>
+
+<h2 id="init" name="init">Using the EFL</h2>
+
+<p>To use the EFL, you must:</p>
+
+<ol>
+ <li>Include the header for the Elementary widget library:
+  <pre class="prettyprint">#include &lt;Elementary.h&gt;</pre>
+ </li>
+ <li>Call the <span style="font-family: Courier New,Courier,monospace">elm_init()</span> and <span style="font-family: Courier New,Courier,monospace">elm_run()</span> functions from the <span style="font-family: Courier New,Courier,monospace">main()</span> function:
+  <pre class="prettyprint">int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;// Initialize Elementary (required for using Elementary widgets)
+&nbsp;&nbsp;&nbsp;elm_init(argc, argv);
+&nbsp;&nbsp;&nbsp;// Run the main loop
+&nbsp;&nbsp;&nbsp;elm_run();
+&nbsp;&nbsp;&nbsp;return 0;
+}</pre>
+ </li>
+</ol>
+
+<h2 id="ui" name="ui">Creating the UI</h2>
+
+<p>The UI consists of the following Elementary widgets and container:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">Win</span> for creating the window that holds the UI</li>
+ <li><span style="font-family: Courier New,Courier,monospace">Conformant</span> for showing the virtual keyboard</li>
+ <li><span style="font-family: Courier New,Courier,monospace">Naviframe</span> for managing the different views of the UI (although this application only uses a single view in its UI)</li>
+ <li><span style="font-family: Courier New,Courier,monospace">Box</span> for creating a horizontal box container that holds a multi-line <span style="font-family: Courier New,Courier,monospace">Label</span> and a <span style="font-family: Courier New,Courier,monospace">Button</span></li>
+</ul>
+
+To create the UI:
+
+<ol>
+
+<li>
+
+<p>Create the following data structure for storing the UI objects:</p>
+
+<pre class="prettyprint">typedef struct appdata
+{
+&nbsp;&nbsp;&nbsp;// All UI objects here are pointers to values of type Evas_Object
+&nbsp;&nbsp;&nbsp;Evas_Object *win;
+&nbsp;&nbsp;&nbsp;Evas_Object *conformant;
+&nbsp;&nbsp;&nbsp;Evas_Object *naviframe;
+&nbsp;&nbsp;&nbsp;Evas_Object *box;
+&nbsp;&nbsp;&nbsp;Evas_Object *label;
+&nbsp;&nbsp;&nbsp;Evas_Object *button;
+}
+appdata_s;</pre>
+
+</li>
+
+<li>
+
+<p>In the <span style="font-family: Courier New,Courier,monospace">main()</span> function, initialize the data structure to only contain zeros:</p>
+
+<pre class="prettyprint">int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;appdata_s ad;
+&nbsp;&nbsp;&nbsp;// Zero out the structure
+&nbsp;&nbsp;&nbsp;memset(&amp;ad, 0x0, sizeof(struct appdata));
+&nbsp;&nbsp;&nbsp;elm_init(argc, argv);
+&nbsp;&nbsp;&nbsp;// Build the UI
+&nbsp;&nbsp;&nbsp;create_gui(&amp;ad);
+&nbsp;&nbsp;&nbsp;elm_run();
+&nbsp;&nbsp;&nbsp;return 0;
+}</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">create_gui()</span> function creates the UI. The function takes a pointer to the data structure as a parameter, so that it can create and add the UI objects to the structure.</p>
+
+</li>
+
+<li>
+
+<p>Declare the <span style="font-family: Courier New,Courier,monospace">create_gui()</span> function. Make it static, so that it is only reachable from the current compilation unit, allowing the compiler to produce faster and shorter code.</p>
+
+<pre class="prettyprint">static void
+create_base_gui(appdata_s *ad)
+{</pre>
+
+</li>
+
+<li>
+
+<p>Create the window, and set its name and title to "Hello World". In addition, add a callback for the <span style="font-family: Courier New,Courier,monospace">delete,request</span> event, which is triggered when the window is requested to be closed.</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;ad-&gt;win = elm_win_util_standard_add(&quot;Hello World&quot;, &quot;Hello World&quot;);
+&nbsp;&nbsp;&nbsp;elm_win_wm_desktop_layout_support_set(ad-&gt;win, EINA_TRUE);
+&nbsp;&nbsp;&nbsp;elm_win_conformant_set(ad-&gt;win, EINA_TRUE);
+&nbsp;&nbsp;&nbsp;if (elm_win_wm_rotation_supported_get(ad-&gt;win))
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int rots[4] = { 0, 90, 180, 270 };
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_win_wm_rotation_available_rotations_set(ad-&gt;win, (const int *)(&amp;rots), 4);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(ad-&gt;win, &quot;delete,request&quot;, win_delete_request_cb, NULL);</pre>
+
+</li>
+
+<li>
+
+<p>Create the conformant inside the window:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Create the conformant
+&nbsp;&nbsp;&nbsp;ad-&gt;conformant = elm_conformant_add(ad-&gt;win);
+&nbsp;&nbsp;&nbsp;// Make the conformant use as much horizontal and vertical space as possible (expand it in both directions)
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(ad-&gt;conformant, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;// Make the conformant the resize object for the window: When the conformant needs to
+&nbsp;&nbsp;&nbsp;// grow, it will grow the window, and when the window grows, it will grow the
+&nbsp;&nbsp;&nbsp;// conformant
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(ad-&gt;win, ad-&gt;conformant);
+&nbsp;&nbsp;&nbsp;// Show the conformant, since all widgets are hidden by default
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;conformant);</pre>
+
+</li>
+
+<li>
+
+<p>Create the naviframe inside the conformant:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;ad-&gt;naviframe = elm_naviframe_add(ad-&gt;conformant);
+&nbsp;&nbsp;&nbsp;elm_object_content_set(ad-&gt;conformant, ad-&gt;naviframe);</pre>
+
+</li>
+
+<li>
+
+<p>Create the horizontal box inside the naviframe:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Create the box
+&nbsp;&nbsp;&nbsp;ad-&gt;box = elm_box_add(ad-&gt;naviframe);
+&nbsp;&nbsp;&nbsp;// Make the box vertical
+&nbsp;&nbsp;&nbsp;elm_box_horizontal_set(ad-&gt;box, EINA_FALSE);
+&nbsp;&nbsp;&nbsp;// The box must expand when its contents need more space
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(ad-&gt;box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;// The box must fill the available space
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(ad-&gt;box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+&nbsp;&nbsp;&nbsp;// Show the box
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;box);
+&nbsp;&nbsp;&nbsp;// Add the box to the naviframe container
+&nbsp;&nbsp;&nbsp;elm_naviframe_item_push(ad-&gt;naviframe, &quot;Hello World&quot;, NULL, NULL, ad-&gt;box, NULL);</pre>
+
+</li>
+
+<li>
+
+<p>Create the multi-line text label inside the horizontal box:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Create the label
+&nbsp;&nbsp;&nbsp;ad-&gt;label = elm_label_add(ad-&gt;box);
+&nbsp;&nbsp;&nbsp;// The label must expand when its contents need more space
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(ad-&gt;label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;// The label must fill the available space on the horizontal axis and be
+&nbsp;&nbsp;&nbsp;// centered on the vertical axis 
+&nbsp;&nbsp;&nbsp;// (placed at 0.5 vertically, meaning in the middle)
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(ad-&gt;label, EVAS_HINT_FILL, 0.5);
+&nbsp;&nbsp;&nbsp;// Set the text for the label and set the formatting through HTML:
+&nbsp;&nbsp;&nbsp;// - &quot;Hello World!&quot; centered on the first line
+&nbsp;&nbsp;&nbsp;// - Skip a line
+&nbsp;&nbsp;&nbsp;// - Add a longer text that does not fit on a single line but will wrap on
+&nbsp;&nbsp;&nbsp;//   word boundaries
+&nbsp;&nbsp;&nbsp;elm_object_text_set(ad-&gt;label,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;align=center&gt;Hello World!&lt;/align&gt;&lt;br&gt;&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;br&gt;&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;wrap=word&gt;Clicking on the button below will close the application.&lt;/wrap&gt;&quot;);
+&nbsp;&nbsp;&nbsp;// Add the label at the end of the box
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(ad-&gt;box, ad-&gt;label);
+&nbsp;&nbsp;&nbsp;// Show the label
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;label);</pre>
+
+</li>
+
+<li>
+
+<p>Create the button inside the horizontal box. Clicking the button exits the application.</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Create the button
+&nbsp;&nbsp;&nbsp;ad-&gt;button = elm_button_add(ad-&gt;box);
+&nbsp;&nbsp;&nbsp;// The button must expand when its contents need more space
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(ad-&gt;button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;// The button must fill the available space on the horizontal axis and be
+&nbsp;&nbsp;&nbsp;// placed at the bottom of the vertical axis (1 is the end of the axis,
+&nbsp;&nbsp;&nbsp;// coordinates start at (0,0) from the top-left corner
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(ad-&gt;button, EVAS_HINT_FILL, 1);
+&nbsp;&nbsp;&nbsp;// Set the text for the button
+&nbsp;&nbsp;&nbsp;elm_object_text_set(ad-&gt;button, &quot;Close!&quot;);
+&nbsp;&nbsp;&nbsp;// Add a callback on the button for the &quot;clicked&quot; event
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(ad-&gt;button, &quot;clicked&quot;, clicked_cb, NULL);
+&nbsp;&nbsp;&nbsp;// Add the widget at the end of the box; since the axis starts from the top-left
+&nbsp;&nbsp;&nbsp;// corner and the box is vertical, the end of the box is below the label
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(ad-&gt;box, ad-&gt;button);
+&nbsp;&nbsp;&nbsp;// Show the button
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;button);</pre>
+
+</li>
+
+<li>
+
+<p>Show the window (and thereby the UI as a whole):</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;// Show the window after the UI is set up
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;win);
+}</pre>
+
+</li>
+
+<li>
+
+<p>Implement the <span style="font-family: Courier New,Courier,monospace">clicked_cb()</span> callback function for exiting the Elementary (and thereby the application) when the button is clicked.</p>
+
+<pre class="prettyprint">static void
+clicked_cb(void *user_data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+&nbsp;&nbsp;&nbsp;// Exit from the Elementary
+&nbsp;&nbsp;&nbsp;elm_exit();
+}</pre>
+
+</li>
+
+</ol>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="ui_tutorial.htm">UI Tutorials</a></li>
+ <li><a href="../../guide/ui/ui.htm">UI Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL API Reference</a></li>
+</ul>
+
+<div id="footer">
+ <hr size="1" />
+ <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+</div>
+
+<!--start-->
+
+<script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-25976949-1']);
+ _gaq.push(['_trackPageview']);
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>
+
+<!--end-->
+
+</body>
+
+</html>

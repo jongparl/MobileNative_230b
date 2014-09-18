@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Shortcut Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Shortcut Tutorial </h1> 
+
+<p>This tutorial demonstrates how you can handle shortcuts and dynamicboxes on the Home screen and track changes made to them.</p>
+ 
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;shortcut.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__SHORTCUT__MODULE.html">Shortcut</a> API.</p>
+
+<p>To learn about the Shortcut API features, see the <a href="../../guide/app/shortcut.htm">Shortcuts Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#add">Adding Shortcuts and Dynamicboxes</a>
+		<p>Add shortcuts and dynamicboxes to the Home screen.</p></li>
+		<li><a href="#remove">Removing Shortcuts and Dynamicboxes</a>
+		<p>Remove existing shortcuts and dynamicboxes.</p></li>
+		<li><a href="#list">Listing Shortcuts and Dynamicboxes</a>
+		<p>List existing shortcuts and dynamicboxes.</p></li>
+		<li><a href="#track">Tracking Shortcut and Dynamicbox Changes</a>
+		<p>Monitor when new shortcuts and dynamicboxes are added.</p></li>
+   </ul>
+
+<h2 id="add" name="add">Adding Shortcuts and Dynamicboxes</h2>
+<p>To add shortcuts and dynamicboxes from your application to the Home screen of the device:</p>
+
+<ul><li>Add a shortcut:
+<ol><li>To add a shortcut, you must know the application name and its icon must be set (to set a default icon for the application, give <span style="font-family: Courier New,Courier,monospace;">NULL</span> as the icon parameter). The following example adds a shortcut for the music player with a given icon:
+
+<pre class="prettyprint">
+add_to_home_shortcut(&quot;com.samsung.music-player&quot;, &quot;Music Player&quot;, LAUNCH_BY_PACKAGE, NULL, &quot;/…/icon.jpg&quot;, 1, result_cb, NULL); 
+</pre></li>
+
+<li>To track possible errors, use a callback function:</p>
+
+<pre class="prettyprint">
+static int result_cb(int ret, int pid, void *data)
+{
+&nbsp;&nbsp;&nbsp;if (ret &lt; 0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// No error detected
+}
+</pre></li></ol></li>
+
+<li>Add a dynamicbox:
+<p>A dynamicbox is usually bigger than a shortcut and it can handle, for example, a player.</p>
+<p>To add a dynamicbox, you must know the package name. The following example adds a player dynamicbox:</p>
+
+<pre class="prettyprint">
+add_to_home_dynamicbox(&quot;com.samsung.music-player.dynamicbox&quot;, &quot;Music Player&quot;, LIVEBOX_TYPE_4x4, NULL, NULL, -1.0f, 0, result_cb, NULL); 
+</pre>
+
+<p>If the dynamicbox does not appear correctly, check whether it works with other types. The types are described in the XML manifest file dedicated to each application.</p></li></ul>
+
+
+
+
+
+<h2 id="remove" name="remove">Removing Shortcuts and Dynamicboxes</h2>
+<p>To remove shortcuts and dynamicboxes from the Home screen of the device:</p>
+
+<ul><li><p>To remove a shortcut:</p>
+<ol><li>Use the <span style="font-family: Courier New,Courier,monospace;">add_to_home_remove_shortcut()</span> function:
+<pre class="prettyprint">
+add_to_home_remove_shortcut(&quot;com.samsung.music-player&quot;, &quot;Music Player&quot;, NULL, result_cb, NULL); 
+</pre></li>
+
+<li><p>To track possible errors, use a callback function:</p>
+
+<pre class="prettyprint">
+static int result_cb(int ret, int pid, void *data)
+{
+&nbsp;&nbsp;&nbsp;if (ret &lt; 0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// No error detected
+}
+</pre></li></ol></li>
+
+<li><p>To remove a dynamicbox:</p>
+
+<pre class="prettyprint">
+add_to_home_remove_dynamicbox(&quot;com.samsung.music-player.dynamicbox&quot;, &quot;Music Player&quot;, NULL, result_cb, NULL);
+</pre></li></ul>
+
+<h2 id="list" name="list">Listing Shortcuts and Dynamicboxes</h2>
+<p>To list the shortcuts registered on the device, use <span style="font-family: Courier New,Courier,monospace;">shortcut_get_list()</span>: </p>
+
+<pre class="prettyprint">
+shortcut_get_list(NULL, get_list_cb, NULL);
+
+static int get_list_cb(const char *appid, const char *name, int type, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *content_info, const char *icon, int pid, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double period, int allow_duplicate, void *data)
+{
+&nbsp;&nbsp;&nbsp;// Retrieve shortcut information
+}
+</pre>
+
+<p>The first parameter refers to the package name, the second parameter refers to the callback function to get the shortcut item information, and the third parameter refers to the callback data used in the callback function.</p>
+
+<p>To list all shortcuts, set the first parameter to <span style="font-family: Courier New,Courier,monospace;">NULL</span>). To list the shortcuts for a specific application only, set the first parameter to its package name.</p>
+
+<h2 id="track" name="track">Tracking Shortcut and Dynamicbox Changes</h2>
+<p>To monitor when new shortcuts or dynamicboxes are added, register a callback with the <span style="font-family: Courier New,Courier,monospace;">shortcut_set_request_cb()</span> function:</p>
+
+<pre class="prettyprint">
+shortcut_set_request_cb(shortcut_request_cb, NULL);
+
+static int shortcut_request_cb(const char *appid, const char *name, int type, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *content_info, const char *icon, int pid, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double period, int allow_duplicate)
+{
+&nbsp;&nbsp;&nbsp;// Catch any of the parameters used in the captured operation
+}
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">shortcut_request_cb</span> callback function pointer is invoked when the <span style="font-family: Courier New,Courier,monospace;">add_to_home_*()</span> function is requested. The second parameter of the <span style="font-family: Courier New,Courier,monospace;">shortcut_set_request_cb()</span> function delivers data to the callback function.</p>
+
+<p>When a callback is set, give a timeout to allow the call.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorial</a></li>
+	<li><a href="../../guide/app/shortcut.htm">Shortcuts Programming Guide</a></li> 
+	<li><a href="../../../..//org.tizen.mobile.native.apireference/group__SHORTCUT__MODULE.html">Shortcut API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

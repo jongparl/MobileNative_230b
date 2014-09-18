@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>App Control Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>App Control Tutorial</h1>
+ 
+<p>This tutorial demonstrates how you can launch another application through your application based on specific criteria. The criteria include the operation the application must perform and details about the content on which the application must operate. You can either specify the URI and MIME type of the content, or you can preconfigure the content by providing extra data for it.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;app.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APP__CONTROL__MODULE.html">App Control API</a>.</p>
+
+<p>To learn about the App Control API features, see the <a href="../../guide/app/app_controls.htm">Launching Applications Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#uri_mime">Launching with a URI and MIME Type</a>
+  <p>Launch an application by specifying the URI and MIME type of the target content.</p>
+ </li>
+ 
+ <li><a href="#extra_data">Launching with Extra Data</a>
+  <p>Launch an application by specifying extra data for the target content.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>The criteria for launching an application are stored in the <span style="font-family: Courier New,Courier,monospace">app_control</span> structure (<span style="font-family: Courier New,Courier,monospace">app_control_h</span>).</p>
+
+<p>Before performing any operations on the <span style="font-family: Courier New,Courier,monospace">app_control</span>, initialize it:</p>
+<pre class="prettyprint">app_control_h app_control;
+app_control_create(&amp;app_control);</pre>
+
+<h2 id="uri_mime" name="uri_mime">Launching with a URI and MIME Type</h2>
+<p>The App Control API allows you to launch an application with a specific operation and the URI and MIME type of the target content. The URI specifies the content on which to operate and the MIME type specifies the specific type of the URI.</p>
+
+<p>In this example, a specified image from a gallery is selected and opened.</p>
+
+<ol>
+
+<li>
+
+<p>Create the <span style="font-family: Courier New,Courier,monospace">app_control</span> instance, and prepare it by specifying the operation, URI, and MIME type for the target content, and the application (package) to launch:</p>
+
+<pre class="prettyprint">error_code = app_control_create(&amp;app_control);
+
+error_code = app_control_set_operation(app_control, APP_CONTROL_OPERATION_VIEW);
+
+error_code = app_control_set_uri(app_control, file:///opt/usr/media/Images/Image_01.jpg);
+
+error_code = app_control_set_mime(app_control, &quot;image/jpg&quot;);
+
+error_code = app_control_set_app_id(app_control, &quot;com.samsung.image-viewer&quot;);</pre>
+
+
+<p>The available <span style="font-family: Courier New,Courier,monospace">app_control</span> operations are defined by the package used. For example, the <span style="font-family: Courier New,Courier,monospace">image-viewer</span> implements 2 variants of the VIEW operation, as shown in the following table.</p>
+	 
+<table> 
+   <caption>
+     Table: App control operations 
+   </caption> 
+   <tbody> 
+    <tr> 
+	<th rowspan="2">Application</th>
+     <th rowspan="2">Operation</th> 
+     <th colspan="3">Description</th> 
+    </tr> 
+    <tr> 
+	<th>Operation</th>
+     <th>URI</th> 
+     <th>MIME</th> 
+    </tr> 	
+    <tr> 
+     <td rowspan="2">Image viewer</td> 
+     <td rowspan="2">Displays a specific image file.</td> 
+     <td>VIEW</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">http</span></td>  
+     <td><span style="font-family: Courier New,Courier,monospace">image / *</span></td> 
+    </tr> 
+    <tr> 
+     <td>VIEW</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">NULL</span></td>  
+     <td><span style="font-family: Courier New,Courier,monospace">image / *</span></td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+</li>
+
+<li>
+
+<p>Launch the <span style="font-family: Courier New,Courier,monospace">app_control</span> instance by calling the <span style="font-family: Courier New,Courier,monospace">app_control_send_launch_request()</span> function:</p>
+
+<pre class="prettyprint">error_code = app_control_send_launch_request(app_control, NULL, NULL);</pre>
+
+<p>You can handle the reply from the <span style="font-family: Courier New,Courier,monospace">app_control</span> by registering the <span style="font-family: Courier New,Courier,monospace">app_control_reply_cb</span> callback function. To handle the reply data, replace the second and third parameters in the above code with the callback function and custom user data, respectively.</p>
+</li>
+
+<li>
+
+<p>Destroy the <span style="font-family: Courier New,Courier,monospace">app_control</span> instance and release all its resources by calling the <span style="font-family: Courier New,Courier,monospace">app_control_destroy()</span> function:</p>
+
+<pre class="prettyprint">error_code = app_control_destroy(app_control);</pre>
+
+</li>
+
+</ol>
+
+
+
+
+<h2 id="extra_data" name="extra_data">Launching with Extra Data</h2>
+
+<p>The App Control API allows you to launch an application with a specific operation and preconfigured content.</p>
+
+<p>Use extra data to preconfigure the content parameters with which to launch the <span style="font-family: Courier New,Courier,monospace">app_control</span>.</p>
+
+<p>In this example, an email message is prepared with selected parameters, and the email service is opened to allow the user to customize and send the message.</p>
+
+<ol>
+
+<li>
+
+<p>Create the <span style="font-family: Courier New,Courier,monospace">app_control</span>, and prepare it by specifying the operation, extra data parameters, and the application (package) to launch. Use the <span style="font-family: Courier New,Courier,monospace">app_control_add_extra_data()</span> or <span style="font-family: Courier New,Courier,monospace">app_control_add_extra_data_array()</span> function to add the extra data:</p>
+
+<pre class="prettyprint">char *mail_address = &quot;test@target.com&quot;;
+char *subject = &quot;Tutorial message&quot;;
+char *message = &quot;Tutorial message content.&quot;;
+
+error_code = app_control_set_operation(app_control, APP_CONTROL_OPERATION_SEND);
+
+error_code = app_control_add_extra_data(app_control,APP_CONTROL_DATA_TEXT,message);
+
+error_code = app_control_add_extra_data(app_control, APP_CONTROL_DATA_TO, mail_address);
+
+error_code = app_control_add_extra_data(app_control, APP_CONTROL_DATA_SUBJECT, subject);
+
+error_code = app_control_set_app_id(app_control, &quot;com.samsung.email&quot;);
+
+return 0;
+</pre>
+
+<p>The following table lists the available extra data parameters.</p>
+
+<table> 
+   <caption>
+     Table: Extra data parameters
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Extra data</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_SUBJECT</span></td> 
+     <td>Subject line of the email</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_TO</span></td> 
+     <td>Email address(es) of the primary recipient(s)</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_CC</span></td> 
+     <td>Email address(es) of the recipient(s) to be carbon-copied</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_BCC</span></td> 
+     <td>Email address(es) of the private recipient(s)</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_TEXT</span></td> 
+     <td>Message body of the email</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_TITLE</span></td> 
+     <td>The title of the data</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">APP_CONTROL_DATA_SELECTED</span></td> 
+     <td>The path of the selected item</td> 
+    </tr>	
+   </tbody> 
+</table> 
+
+</li>
+
+<li>
+
+<p>Launch the <span style="font-family: Courier New,Courier,monospace">app_control</span> by calling the <span style="font-family: Courier New,Courier,monospace">app_control_send_launch_request()</span> function:</p>
+
+<pre class="prettyprint">ret = app_control_send_launch_request(app, NULL, NULL);
+</pre>
+
+<p>You can handle the reply from the <span style="font-family: Courier New,Courier,monospace">app_control</span> by registering the <span style="font-family: Courier New,Courier,monospace">app_control_reply_cb</span> callback function. To handle the reply data, replace the second and third parameters in the above code with the callback function and custom user data, respectively.</p>
+</li>
+
+<li>
+<p>Retrieve the extra data by calling the <span style="font-family: Courier New,Courier,monospace">app_control_foreach_extra_data()</span> function:</p>
+
+<pre class="prettyprint">error_code = app_control_foreach_extra_data(app_control, _app_control_extra_data_cb, 0);
+
+bool _app_control_extra_data_cb(app_control_h app_control, const char *key, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;char *value;
+
+&nbsp;&nbsp;&nbsp;error_code = app_control_get_extra_data(app_control, key, &amp;value);
+
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, &quot;MY_APP&quot;, &quot;KEY: %s VALUE:%s\n&quot;,key,value);
+
+&nbsp;&nbsp;&nbsp;free(value);
+&nbsp;&nbsp;&nbsp;return 1;
+}</pre>
+
+
+<p>The same function used on <span style="font-family: Courier New,Courier,monospace">app_control_h</span> returned by the <span style="font-family: Courier New,Courier,monospace">app_control</span> reply allows you to read the reply message.</p>
+</li>
+
+<li>
+<p>Destroy the <span style="font-family: Courier New,Courier,monospace">app_control</span> and releases all its resources by calling the <span style="font-family: Courier New,Courier,monospace">app_control_destroy()</span> function:</p>
+
+<pre class="prettyprint">error_code = app_control_destroy(app_control);</pre>
+</li>
+
+</ol>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/app_controls.htm">Launching Applications Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APP__CONTROL__MODULE.html">App Control API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

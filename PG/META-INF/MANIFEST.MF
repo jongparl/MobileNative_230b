@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 1
+Bundle-Name: Tizen Mobile Native App Programming
+Bundle-SymbolicName: org.tizen.mobile.native.appprogramming;singleton=
+ true
+Bundle-Version: 2.3.0
+Bundle-Vendor: The Linux Foundation
+

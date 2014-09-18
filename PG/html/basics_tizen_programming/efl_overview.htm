@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>EFL Overview</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+  
+<h1>EFL Overview</h1>
+  
+<p>EFL stands for Enlightenment Foundation Libraries. Enlightenment is a project consisting of the Enlightenment window manager, EFL libraries, and various utilities and applications. The Enlightenment team needed powerful libraries to handle, among others, rendering, main loops, and events, so EFL was introduced during the development of the Enlightenment window manager to fill these gaps. EFL is now widely used outside of the Enlightenment window manager.</p>
+
+<p>Currently, five EFL libraries are publicly available to Tizen native applications. These libraries provide the following features, among others:</p>
+
+<ul>
+ <li>Data structures</li>
+ <li>Optimized rendering</li>
+ <li>Thread pool</li>
+ <li>Events and callbacks</li>
+ <li>Fd handlers</li>
+ <li>Timers and animators</li>
+ <li>Widgets</li>
+ <li>Layout scripts</li>
+</ul>
+
+<h2>EFL Characteristics</h2>
+
+<p>EFL is aimed at not only desktop computers but also touch-screen and embedded devices, making EFL applications portable to many different types of devices. Applications do not need to care about the types of devices and profiles they run on. Instead of changing the code, it is typically enough to simply configure the applications for different devices.</p>
+
+<p>The key characteristics of EFL include:</p>
+
+<ul>
+ <li><strong>Performance</strong>
+  <p>The main reason Tizen adopted EFL as its native toolkit is its speed. EFL is highly optimized by using a scene graph and retained-mode rendering. EFL is fast even in software rendering.</p></li>
+ <li><strong>Small memory footprint</strong>
+  <p>Despite its fast performance, EFL's memory footprint is smaller than that of other toolkits with similar features. A small memory footprint is useful in the embedded world, since embedded devices do not normally have much memory.</p></li>
+ <li><strong>Back-end engine support</strong>
+  <p>EFL supports several back-end engines, such as X11 (OpenGL, Xlib, Xcb), Wayland (OpenGL, SHM), Direct Framebuffer, DRM, memory buffers, PS3 native, Windows, and Mac OS. Applications do not need to deal with each back-end engine separately.</p></li>
+ <li><strong>GUI and logic separation</strong>
+  <p>EFL supports GUI layout and logic separation by having the layout description in a plain text file and the logic code in the C or C++ source files.</p></li>
+ <li><strong>Themeable</strong>
+  <p>An EFL theme can be changed at runtime without restarting the application. Widgets are customizable so that each application can create its own customized theme to overlay above the default theme, adding customized versions of widgets to achieve a specific look and feel.</p></li>
+ <li><strong>Scalable</strong>
+  <p>EFL supports a scale factor that affects the size of objects in the application at runtime. By configuring the scale factor, applications can scale up and down as needed. The scale factor also supports a default setting that allows applications to scale nicely out-of-the-box.</p></li>
+ <li><strong>Animations</strong>
+  <p>EFL supports different types of animations. Evas supports Evas maps with low-level APIs for performing 2D, 2.5D, and 3D object transformations. Edje supports pre-defined transitions and wrapping of Evas maps. Elementary supports transit APIs for various types of animations, which can be combined.</p></li>
+ <li><strong>Hardware acceleration</strong>
+  <p>EFL supports OpenGL and OpenGL-ES acceleration.</p></li>
+</ul>
+
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

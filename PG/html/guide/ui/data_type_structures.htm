@@ -1,0 +1,1720 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Using Data Types</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Using Data Types</h1> 
+<p>The following sections show how you can use the most common data types of Eina:</p>
+
+<ul>
+<li><a href="#iterate">Iterator functions</a></li>
+<li><a href="#array">Arrays</a></li>
+<li><a href="#hash">Hash tables</a></li>
+<li><a href="#list">Lists</a></li>
+<li><a href="#generic">Generic values</a></li>
+</ul>
+
+<h2 id="iterate" name="iterate">Iterator Functions</h2>
+
+<p>Eina provides a set of iterator functions to manipulate data types, such as arrays.</p>
+
+<p>The iterator functions allow you to access container elements in a generic way, without knowing which container is used (similar to iterators in the C++ STL). Iterators only allow sequential access (that is, from one element to the next one). For random access, Eina provides accessor functions.</p>
+
+<p>An iterator accesses the elements of a given container through the functions of that particular container. There is no function to create a generic iterator, as iterators depend on the container. To find a function for creating an iterator for a specific container type, search the specific container documentation. Note that all iterators, regardless of the container type, are always deleted with the same function: <span style="font-family: Courier New,Courier,monospace;">eina_iterator_free()</span>.</p>
+
+<p>To get the data and iterate, use the <span style="font-family: Courier New,Courier,monospace;">eina_iterator_next()</span> function. To call a function on all the elements of a container, use the <span style="font-family: Courier New,Courier,monospace;">eina_iterator_foreach()</span> function.</p>
+
+<p>Each data type has a set of macros that provide the iterators, like <span style="font-family: Courier New,Courier,monospace;">FOREACH</span> or <span style="font-family: Courier New,Courier,monospace;">REVERSE_FOREACH</span>. More more information, see the applicable data type.</p>
+
+<h2 id="string" name="string">Strings</h2>
+
+<h3 id="share" name="share">Stringshare</h3>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Stringshare</span> data type functions allow you to store a single copy of a string, and use it in multiple places within your application. It improves string creation and destruction speed, reduces memory use, and decreases memory fragmentation.</p>
+
+<p>With the stringshare data type, you reduce the number of duplicated strings kept in the memory. It is common for the same strings to be dynamically allocated repeatedly between applications and libraries, especially when you can have multiple copies of a structure that allocates the string. Rather than duplicating and freeing these strings, request a read-only pointer to an existing string and only incur the overhead of a hash lookup. This can sound like micro-optimizing, but profiling has shown that it can have a significant impact as you scale the number of copies up.</p>
+
+<p>To create a stringshare, declare a <span style="font-family: Courier New,Courier,monospace;">const char *</span> and call the <span style="font-family: Courier New,Courier,monospace;">eina_stringshare_add(const char * str)</span> function:</p>
+
+<pre class="prettyprint">
+const char *mystr;
+const char *prologue = &quot;Enlightenment is not just a window manager for Linux/X11 and others&quot;
+mystr = eina_stringshare_add(prologue)
+</pre>
+
+<p>When the string is no longer needed, delete it using the <span style="font-family: Courier New,Courier,monospace;">eina_stringshare_del()</span> function:</p>
+
+<pre class="prettyprint">
+eina_stringshare_del(mystr);
+</pre>
+
+<p>To work with stringshares, use the following functions:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_stringshare_printf()</span>
+<p>Retrieves a string to be used in a program from a format string. If you have a &quot;format&quot; string to pass to a function, like <span style="font-family: Courier New,Courier,monospace;">printf</span>, you can store it as a stringshare.</p>
+<p>The following example produces &quot;One desktop manager to rule them all&quot;.</p>
+<pre class="prettyprint">
+const char *myfmtstr = &quot;%d desktop manager to rule them all&quot;;
+const char *str;
+str = eina_stringshare_printf(myfmtstr, 1);
+print(str)
+</pre></li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_stringshare_replace()</span>
+<p>Replaces the value of an <span style="font-family: Courier New,Courier,monospace;">Eina_Stringshare</span>. Pass the pointer address and the new value to the function as follows:</p>
+<pre class="prettyprint">
+eina_stringshare_replace(&str, &quot;One desktop manager to rule them all&quot;);
+</pre></li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_stringshare_strlen()</span>
+<p>Retrieves the length of the stringshare value.</p>
+<pre class="prettyprint">
+printf(&quot;length: %d\n&quot;, eina_stringshare_strlen(str));
+</pre></li>
+</ul>
+
+<h3 id="buffer" name="buffer">String Buffer</h3>
+
+<p>The string buffer data type is designed to be a mutable string, allowing you to append, prepend, or insert a string to a buffer.</p>
+
+<p>First, initialize the <span style="font-family: Courier New,Courier,monospace;">Eina_Strbuf</span> data type and create the buffer:</p>
+
+<pre class="prettyprint">
+Eina_Strbuf *buf;
+eina_init();
+mybuffer = eina_strbuf_new();
+</pre>
+
+<h4>Appending and Prepending Characters to the Buffer</h4>
+
+<p>To append or prepend characters to your buffer:</p>
+
+<ul><li><p>For basic strings, use the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_append()</span> function:</p>
+
+<pre class="prettyprint">
+eina_strbuf_append(mybuffer, &quot;This is my string.&quot;)
+</pre></li>
+
+<li><p>To append 1 character to your buffer, use <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_append_char()</span>. You also can append a &quot;sized&quot; string to the buffer using <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_append_length()</span>.</p>
+
+<pre class="prettyprint">
+eina_strbuf_append_length(mybuffer, &quot;Buffe&quot;, 5);
+eina_strbuf_append_char(mybuffer, &#39;r&#39;);
+</pre></li>
+
+<li>
+<p>To handle &quot;printf&quot; format strings, use the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_append_printf()</span> function to add formatted strings to the buffer:</p>
+
+<pre class="prettyprint">
+eina_strbuf_append_printf(buf, &quot;%s%c&quot;, &quot;buffe&quot;, &#39;r&#39;);
+</pre></li></ul>
+
+<h4>Removing and Replacing Characters within the Buffer</h4>
+
+<p>To remove characters between 2 positions, use the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_remove()</span> function. The first parameter is the buffer, the second is the start position of characters you want to delete, and the last is the end position.</p>
+
+<p>The following example removes the first 19 characters of the buffer:</p>
+
+<pre class="prettyprint">
+eina_strbuf_remove(buf, 0, 18);
+</pre>
+
+<p>To replace characters, call <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_replace()</span> or <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_replace_all()</span>:</p>
+
+<ul><li><p><span style="font-family: Courier New,Courier,monospace;">eina_strbuf_replace()</span> replaces the specified occurrence of the given string in the buffer with another string.</p></li>
+<li><p><span style="font-family: Courier New,Courier,monospace;">eina_strbuf_replace_all()</span> replaces all occurrences of the given string in the buffer with another string.</p></li></ul>
+
+<pre class="prettyprint">
+eina_strbuf_append(mybuffer, &quot;buffer buffer buffer&quot;);
+// Replace one occurrence of &quot;buffer&quot; by &quot;B-U-F-F-E-R&quot;
+eina_strbuf_replace(mybuffer, &quot;buffer&quot;, &quot;B-U-F-F-E-R&quot;, 1);
+// Replace all the occurrences of &quot;buffer&quot; by &quot;B-U-F-F-E-R&quot;
+eina_strbuf_replace_all(mybuffer, &quot;buffer&quot;, &quot;B-U-F-F-E-R&quot;);
+// Replace all the occurrences of &quot;B-U-F-F-E-R&quot; by &quot;Buffer&quot;
+eina_strbuf_replace_all(mybuffer, &quot;B-U-F-F-E-R&quot;, &quot;Buffer&quot;);
+</pre>
+
+<h4>Inserting Characters in the Buffer</h4>
+
+<p>To insert characters, use the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_insert()</span> function to insert the given string in the specified position. To handle formatted strings, use the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_insert_printf()</span> function instead.</p>
+
+<pre class="prettyprint">
+eina_strbuf_insert(mybuffer, &quot;More buffer&quot;, 10);
+// Using  eina_strbuf_length_get to get the buffer length
+eina_strbuf_insert_printf(buf, &quot; %s: %d&quot;, 6, &quot;length&quot;, eina_strbuf_length_get(buf));
+</pre>
+
+<h4>Counting or Printing the Buffer</h4>
+
+<p>To get the complete string and its length, call the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_string_get()</span> and <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_length_get()</span> functions:</p>
+
+<pre class="prettyprint">
+printf(&quot;%d : %s\n&quot;, eina_strbuf_string_get(mybuffer), eina_strbuf_length_get(buf));
+</pre>
+
+<h4>Freeing the Buffer</h4>
+
+<p>Free the buffer using the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_free()</span> function. You also can free the content of an <span style="font-family: Courier New,Courier,monospace;">Eina_Strbuf</span> without freeing the buffer itself, using the <span style="font-family: Courier New,Courier,monospace;">eina_strbuf_string_free()</span> function.</p>
+
+<pre class="prettyprint">
+eina_strbuf_free(mybuffer);
+</pre>
+
+<h2 id="array" name="array">Arrays</h2>
+
+<p>An array is a data type that describes an ordered collection of values. The values are accessed by their index:</p>
+
+<pre class="prettyprint">// INDEX | VALUE
+
+0 | value0 1 | value1 2 | value2 3 | value3 4 | value4 5 | value5 6 | value6 7 | value7</pre>
+
+<p>Eina provides 2 array types: the classic array and an <a href="#inline">inline array</a>.</p>
+
+<h3>Creating and Destructing an Array</h3>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">eina_array_new()</span> function to create a new array. You can store strings or &quot;objects&quot; in the created array.</p>
+
+<p>The function parameter defines the size of the allocation step. For example, if you set 4 to this parameter, the function returns an array of 4 elements. Next time you grow the array, it grows by another 4 elements. It does not grow until you have pushed 4 elements in. Once you add the 5<sup>th</sup> element, it grows again and is an array of 8 elements. This is very useful for speed, and it also reduces memory fragmentation by having a size that fits the array usage. If you set the parameter to 0, the function sets a default safe value. The step can be changed using the <span style="font-family: Courier New,Courier,monospace;">eina_array_step_set</span> function.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_array_new()</span> function returns a valid array on success, or <span style="font-family: Courier New,Courier,monospace;">NULL</span> if memory allocation fails.</p>
+
+<p>The following example shows how to create an array to store &quot;strings&quot;:</p>
+
+<pre class="prettyprint">
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;// Strings we want to store in the array
+&nbsp;&nbsp;&nbsp;const char* strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;helo&quot;, &quot;hera&quot;, &quot;starbuck&quot;, &quot;kat&quot;, &quot;boomer&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;hotdog&quot;, &quot;longshot&quot;, &quot;jammer&quot;, &quot;crashdown&quot;, &quot;hardball&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;duck&quot;, &quot;racetrack&quot;, &quot;apolo&quot;, &quot;husker&quot;, &quot;freaker&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;skulls&quot;, &quot;bulldog&quot;, &quot;flat top&quot;, &quot;hammerhead&quot;, &quot;gonzo&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;// Declare the array (type Eina_Array)
+&nbsp;&nbsp;&nbsp;Eina_Array *array;
+&nbsp;&nbsp;&nbsp;unsigned int i;
+&nbsp;&nbsp;&nbsp;// Initialize Eina library
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;// Create the array :
+&nbsp;&nbsp;&nbsp;array = eina_array_new(20);
+&nbsp;&nbsp;&nbsp;// Insert elements in the array
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 20; i++)
+&nbsp;&nbsp;&nbsp;eina_array_push(array, strdup(strings[i]));
+&nbsp;&nbsp;&nbsp;// Free the array elements
+&nbsp;&nbsp;&nbsp;while (eina_array_count(array))
+&nbsp;&nbsp;&nbsp;free(eina_array_pop(array));
+&nbsp;&nbsp;&nbsp;// Free the array itself
+&nbsp;&nbsp;&nbsp;eina_array_free(array);
+&nbsp;&nbsp;&nbsp;// Shut down the Eina library
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The above example uses <span style="font-family: Courier New,Courier,monospace;">eina_array_free()</span> to free the array. It first calls <span style="font-family: Courier New,Courier,monospace;">eina_array_flush()</span>, and then frees the memory of the pointer. It does not free the memory allocated for the elements of the array. To free them, use a &#39;while&#39; statement with <span style="font-family: Courier New,Courier,monospace;">eina_array_pop</span>.</p>
+
+
+<h3>Using Array Push and Pop Operations</h3>
+<p>Add elements at the end of the array using the <span style="font-family: Courier New,Courier,monospace;">eina_array_push()</span> function. The function returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> if everything runs well, and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> if not.</p>
+
+<pre class="prettyprint">
+// Insert elements in the array
+for (i = 0; i &lt; 20; i++)
+&nbsp;&nbsp;&nbsp;eina_array_push(array, strdup(strings[i]));
+</pre>
+
+<p>The first parameter is the array to store the element, the second is the data you want to store. If you store strings, remember to allocate the memory for them first. The above example uses <span style="font-family: Courier New,Courier,monospace;">strdup</span> to duplicate the string contained in <span style="font-family: Courier New,Courier,monospace;">strings[]</span>. This function allocates the memory of the returned string, so you do not have to do it yourself.</p>
+
+<p>To remove the last element of an array, use <span style="font-family: Courier New,Courier,monospace;">eina_array_pop()</span>. It takes the array as a parameter, and if the operation is a success, it returns a pointer to the data of the removed element.</p>
+
+<pre class="prettyprint">
+// Free the array elements
+while (eina_array_count(array))
+&nbsp;&nbsp;&nbsp;free(eina_array_pop(array));
+</pre>
+
+<h3>Getting and Setting Data in an Array</h3>
+<p>To access your array data, use <span style="font-family: Courier New,Courier,monospace;">eina_array_data_get()</span>. Pass the array and the index of the element you want to get.</p>
+
+<pre class="prettyprint">
+// Get the data of the first element
+char *mydata;
+mydata = eina_array_data_get(array, 0)
+</pre>
+
+<p>The function returns a pointer to the data.</p>
+
+<p>You can also set the data of an element using <span style="font-family: Courier New,Courier,monospace;">eina_array_data_set()</span>. The first parameter is the array, the second the index of the element you want to set, and the last the data. Since this function effectively replaces the previously held data, get a pointer to the previous data first if you need to free it. Be careful, as there is no array or index check. If the value is <span style="font-family: Courier New,Courier,monospace;">NULL</span> or invalid, the application can crash.</p>
+
+<pre class="prettyprint">
+// Get the data of the first element
+free(eina_array_data_get(array, 0))
+// Set the data of the first element
+eina_array_data_set(array, 0, strdup(strings[3])
+</pre>
+
+<h3>Using Array Removal Operations</h3>
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_array_remove()</span> function rebuilds an array by specifying the data to keep. The first parameter is the array to be changed, the second is the callback function that selects the data to keep in the rebuilt array. The last one is the data to pass to the callback function defined in the second parameter.</p>
+
+<p>The callback function returns an <span style="font-family: Courier New,Courier,monospace;">Eina_Bool</span>, <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> if the element stays, and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> if it has to be removed.</p>
+
+<p>The following example shows how to remove all the elements of the array that are longer than 5.</p>
+
+<pre class="prettyprint">
+// The keep (callback) function
+Eina_Bool keep(void *data, void *gdata)
+{
+&nbsp;&nbsp;&nbsp;if (strlen((const char*)data) &lt;= 5)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+&nbsp;&nbsp;&nbsp;return EINA_FALSE;
+}
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;const char* strs[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;, &quot;eight&quot;, &quot;nine&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;ten&quot;, &quot;eleven&quot;, &quot;twelve&quot;, &quot;thirteen&quot;, &quot;fourteen&quot;, &quot;fifteen&quot;, &quot;sixteen&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;seventeen&quot;, &quot;eighteen&quot;, &quot;nineteen&quot;, &quot;twenty&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;const char* strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;helo&quot;, &quot;hera&quot;, &quot;starbuck&quot;, &quot;kat&quot;, &quot;boomer&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;hotdog&quot;, &quot;longshot&quot;, &quot;jammer&quot;, &quot;crashdown&quot;, &quot;hardball&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;duck&quot;, &quot;racetrack&quot;, &quot;apolo&quot;, &quot;husker&quot;, &quot;freaker&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;skulls&quot;, &quot;bulldog&quot;, &quot;flat top&quot;, &quot;hammerhead&quot;, &quot;gonzo&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;Eina_Array *array;
+&nbsp;&nbsp;&nbsp;Eina_Array_Iterator iterator;
+&nbsp;&nbsp;&nbsp;const char *item;
+&nbsp;&nbsp;&nbsp;unsigned int i;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_array_new(10);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 20; i++)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_array_push(array, strs[i]);
+&nbsp;&nbsp;&nbsp;eina_array_clean(array);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 20; i++)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_array_push(array, strings[i]);
+&nbsp;&nbsp;&nbsp;eina_array_data_set(array, 17, &quot;flattop&quot;);
+&nbsp;&nbsp;&nbsp;// Remove the undesired elements
+&nbsp;&nbsp;&nbsp;eina_array_remove(array, keep, NULL);
+&nbsp;&nbsp;&nbsp;EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
+&nbsp;&nbsp;&nbsp;printf(&quot;item #%d: %s\n&quot;, i, item);
+&nbsp;&nbsp;&nbsp;// Flush the array
+&nbsp;&nbsp;&nbsp;eina_array_flush(array);
+&nbsp;&nbsp;&nbsp;// Free the array
+&nbsp;&nbsp;&nbsp;eina_array_free(array);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<h3>Flushing an Array</h3>
+<p>To completely wipe an array, use <span style="font-family: Courier New,Courier,monospace;">eina_array_flush()</span>. This function sets the count and total members of an array to 0, and frees and sets its data members to <span style="font-family: Courier New,Courier,monospace;">NULL</span>. For performance reasons, there is no array check. If it is <span style="font-family: Courier New,Courier,monospace;">NULL</span> or invalid, the application can crash. The only parameter of this function is the array (<span style="font-family: Courier New,Courier,monospace;">Eina_Array *</span>) that you want to flush.</p>
+
+<pre class="prettyprint">
+eina_array_flush(array)
+</pre>
+
+<h3>Using Counting Operations</h3>
+<p>To get the number of elements in an array, use <span style="font-family: Courier New,Courier,monospace;">eina_array_count()</span>. The parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>.</p>
+
+<p>The function returns the number of elements.</p>
+
+<pre class="prettyprint">
+unsigned int nb_elm;
+nb_elm = eina_array_count(array)
+</pre>
+
+<h3>Cleaning an Array </h3>
+<p>To empty an array quickly, use <span style="font-family: Courier New,Courier,monospace;">eina_array_clean()</span>. This function sets the count member of an array to 0. It does not free any space, so use it carefully. For performance reasons, there is no array check. If it is <span style="font-family: Courier New,Courier,monospace;">NULL</span> or invalid, the application can crash.</p>
+
+<pre class="prettyprint">
+eina_array_clean(array)
+</pre>
+
+<h3>Iterating in an Array</h3>
+<p>Eina implements iterators to allow you to iterate in the data type.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Array</span> data type has 1 iterator, the <span style="font-family: Courier New,Courier,monospace;">ITER_NEXT</span>. To use it, call the <span style="font-family: Courier New,Courier,monospace;">EINA_ARRAY_ITER_NEXT()</span> macro. It takes the array to iterate, a counter for the current index during iteration, a variable of the same type of item data, and an <span style="font-family: Courier New,Courier,monospace;">Eina_Iterator</span> as parameters. Declare an <span style="font-family: Courier New,Courier,monospace;">Eina_Iterator</span>, an int counter, and, for example, a char * item if your array contains &#39;strings&#39;.</p>
+
+<pre class="prettyprint">
+Eina_Array_Iterator iterator;
+const char *item;
+unsigned int i;
+EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
+printf(&quot;item #%d: %s\n&quot;, i, item);
+</pre>
+
+<p>Eina also provides a function to iterate over an array, <span style="font-family: Courier New,Courier,monospace;">eina_array_foreach()</span>. This function takes the array to iterate, a callback function that determines if the iteration can continue, and the data passed to the callback function as parameters.</p>
+
+<p>The following example shows how to print the data of each element:</p>
+
+<pre class="prettyprint">
+// Callback function
+static Eina_Bool
+elm_print(const void *container, void *data, void *fdata)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, (char *)data);
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;const char* strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;helo&quot;, &quot;hera&quot;, &quot;starbuck&quot;, &quot;kat&quot;, &quot;boomer&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;hotdog&quot;, &quot;longshot&quot;, &quot;jammer&quot;, &quot;crashdown&quot;, &quot;hardball&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;duck&quot;, &quot;racetrack&quot;, &quot;apolo&quot;, &quot;husker&quot;, &quot;freaker&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;skulls&quot;, &quot;bulldog&quot;, &quot;flat top&quot;, &quot;hammerhead&quot;, &quot;gonzo&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;Eina_Array *array;
+&nbsp;&nbsp;&nbsp;unsigned int i;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_array_new(10);
+&nbsp;&nbsp;&nbsp;eina_array_step_set(array, sizeof(*array), 20);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 20; i++)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_array_push(array, strdup(strings[i]));
+&nbsp;&nbsp;&nbsp;// Iterate over the array and calling elm_print on each element
+&nbsp;&nbsp;&nbsp;eina_array_foreach(array, elm_print, NULL);
+&nbsp;&nbsp;&nbsp;// Free the elements data
+&nbsp;&nbsp;&nbsp;while (eina_array_count(array))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(eina_array_pop(array));
+&nbsp;&nbsp;&nbsp;// Free the array
+&nbsp;&nbsp;&nbsp;eina_array_free(array);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_array_iterator_new()</span> function returns a newly allocated iterator associated with the array. If the array is <span style="font-family: Courier New,Courier,monospace;">NULL</span> or the count member of the array is less than or equal to 0, this function returns <span style="font-family: Courier New,Courier,monospace;">NULL</span>. If the memory cannot be allocated, <span style="font-family: Courier New,Courier,monospace;">NULL</span> is returned, and <span style="font-family: Courier New,Courier,monospace;">EINA_ERROR_OUT_OF_MEMORY</span> is set. Otherwise, a valid iterator is returned.</p>
+
+<p>Pass to this function the array for which you want to create a new iterator. The iterator is used to run a sequential walkthrough of the array, just like <span style="font-family: Courier New,Courier,monospace;">eina_array_foreach()</span>.</p>
+
+<p>The following example shows how to print the data of all elements:</p>
+
+<pre class="prettyprint">
+static Eina_Bool
+print_one(const void *container, void *data, void *fdata)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, (char*)data);
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+int main(int argc, char *argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Array *array;
+&nbsp;&nbsp;&nbsp;Eina_Iterator *it;
+&nbsp;&nbsp;&nbsp;unsigned short int i;
+&nbsp;&nbsp;&nbsp;char *uninteresting;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_array_new(4);
+&nbsp;&nbsp;&nbsp;const char *strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;uninteresting string&quot;, &quot;husker&quot;, &quot;starbuck&quot;, &quot;husker&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 4; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_array_push(array, strings[i]);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;it = eina_array_iterator_new(array);
+&nbsp;&nbsp;&nbsp;eina_iterator_next(it, &amp;uninteresting);
+&nbsp;&nbsp;&nbsp;eina_iterator_foreach(it, print_one, NULL);
+&nbsp;&nbsp;&nbsp;eina_iterator_free(it);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_array_accessor_new()</span> function returns a newly allocated accessor associated with the array. If the array is <span style="font-family: Courier New,Courier,monospace;">NULL</span> or the count member of the array is less than or equal to 0, this function returns <span style="font-family: Courier New,Courier,monospace;">NULL</span>. If the memory cannot be allocated, <span style="font-family: Courier New,Courier,monospace;">NULL</span> is returned and <span style="font-family: Courier New,Courier,monospace;">EINA_ERROR_OUT_OF_MEMORY</span> is set. Otherwise, a valid accessor is returned. The accessors allow random access on the array.</p>
+
+<p>The following example shows how to use accessors for a random access to the array elements:</p>
+
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;Eina.h&gt;
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;const char *strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;even&quot;, &quot;odd&quot;, &quot;even&quot;, &quot;odd&quot;, &quot;even&quot;, &quot;odd&quot;, &quot;even&quot;, &quot;odd&quot;, &quot;even&quot;, &quot;odd&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;const char *more_strings[] = 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;
+&nbsp;&nbsp;&nbsp;};
+&nbsp;&nbsp;&nbsp;// Declaration of the array
+&nbsp;&nbsp;&nbsp;Eina_Array *array;
+&nbsp;&nbsp;&nbsp;// Declaration of the accessor
+&nbsp;&nbsp;&nbsp;Eina_Accessor *acc;
+&nbsp;&nbsp;&nbsp;// Generic counter
+&nbsp;&nbsp;&nbsp;unsigned short int i;
+&nbsp;&nbsp;&nbsp;// Variable to put the data retrieved from an array element
+&nbsp;&nbsp;&nbsp;void *data;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_array_new(10);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; 10; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_array_push(array, strings[i]);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;// Create the array accessor
+&nbsp;&nbsp;&nbsp;acc = eina_array_accessor_new(array);
+&nbsp;&nbsp;&nbsp;// Random access to the data of the array elements
+&nbsp;&nbsp;&nbsp;for(i = 1; i &lt; 10; i += 2)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Put the data in the variable &#39;data&#39;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_accessor_data_get(acc, i, &amp;data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, (const char *)data);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;// Free the accessor
+&nbsp;&nbsp;&nbsp;eina_accessor_free(acc);
+&nbsp;&nbsp;&nbsp;// Free the array
+&nbsp;&nbsp;&nbsp;eina_array_free(array);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<h3 id="inline" name="inline">Inline Arrays</h3>
+<p>The inline array is a container that stores the data itself, not pointers to data. This means that there is no memory fragmentation, also for small data types (such as char, short, or int). It is more memory efficient, and the data is in a cache and can accessed faster. However, the bigger the data gets, the less likely it is and the less interesting it becomes.</p>
+
+<p>To create an inline array, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The first parameter is the size of the value (the following example stores only characters, so the <span style="font-family: Courier New,Courier,monospace;">sizeof(char)</span> is passed to the function). The second parameter defines the size of the allocation step, similarly as in a classic array. You can change the step using the <span style="font-family: Courier New,Courier,monospace;">eina_inarray_step_set</span> function.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span> function returns a pointer to the new <span style="font-family: Courier New,Courier,monospace;">Eina_Inarray</span> variable.</p></p>
+
+<pre class="prettyprint">
+#include &lt;Eina.h&gt;
+int main(int argc, char **argv) 
+{
+&nbsp;&nbsp;&nbsp;// Declaration of inline array variable fo type Eina_Inarray
+&nbsp;&nbsp;&nbsp;Eina_Inarray *iarr;
+&nbsp;&nbsp;&nbsp;// Initialize Eina library
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;// Create an Inline array of &quot;char&quot;
+&nbsp;&nbsp;&nbsp;iarr = eina_inarray_new(sizeof(char), 0);
+&nbsp;&nbsp;&nbsp;// Free the memory
+&nbsp;&nbsp;&nbsp;eina_inarray_free(iarr);
+&nbsp;&nbsp;&nbsp;// Shut down Eina library
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+
+<h4>Using Inline Array Push and Pop Operations</h4>
+<p>To add data as the last element of the inline array, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_push()</span>. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the data you want to push to the inline array.</p>
+
+<p>If everything runs fine, the function returns the index of the new element. If something goes wrong, it returns -1.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+// Add a value to the inline array
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+</pre>
+
+
+<p>To remove the last element of the inline array, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_pop()</span>. The parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>.</p>
+
+<p>This function returns the data removed from the inline array.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Remove the last element
+eina_inarray_pop(iarr);
+</pre>
+
+
+
+<h4>Inserting Data to an Inline Array</h4>
+<p>To insert data on a given position of the inline array, use the <span style="font-family: Courier New,Courier,monospace;">eina_inarray_insert_at()</span> function. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the index of the element you want to remove from the inline array.</p>
+
+<p>The content of the pointer is copied at the given position in the inline array. All the members from that position to the end of the array are shifted to the end. If the position is equal to the end of the array, the member is appended. If the position is bigger than the array length, the insertion fails.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;d&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Adding data on position 3
+ch = &#39;c&#39;;
+eina_inarray_insert_at(iarr, 2, &amp;ch)
+</pre>
+
+
+<p>To insert data with your own position criteria, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_insert()</span>. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the data you want to push to the inline array. The last parameter is the callback comparison function. This <span style="font-family: Courier New,Courier,monospace;">Eina_Compare_Cb</span> callback type compares <span style="font-family: Courier New,Courier,monospace;">data1</span> and <span style="font-family: Courier New,Courier,monospace;">data2</span>. <span style="font-family: Courier New,Courier,monospace;">data1</span> is the value contained in the inline array and <span style="font-family: Courier New,Courier,monospace;">data2</span> is the data you pass to <span style="font-family: Courier New,Courier,monospace;">eina_inarray_insert_sorted()</span> as the second parameter. If <span style="font-family: Courier New,Courier,monospace;">data1</span> is &#39;less&#39; than <span style="font-family: Courier New,Courier,monospace;">data2</span>, -1 must be returned, if it is &#39;greater&#39;, 1 must be returned, and if they are equal, 0 must be returned.</p>
+
+<p>The following example shows how to insert before a greater value:</p>
+
+<pre class="prettyprint">
+#include &lt;Eina.h&gt;
+// Define the function with your own criteria of position
+Eina_Compare_Cb cmp(const void *a, const void *b)
+{
+&nbsp;&nbsp;&nbsp;return *(int*)a &gt; *(int*)b;
+}
+int main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Inarray *iarr;
+&nbsp;&nbsp;&nbsp;char ch, *ch2;
+&nbsp;&nbsp;&nbsp;int a, *b;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;// Create an inline array of ints with step of 4
+&nbsp;&nbsp;&nbsp;iarr = eina_inarray_new(sizeof(int), 4);
+&nbsp;&nbsp;&nbsp;// Add data to this inline array
+&nbsp;&nbsp;&nbsp;a = 97;
+&nbsp;&nbsp;&nbsp;eina_inarray_push(iarr, &amp;a);
+&nbsp;&nbsp;&nbsp;a = 98;
+&nbsp;&nbsp;&nbsp;eina_inarray_push(iarr, &amp;a);
+&nbsp;&nbsp;&nbsp;a = 100;
+&nbsp;&nbsp;&nbsp;eina_inarray_push(iarr, &amp;a);
+&nbsp;&nbsp;&nbsp;// Insert data with our own criteria
+&nbsp;&nbsp;&nbsp;a = 99;
+&nbsp;&nbsp;&nbsp;eina_inarray_insert_sorted(iarr, &amp;a, cmp);
+&nbsp;&nbsp;&nbsp;eina_inarray_free(iarr);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+}
+</pre>
+
+
+
+<h4>Removing Data from and Flushing an Inline Array</h4>
+<p>To remove some data from an inline array, use the <span style="font-family: Courier New,Courier,monospace;">eina_inarray_remove()</span> function. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the data you want to remove from the inline array.</p>
+
+<p>The function finds the data and removes the matching member from the array. The data can be an existing member of the inline array for an optimized usage. If it is not the case, the content is matched using <span style="font-family: Courier New,Courier,monospace;">memcmp()</span>. The function returns the index of the removed member or -1 on errors.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;d&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Remove data from the array
+eina_inarray_remove(iarr, &amp;ch)
+</pre>
+
+<p>You can also remove data from a defined position in the array using <span style="font-family: Courier New,Courier,monospace;">eina_inarray_remove_at()</span>. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the index of the element you want to remove from the inline array.</p>
+
+<p>The function returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> on success and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> if something goes wrong. The member is removed from inline array and any members after it are moved towards the array head.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;d&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Remove data from position 2
+eina_inarray_remove_at(iarr, 2);
+</pre>
+
+
+<p>To remove all the elements of the array, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_flush()</span>. The parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The function removes every member from the array.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;d&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Remove all inline array members
+eina_inarray_flush(iarr);
+</pre>
+
+<h4>Using Inline Array Replace Operations</h4>
+<p>In most of the cases, arrays are used to replace some values. You can do it using the <span style="font-family: Courier New,Courier,monospace;">eina_inarray_replace_at()</span> function. This function copies the data over the given position. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the index of the element you want to remove from the inline array, and the last parameter is the data you want to be copied in place of the current data.</p>
+
+<p><span style="font-family: Courier New,Courier,monospace;">eina_inarray_replace_at</span> returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> on success and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> on failure. The given pointer contents are copied at the given position in the array. The pointer is not referenced, instead, its contents are copied to the members&#39; array using the previously defined <span style="font-family: Courier New,Courier,monospace;">member_size</span>. If the position does not exist, the function fails.</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Replace inline array members
+ch = &#39;d&#39;;
+eina_inarray_replace_at(iarr, 3, &amp;ch);
+</pre>
+
+
+
+<h4>Searching in the Inline Array</h4>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_inarray_search()</span> function allows you to search a member in an inline array. It runs a linear walk looking for the given data. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the data used by the callback function to run comparison, and the last parameter is the callback comparison function. This <span style="font-family: Courier New,Courier,monospace;">Eina_Compare_Cb</span> callback type compares <span style="font-family: Courier New,Courier,monospace;">data1</span> and <span style="font-family: Courier New,Courier,monospace;">data2</span>. <span style="font-family: Courier New,Courier,monospace;">data1</span> is the value contained in the inline array and <span style="font-family: Courier New,Courier,monospace;">data2</span> is the data you pass to <span style="font-family: Courier New,Courier,monospace;">eina_inarray_insert_sorted</span> as the second parameter. Data match function must return 0, if <span style="font-family: Courier New,Courier,monospace;">data1</span> is &#39;less&#39; than <span style="font-family: Courier New,Courier,monospace;">data2</span>, -1 must be returned, and if it is &#39;greater&#39;, 1 must be returned. As the data given to the compare function is the pointer to member memory itself, do no change it.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_inarray_search()</span> function returns the member index or -1, if not found.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_inarray_search_sorted()</span> function does exactly the same as <span style="font-family: Courier New,Courier,monospace;">eina_inarray_search()</span>, but it uses a binary search for given data as compared by the compare function.</p>
+
+<pre class="prettyprint">
+Eina_Compare_Cb
+compare(const void *pa, const void *pb)
+{
+&nbsp;&nbsp;&nbsp;const short *a = pa, *b = pb;
+&nbsp;&nbsp;&nbsp;if ( *a == *b )
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return EINA_FALSE;
+}
+int main(int argc, char *argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Inarray *array;
+&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;int elm_index;
+&nbsp;&nbsp;&nbsp;int to_search = 3;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_inarray_new(sizeof(short), 1);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; numbers_count; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;short val = i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_inarray_push(array, &amp;val);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;elm_index = eina_inarray_search(array, &amp;to_search, compare)
+&nbsp;&nbsp;&nbsp;eina_inarray_free(array);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+}
+</pre>
+
+
+
+<h4>Sorting and Counting the Inline Array Elements</h4>
+
+<p>To sort an inline array, use the <span style="font-family: Courier New,Courier,monospace;">eina_inarray_sort()</span> function. This function applies a quick sort to the inline array.</p>
+
+<p>The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The last parameter is the callback comparison function. This <span style="font-family: Courier New,Courier,monospace;">Eina_Compare_Cb</span> callback type compares <span style="font-family: Courier New,Courier,monospace;">data1</span> and <span style="font-family: Courier New,Courier,monospace;">data2</span>. <span style="font-family: Courier New,Courier,monospace;">data1</span> is the value contained in the inline array and <span style="font-family: Courier New,Courier,monospace;">data2</span> is the data you pass to <span style="font-family: Courier New,Courier,monospace;">eina_inarray_insert_sorted()</span> as the second parameter. The data match function must return 0. If <span style="font-family: Courier New,Courier,monospace;">data1</span> is &#39;less&#39; than <span style="font-family: Courier New,Courier,monospace;">data2</span>, -1 must be returned, and if it is &#39;greater&#39;, 1 must be returned.</p>
+
+<p>Like for <span style="font-family: Courier New,Courier,monospace;">eina_inarray_search()</span>, the data given to the compare function is the pointer to member memory itself, so do no change it.</p>
+
+<pre class="prettyprint">
+static int
+short_cmp(const void *pa, const void *pb)
+{
+&nbsp;&nbsp;&nbsp;const short *a = pa, *b = pb;
+&nbsp;&nbsp;&nbsp;return *a - *b;
+}
+static const short rand_numbers[] = 
+{
+&nbsp;&nbsp;&nbsp;9, 0, 2, 3, 6, 5, 4, 7, 8, 1, 10
+};
+int main(int argc, char *argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Inarray *array;
+&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;array = eina_inarray_new(sizeof(short), 1);
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; sizeof(rand_numbers)/sizeof(rand_numbers[0]); i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;short val = rand_numbers[i];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_inarray_push(array, &amp;val);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;eina_inarray_sort(array, short_cmp);
+&nbsp;&nbsp;&nbsp;eina_inarray_free(array);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+}
+</pre>
+
+
+<p>To get the number of elements in an inline array, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_count()</span>:</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+ch = &#39;a&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;b&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;c&#39;;
+eina_inarray_push(iarr, &amp;ch);
+ch = &#39;e&#39;;
+eina_inarray_push(iarr, &amp;ch);
+// Print the number of array elements using eina_inarray_count
+printf(&quot;Inline array of integers with %d elements:\n&quot;, eina_inarray_count(iarr));
+</pre>
+
+<h4>Iterating Over an Inline Array</h4>
+<p>Eina implements iterators to allow you to iterate over the data type.</p>
+
+<p>The inline array has 2 iterator macros: <span style="font-family: Courier New,Courier,monospace;">FOREACH</span> and <span style="font-family: Courier New,Courier,monospace;">REVERSE_FOREACH</span>.</p>
+
+<p>To run a linear walk over an array of elements, use the <span style="font-family: Courier New,Courier,monospace;">EINA_INARRAY_FOREACH()</span> macro. The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new() </span> and the second parameter is the variable used to put the current value during the walk.</p>
+
+<p>The following example shows how to print each element and a pointer:</p>
+
+<pre class="prettyprint">
+iarr = eina_inarray_new(sizeof(char), 0);
+int a, *b;
+a = 97;
+eina_inarray_push(iarr, &amp;a);
+a = 98;
+eina_inarray_push(iarr, &amp;a);
+a = 100;
+eina_inarray_push(iarr, &amp;a);
+a = 99;
+EINA_INARRAY_FOREACH(iarr, b)
+printf(&quot;int: %d(pointer: %p)\n&quot;, *b, b);
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">EINA_INARRAY_REVERSE_FOREACH</span> macro does the same, but starts from the last element.</p>
+
+<p>To perform processing on the array data, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_foreach()</span>. It calls the given function on each element of the array with the given data.</p>
+<p>The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the callback function to run on each element, and the last parameter is the data passed to the callback.</p>
+
+<p>The function returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span>, if it successfully iterates all items of the array. The callback function must return <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> as long as you want the function to continue iterating. By returning <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span>, it stops.</p>
+
+<p>The data given to the callback function is the pointer to member memory itself.</p>
+
+<pre class="prettyprint">
+#include &lt;Eina.h&gt;
+static Eina_Bool
+array_foreach(const void *array __UNUSED__, void *p, void *user_data __UNUSED__)
+{
+&nbsp;&nbsp;&nbsp;short *member = p;
+&nbsp;&nbsp;&nbsp;int *i = user_data;
+&nbsp;&nbsp;&nbsp;(*p)++;
+&nbsp;&nbsp;&nbsp;(*i)++;
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+int main(int argc, char *argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Inarray *iarr;
+&nbsp;&nbsp;&nbsp;eina_init()
+&nbsp;&nbsp;&nbsp;iarr = eina_inarray_new(sizeof(char), 1);
+&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; numbers_count; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;short val = i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_inarray_push(iarr, &amp;val);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;i=0;
+&nbsp;&nbsp;&nbsp;eina_inarray_foreach(iarr, array_foreach, &amp;i);
+&nbsp;&nbsp;&nbsp;eina_inarray_free(iarr);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+
+
+<p>To remove some elements based on your own criteria, use <span style="font-family: Courier New,Courier,monospace;">eina_inarray_foreach_remove()</span>. This function walks through the array, and if the value matches in the callback function, it removes the element.</p>
+
+<p>The first parameter is a pointer to the array variable returned by <span style="font-family: Courier New,Courier,monospace;">eina_inarray_new()</span>. The second parameter is the callback function to run on each element, and the last parameter is the data passed to the callback.</p>
+
+<p>The function returns the number of removed entries or -1, if something goes wrong. The match function has to return <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span>, if it matches, or <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> if it does not.</p>
+
+<pre class="prettyprint">
+static Eina_Bool
+array_foreach(const void *array __UNUSED__, void *p, void *user_data __UNUSED__)
+{
+&nbsp;&nbsp;&nbsp;short *member = p;
+&nbsp;&nbsp;&nbsp;int *i = user_data;
+&nbsp;&nbsp;&nbsp;if ( *i == *p)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return EINA_FALSE;
+}
+int main(int argc, char *argv)
+{
+&nbsp;&nbsp;&nbsp;Eina_Inarray *iarr;
+&nbsp;&nbsp;&nbsp;eina_init()
+&nbsp;&nbsp;&nbsp;iarr = eina_inarray_new(sizeof(char), 1);
+&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; numbers_count; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;short val = i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_inarray_push(iarr, &amp;val);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;i=6;
+&nbsp;&nbsp;&nbsp;eina_inarray_foreach_remove(iarr, array_foreach, &amp;i);
+&nbsp;&nbsp;&nbsp;eina_inarray_free(iarr);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+
+
+<h2 id="hash" name="hash">Hash Tables</h2>
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Hash</span> data type provides a way to store values in association with a key, just like all other hash table implementations. For example, if you want to store some tuples into a table, you use <span style="font-family: Courier New,Courier,monospace;">Eina_Hash</span>.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Hash</span> is implemented using an array of N &quot;buckets&quot;, where each bucket is a pointer to a structure that is the head of a red-black tree. This implementation makes it very robust against week keys, as even in the worst case you still depend on an efficient binary tree implementation.</p>
+
+<p>You can create the hash table similarly as other Eina data types using <span style="font-family: Courier New,Courier,monospace;">eina_hash_new()</span>. However, since the function requires 4 callback functions to be created, it can be quite tiresome. Instead, use one of the predefined functions to create a hash table:</p>
+
+<ul><li><span style="font-family: Courier New,Courier,monospace;">eina_hash_string_djb2_new()</span> creates a new hash table using the djb2 algorithm for strings.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_hash_string_superfast_new()</span> creates a new hash table for use with strings (better with long strings).</li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_hash_string_small_new()</span> creates a new hash table for use with strings with small bucket size.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_hash_int32_new()</span> creates a new hash table for use with 32-bit integers and <span style="font-family: Courier New,Courier,monospace;">eina_hash_int64_new()</span> for 64-bit integers.</li></ul>
+
+<p>With a predefined function, you only have to manage the function to free the data you store in your hash. <span style="font-family: Courier New,Courier,monospace;">Eina_Hash</span> also has predefined functions for using white pointers and shared strings, such as <span style="font-family: Courier New,Courier,monospace;">eina_hash_pointer_new()</span> and <span style="font-family: Courier New,Courier,monospace;">eina_hash_stringshared_new()</span>.</p>
+
+<p>The following example shows how to manage a &quot;small phone book&quot;, using <span style="font-family: Courier New,Courier,monospace;">eina_hash_string_superfast_new</span>:</p>
+
+<ol><li><p>Create the structure of the &quot;phone book&quot; and some static data:</p>
+
+<pre class="prettyprint">
+struct _Phone_Entry 
+{
+&nbsp;&nbsp;&nbsp;const char *name; // Full name
+&nbsp;&nbsp;&nbsp;const char *number; // Phone number
+};
+typedef struct _Phone_Entry Phone_Entry;
+static Phone_Entry _start_entries[] = 
+{
+&nbsp;&nbsp;&nbsp;{ &quot;Wolfgang Amadeus Mozart&quot;, &quot;+01 23 456-78910&quot; },
+&nbsp;&nbsp;&nbsp;{ &quot;Ludwig van Beethoven&quot;, &quot;+12 34 567-89101&quot; },
+&nbsp;&nbsp;&nbsp;{ &quot;Richard Georg Strauss&quot;, &quot;+23 45 678-91012&quot; },
+&nbsp;&nbsp;&nbsp;{ &quot;Heitor Villa-Lobos&quot;, &quot;+34 56 789-10123&quot; },
+&nbsp;&nbsp;&nbsp;{ NULL, NULL }
+};
+</pre></li>
+
+<li><p>Create the free callback:</p>
+
+<pre class="prettyprint">
+static void
+_phone_entry_free_cb(void *data)
+{
+&nbsp;&nbsp;&nbsp;free(data);
+}
+</pre></li>
+
+<li><p>Create the hash and destroy the hash.</p>
+
+<pre class="prettyprint">
+int
+main(int argc, const char *argv[])
+{
+&nbsp;&nbsp;&nbsp;Eina_Hash *phone_book = NULL;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;phone_book = eina_hash_string_superfast_new(_phone_entry_free_cb);
+&nbsp;&nbsp;&nbsp;// Empty the phone book, but do not destroy it
+&nbsp;&nbsp;&nbsp;eina_hash_free_buckets(phone_book);
+&nbsp;&nbsp;&nbsp;eina_hash_free(phone_book);
+}
+</pre></li></ol>
+
+<p><span style="font-family: Courier New,Courier,monospace;">eina_hash_free_buckets</span> frees all &#39;buckets&#39; of the hash table. It empties the hash but does not destroy it. You can still use it for other purposes. When <span style="font-family: Courier New,Courier,monospace;">eina_hash_free()</span> is called, the space allocated for the hash is freed.</p>
+
+<p>The free callback can be changed using <span style="font-family: Courier New,Courier,monospace;">eina_hash_free_cb_set()</span>. You need to pass the hash and the new callback function.</p>
+
+<h3>Working with Hash Tables</h3>
+<p>The previous example shows how to create a hash but not how to do anything with it. To add some data to this hash, use the <span style="font-family: Courier New,Courier,monospace;">eina_hash_add()</span> function. This function takes the hash, the key to access the data, and the data as parameters.</p>
+
+<p>The following example shows how to add the &quot;initial&quot; data that was declared before to the hash.</p>
+
+<pre class="prettyprint">
+// Add initial entries to the hash
+for (i = 0; _start_entries[i].name != NULL; i++)
+{
+&nbsp;&nbsp;&nbsp;eina_hash_add(phone_book, _start_entries[i].name, strdup(_start_entries[i].number));
+}
+</pre>
+
+
+<p>You can also add elements to the hash using <span style="font-family: Courier New,Courier,monospace;">eina_hash_direct_add()</span>. This function adds the entry without duplicating the string key. The key is stored in the struct, so you can use this function with <span style="font-family: Courier New,Courier,monospace;">Eina_Stringshare</span> to avoid key data duplication. The hash can be initialized as follows:</p>
+
+<pre class="prettyprint">
+// Add initial entries to the hash, using direct_add
+for (i = 0; _start_entries[i].name != NULL; i++)
+{
+&nbsp;&nbsp;&nbsp;// Allocate memory for the &quot;phone entry&quot;
+&nbsp;&nbsp;&nbsp;Phone_Entry *e = malloc(sizeof(Phone_Entry));
+&nbsp;&nbsp;&nbsp;// Create an eina_stringshare for the Name and the phone number
+&nbsp;&nbsp;&nbsp;e-&gt;name = eina_stringshare_add(_start_entries[i].name);
+&nbsp;&nbsp;&nbsp;e-&gt;number = eina_stringshare_add(_start_entries[i].number);
+&nbsp;&nbsp;&nbsp;// Add entry to the hash
+&nbsp;&nbsp;&nbsp;eina_hash_direct_add(phone_book, e-&gt;name, e);
+}
+</pre>
+
+<p>To remove entries from the table:</p>
+
+<ul><li><p>To delete entries from the table based on a key or a data, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_del()</span>:</p>
+
+<pre class="prettyprint">
+Eina_Bool r;
+const char *entry_name = &quot;Heitor Villa-Lobos&quot;;
+r = eina_hash_del(phone_book, entry_name, NULL);
+</pre></li>
+
+<li><p>To remove an entry by key, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_del_by_key()</span>:</p>
+
+<pre class="prettyprint">
+r = eina_hash_del_by_key(phone_book, &quot;Richard Georg Strauss&quot;);
+</pre></li>
+
+<li><p>To remove en entry by data, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_del_by_data()</span> by passing the hash and the data of the entry to be removed:</p>
+
+<pre class="prettyprint">
+r = eina_hash_del_by_data(phone_book, &quot;+12 34 567-89101&quot;);
+</pre></li></ul>
+
+<h3>Finding, Modifying, and Counting Hash Tables</h3>
+<p>You can find elements in hash tables and get data by the key name:</p>
+
+<ul><li><p>To retrieve an entry by its key, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_find()</span> by passing the hash and the key you are looking for.</p>
+
+<pre class="prettyprint">
+char *phone = NULL;
+const char *entry_name = &quot;Heitor Villa-Lobos&quot;;
+// Look for a specific entry and get its phone number
+phone = eina_hash_find(phone_book, entry_name);
+</pre></li>
+
+<li><p>To modify some entries, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_modify()</span> passing the hash, the key of data to change, and the new data. The function returns the old data on success. <span style="font-family: Courier New,Courier,monospace;">eina_hash_set()</span> does the same work as <span style="font-family: Courier New,Courier,monospace;">eina_hash_modify</span>, but if the entry does not exist, the function creates a new one.</p>
+
+<pre class="prettyprint">
+char *old_phone = NULL;
+char *phone = NULL;
+// Replace the phone number of Richard Strauss
+old_phone = eina_hash_modify(phone_book, &quot;Richard Georg Strauss&quot;, strdup(&quot;+23 45 111-11111&quot;));
+phone = eina_hash_set(phone_book, &quot;Philippe de Magalhães&quot;, strdup(&quot;+33 6 111-11111&quot;));
+eina_hash_set(phone_book, &quot;Richard Georg Strauss&quot;, strdup(&quot;+23 45 111-117711&quot;));
+</pre></li>
+
+<li><p>To change the key associated with a data without freeing and creating a new entry, use the <span style="font-family: Courier New,Courier,monospace;">eina_hash_move()</span> function and pass the hash, the old key, and the new one. If the operation is a success, the function returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span>, if it is not, it returns <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span>.</p>
+
+<pre class="prettyprint">
+Eina_Bool res;
+res = eina_hash_move(phone_book, &quot;Philippe de Magalhães&quot;, &quot;Filipe de Magalhães&quot;);
+</pre></li>
+
+<li><p>To get the number of entries in a hash, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_population()</span> simply by passing the hash as the only parameter. </p>
+
+<pre class="prettyprint">
+unsigned int nb_elm;
+nb_elm = eina_hash_population(phone_book)
+</pre></li></ul>
+
+<h3>Iterating over Hash Tables</h3>
+<p>Like the other container data types of the Eina library, <span style="font-family: Courier New,Courier,monospace;">Eina_Hash</span> provides iterators. The iterators can be used for calling functions, such as <span style="font-family: Courier New,Courier,monospace;">eina_hash_foreach()</span>. The first parameter is the hash, the second is the callback function called on each iteration, and the last one is the data passed to the callback.</p>
+
+<p>The callback function has to return an <span style="font-family: Courier New,Courier,monospace;">Eina_Bool</span>, <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span>, if the iteration has to continue, and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> if the iteration has to stop.</p>
+
+<pre class="prettyprint">
+// This callback function prints the key and the data of an hash entry:
+// the name and the phone number
+static Eina_Bool
+pb_foreach_cb(const Eina_Hash *phone_book, const void *key, void *data, void *fdata)
+{
+&nbsp;&nbsp;&nbsp;const char *name = key;
+&nbsp;&nbsp;&nbsp;const char *number = data;
+&nbsp;&nbsp;&nbsp;printf(&quot;%s: %s\n&quot;, name, number);
+&nbsp;&nbsp;&nbsp;// Return EINA_FALSE to stop this callback from being called
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+printf(&quot;List of phones:\n&quot;);
+// Run the callback on the hash called phone_book
+eina_hash_foreach(phone_book, pb_foreach_cb, NULL);
+printf(&quot;\n&quot;);
+</pre>
+
+<p>You can also use <span style="font-family: Courier New,Courier,monospace;">eina_hash_iterator_key_new()</span> for just iterating over the keys. To iterate over the hash data, use <span style="font-family: Courier New,Courier,monospace;">eina_hash_iterator_data_new()</span>, the same way as <span style="font-family: Courier New,Courier,monospace;">eina_hash_iterator_key_new()(</span>.</p>
+
+<pre class="prettyprint">
+// Declaration of the Eina_Iterator
+Eina_Iterator *it;
+// Variable to handle current iteration &quot;data&quot;
+void *data;
+// Iterate over the keys (names)
+printf(&quot;List of names in the phone book:\n&quot;);
+it = eina_hash_iterator_key_new(phone_book);
+// Use the generic eina_iterator_next()
+while (eina_iterator_next(it, &amp;data))
+{
+&nbsp;&nbsp;&nbsp;const char *name = data;
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, name);
+}
+// Free the Iterator
+eina_iterator_free(it);
+// Iterate over hash data
+printf(&quot;List of numbers in the phone book:\n&quot;);
+it = eina_hash_iterator_data_new(phone_book);
+while (eina_iterator_next(it, &amp;data))
+{
+&nbsp;&nbsp;&nbsp;const char *number = data;
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, number);
+}
+// Free the iterator
+eina_iterator_free(it);
+</pre>
+
+<p>Using this method, you can also iterate over a tuple composed of keys and data, like <span style="font-family: Courier New,Courier,monospace;">eina_hash_foreach</span>, using <span style="font-family: Courier New,Courier,monospace;">eina_hash_iterator_tuple_new()</span>:</p>
+
+<pre class="prettyprint">
+// Declaration of the Eina_Iterator
+Eina_Iterator *tit;
+// Variable to handle current iteration &quot;data&quot;
+void *tuple;
+printf(&quot;List of phones:\n&quot;);
+tit = eina_hash_iterator_tuple_new(phone_book);
+while (eina_iterator_next(it, &amp;tuple))
+{
+&nbsp;&nbsp;&nbsp;Eina_Hash_Tuple *t = tuple;
+&nbsp;&nbsp;&nbsp;const char *name = t-&gt;key;
+&nbsp;&nbsp;&nbsp;const char *number = t-&gt;data;
+&nbsp;&nbsp;&nbsp;printf(&quot;%s: %s\n&quot;, name, number);
+}
+eina_iterator_free(tit); // Always free the iterator after its use
+</pre>
+
+<h2 id="list" name="list">Lists</h2>
+<p>The Eina list (<span style="font-family: Courier New,Courier,monospace;">Eina_List</span>) is a double-linked list. It can store data of any type in the form of void pointers. The Eina list provides a set of functions to create and manipulate a list to avoid the access to the struct&#39;s fields, like in a self-made double-link list.</p>
+
+<p>In addition to keeping references to the previous and next node and its data, the <span style="font-family: Courier New,Courier,monospace;">Eina_List</span> node keeps a reference to an accounting structure. The accounting structure is used to improve the performance of some functions. The structure is private and must not be modified.</p>
+
+<p>In <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, everything is a &quot;list&quot;. The list itself is a list, and each &quot;node&quot; is also a list.</p>
+
+<h3>Creating and Destroying a List</h3>
+
+<p>To use an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, declare it with <span style="font-family: Courier New,Courier,monospace;">NULL</span> as default value and call <span style="font-family: Courier New,Courier,monospace;">eina_list_append()</span> passing the list and the data you want to append. This list must be a pointer to the first element of the list (or <span style="font-family: Courier New,Courier,monospace;">NULL</span>). It returns a list pointer.</p>
+
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;Eina.h&gt;
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;// Declaration of the Eina_List with NULL as default value;
+&nbsp;&nbsp;&nbsp;Eina_List *list = NULL;
+&nbsp;&nbsp;&nbsp;// Initialization of Eina library
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;// Create the first element of the list
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;watch&quot;);
+&nbsp;&nbsp;&nbsp;// Add more elements
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;phone&quot;);
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;ivi&quot;);
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;notebook&quot;);
+&nbsp;&nbsp;&nbsp;// Free the Eina_List
+&nbsp;&nbsp;&nbsp;eina_list_free(list);
+&nbsp;&nbsp;&nbsp;// Shut down the Eina library
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<h3>Adding Elements to a List</h3>
+
+<p>To append data to a list:</p>
+
+<ul><li>To put data to the end or the beginning of the list, use <span style="font-family: Courier New,Courier,monospace;">eina_list_append()</span> or <span style="font-family: Courier New,Courier,monospace;">eina_list_prepend()</span>. Both functions work similarly, they just put the data to the different end of the list.</p>
+
+<pre class="prettyprint">
+list = eina_list_prepend(list, &quot;set-top box&quot;);
+</pre></li>
+
+<li><p>To insert the given data into the given linked list after a specified data, use <span style="font-family: Courier New,Courier,monospace;">eina_list_append_relative()</span>. For example, to append data after the &quot;phone&quot; element of the example, pass this data as the last parameter of <span style="font-family: Courier New,Courier,monospace;">eina_list_append_relative()</span>:</p>
+
+<pre class="prettyprint">
+list = eina_list_append_relative(list, &quot;single-board computer&quot;, &quot;phone&quot;);
+</pre></li>
+
+<li><p>To put a new entry before the &quot;ivi&quot; entry, use <span style="font-family: Courier New,Courier,monospace;">eina_list_prepend_relative()</span>, like you used <span style="font-family: Courier New,Courier,monospace;">eina_list_append_relative()</span>.</p>
+
+<pre class="prettyprint">
+list = eina_list_append_relative(list, &quot;ultrabook&quot;, &quot;ivi&quot;);
+</pre></li>
+
+<li><p>To append a list node to a linked list after a specified member, use <span style="font-family: Courier New,Courier,monospace;">Eina_List * eina_list_append_relative_list()</span>.</p>
+<p><span style="font-family: Courier New,Courier,monospace;">Eina_List * eina_list_prepend_relative_list()</span> prepends a list node to a linked list before the specified member.</p></li></ul>
+
+<h3>Removing Elements from a List</h3>
+<p>To remove a node from the list, use <span style="font-family: Courier New,Courier,monospace;">eina_list_remove()</span>. This function removes the first instance of the specified data from the given list.</p>
+
+<pre class="prettyprint">
+list = eina_list_remove(list, &quot;ultrabook&quot;)
+</pre>
+
+<p>You can also remove a &quot;list&quot; (a node) from a list using <span style="font-family: Courier New,Courier,monospace;">eina_list_remove_list()</span>. Pass the list you want to delete an element from and a &#39;list&#39; (a node) you want to delete:</p>
+
+<pre class="prettyprint">
+Eina_List *app_list = NULL;
+Eina_List *to_remove = NULL;
+// Add some elements to the list (using stringshares)
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;enna&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;ebird&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;calaos&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;rage&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;terminology&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;enlightenment&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;eyelight&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;ephoto&quot;));
+// Find the &quot;list&quot; we want to remove
+to_remove = eina_list_data_find_list(list, eina_string_share_add(&quot;enlightenment&quot;));
+list = eina_list_remove_list(list, to_remove);
+</pre>
+
+<h3>Moving Elements in a List</h3>
+<p>You can move elements within a list. For example, you can promote an element to the top of the list with <span style="font-family: Courier New,Courier,monospace;">eina_list_promote_list()</span>. Remember that everything is a list, so the second parameter represents the &quot;list&quot; (node) you want to move. Use it like <span style="font-family: Courier New,Courier,monospace;">eina_list_remove_list()</span>.</p>
+
+<pre class="prettyprint">
+list = eina_list_promote_list(list, eina_list_data_find_list(list, &quot;ivi&quot;));
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_list_demote_list()</span> function puts the &quot;element&quot; at the end of the list. Use it like <span style="font-family: Courier New,Courier,monospace;">eina_list_promote_list()</span>.</p>
+
+<h3>Finding Elements in a List</h3>
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">eina_list_data_find()</span> function to find elements in a list. Pass the list containing your data and the data you are looking for as parameters. The function returns the found member data pointer if found, and otherwise <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">eina_list_data_find()</span> function searches the list from the beginning to the end for the first member whose data pointer is data. The function compares pointers. Using <span style="font-family: Courier New,Courier,monospace;">Eina_Stringshare</span> is very useful with lists, because it always returns the same pointer for the same string.</p>
+
+<pre class="prettyprint">
+Eina_List *app_list = NULL;
+const char *res_str;
+// Add some elements to the list (using stringshares)
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;enna&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;ebird&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;calaos&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;rage&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;terminology&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;enlightenment&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;eyelight&quot;));
+app_list = eina_list_append(app_list, eina_stringshare_add(&quot;ephoto&quot;));
+// Find the data you need
+res_str = eina_list_data_find(list, eina_string_share_add(&quot;enlightenment&quot;))
+if ( res_str == eina_stringshare_add(&quot;enlightenment&quot;))
+&nbsp;&nbsp;&nbsp;printf(&quot;Data is present&quot;);
+else
+&nbsp;&nbsp;&nbsp;printf(&quot;Data not present&quot;);
+~~~~~~~~~~~~~{.c}
+This example will return &quot;Data is present&quot;.
+&#39;eina_list_data_find_list(const Eina_List *list, const void *data)&#39; does the same thing as &#39;eina_list_data_find&#39; but returns a &quot;Eina_List&quot;. you can see an
+example of this in the &#39;eina_list_remove_list&#39; paragraph.
+You can access to the data or a &quot;list&quot; (node) of a Eina_List, using the &#39;eina_list_nth(const Eina_List *list, unsigned int n)&#39;
+and &#39;eina_list_nth_list (const Eina_List *list, unsigned int n)&#39;. The first one will return a pointer to the data of the &quot;n&quot; element and
+the second a pointer to the &quot;list&quot;. So if you want to access to the data of the 3rd element of a Eina_List proceed like this :
+~~~~~~~~~~~~~{.c}
+const char *res;
+Eina_List *res_lst;
+res = eina_list_nth(app_list, 2);
+res_lst = eina_list_nth_list(app_list, 2);
+</pre>
+
+<p>The variable <span style="font-family: Courier New,Courier,monospace;">res</span> contains the pointer to the string &quot;calaos&quot;. <span style="font-family: Courier New,Courier,monospace;">res_lst</span> is the list containing &quot;calaos&quot;.</p>
+
+<h3>Copying a List</h3>
+<p>You can clone a list with <span style="font-family: Courier New,Courier,monospace;">eina_list_clone()</span>. This function copies all the elements in the list in exactly the same order.</p>
+
+<pre class="prettyprint">
+Eina_List *app_list_copy;
+app_list_copy = eina_list_clone(app_list);
+</pre>
+
+<h3>Reversing a List</h3>
+
+<p>To reverse all the elements of an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, use <span style="font-family: Courier New,Courier,monospace;">eina_list_reverse()</span>. To obtain a reversed copy of the list keeping the initial list unchanged, use <span style="font-family: Courier New,Courier,monospace;">eina_list_reverse_clone()</span>.</p>
+
+<pre class="prettyprint">
+Eina_List *rev_copy;
+app_list = eina_list_reverse(app_list);
+rev_copy = eina_list_reverse_clone(app_list);
+</pre>
+
+<h3>Searching and Sorting Lists</h3>
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_List</span> API provides functions to run powerful searches for large lists.</p>
+
+<p>If your list is unsorted and you need to get the data, use <span style="font-family: Courier New,Courier,monospace;">eina_list_search_unsorted()</span>. This function performs a lookup in unsorted lists. It takes the list, a callback function for comparison, and the data you are looking for as parameters. The <span style="font-family: Courier New,Courier,monospace;">eina_list_search_unsorted_list()</span> does the same but returns an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>.</p>
+
+<p>The following example shows how to perform 2 searches, one with <span style="font-family: Courier New,Courier,monospace;">eina_list_search_unsorted()</span> and another with <span style="font-family: Courier New,Courier,monospace;">eina_list_search_unsorted_list()</span>, and how to compare the results of the 2 searches.</p>
+
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;Eina.h&gt;
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;// Declare the list
+&nbsp;&nbsp;&nbsp;Eina_List *list = NULL;
+&nbsp;&nbsp;&nbsp;Eina_List *l;
+&nbsp;&nbsp;&nbsp;// Little trick to use strcmp as Eina_Compare_Cb
+&nbsp;&nbsp;&nbsp;Eina_Compare_Cb cmp_func = (Eina_Compare_Cb)strcmp;
+&nbsp;&nbsp;&nbsp;void *data;
+&nbsp;&nbsp;&nbsp;int cmp_result;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;debian&quot;);
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;archlinux&quot;);
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, &quot;centos&quot;);
+&nbsp;&nbsp;&nbsp;data = eina_list_search_unsorted(list, cmp_func, &quot;archlinux&quot;);
+&nbsp;&nbsp;&nbsp;l = eina_list_search_unsorted_list(list, cmp_func, &quot;archlinux&quot;);
+&nbsp;&nbsp;&nbsp;if (l-&gt;data != data)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_list_free(list);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_shutdown():
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;eina_list_free(list);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}</pre>
+
+
+
+<p>You can search in sorted lists with <span style="font-family: Courier New,Courier,monospace;">eina_list_search_sorted_list()</span> and <span style="font-family: Courier New,Courier,monospace;">eina_list_search_sorted()</span>. These functions work like <span style="font-family: Courier New,Courier,monospace;">eina_list_search_unsorted()</span>, but need sorted lists.</p>
+
+<p>You can sort a list using <span style="font-family: Courier New,Courier,monospace;">eina_list_sort()</span>. This function takes a list that needs to be sorted, the maximum number of elements to be sorted, and the comparison callback as parameters. You can set the sorting limit to 0, to sort all the list elements.</p>
+
+<pre class="prettyprint">
+int sort_cb(const void *d1, const void *d2)
+{
+&nbsp;&nbsp;&nbsp;const char *txt = d1;
+&nbsp;&nbsp;&nbsp;const char *txt2 = d2;
+&nbsp;&nbsp;&nbsp;if(!txt) return(1);
+&nbsp;&nbsp;&nbsp;if(!txt2) return(-1);
+&nbsp;&nbsp;&nbsp;return(strcmp(txt, txt2));
+}
+
+extern Eina_List *list;
+list = eina_list_sort(list, 0, sort_cb);
+</pre>
+
+<h3>Merging and Splitting Lists</h3>
+<p>You can merge lists:</p>
+<ul><li><span style="font-family: Courier New,Courier,monospace;">eina_list_merge()</span> merges 2 lists to 1.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">eina_list_sorted_merge()</span> merges 2 lists and sorts the new list according to the ordering function you pass as the last parameter.</li></ul>
+
+<pre class="prettyprint">
+int sort_cb(void *d1, void *d2)
+{
+&nbsp;&nbsp;&nbsp;const char *txt = NULL;
+&nbsp;&nbsp;&nbsp;const char *txt2 = NULL;
+&nbsp;&nbsp;&nbsp;if(!d1) return(1);
+&nbsp;&nbsp;&nbsp;if(!d2) return(-1);
+&nbsp;&nbsp;&nbsp;return(strcmp((const char*)d1, (const char*)d2));
+}
+Eina_List *sorted1;
+Eina_List *sorted2;
+Eina_List *newlist;
+
+// Put some values and sort your lists
+
+// Simply merge 2 lists without any process
+newlist = eina_list_merge(sorted1, sorted2);
+newlist = eina_list_sorted_merge(sorted1, sorted2, sort_cb);
+</pre>
+
+<p>You can also split a list into 2 lists, using the <span style="font-family: Courier New,Courier,monospace;">eina_list_split_list()</span> function. The first parameter is the list to split, the second is the &quot;list&quot; (element) that is split afterwards, and the last is the head of the second list.</p>
+
+<pre class="prettyprint">
+// Origin list (left list)
+Eina_List *list = NULL
+// New list (right list)
+Eina_List *other_list = NULL;
+// Eina_List (element)
+Eina_List *l;
+eina_init();
+list = eina_list_append(list, &quot;super tux&quot;);
+list = eina_list_append(list, &quot;frozen bubble&quot;);
+list = eina_list_append(list, &quot;lincity-ng&quot;);
+// Sort the list (just for fun)
+list = eina_list_sort(list, 0, cmp_func);
+// Look for the &#39;split&#39; element
+l = eina_list_search_sorted_list(list, cmp_func, &quot;frozen bubble&quot;);
+// Split the list
+list = eina_list_split_list(list, l, &amp;other_list);
+</pre>
+
+<h3>Getting and Setting Data in a List Element</h3>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">eina_list_data_get()</span> function to get the data contained in the given list:</p>
+
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;Eina.h&gt;
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;// Declare the list
+&nbsp;&nbsp;&nbsp;Eina_List *list = NULL;
+&nbsp;&nbsp;&nbsp;//  Eina_List to place the Elements or lists
+&nbsp;&nbsp;&nbsp;Eina_List *l;
+&nbsp;&nbsp;&nbsp;void *list_data;
+&nbsp;&nbsp;&nbsp;eina_init();
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Bertrand&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Cedric&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Nicolas&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Vincent&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Raoul&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Fabien&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;Philippe&quot;));
+&nbsp;&nbsp;&nbsp;list = eina_list_append(list, eina_stringshare_add(&quot;billiob&quot;));
+&nbsp;&nbsp;&nbsp;for(l = list; l; l = eina_list_next(l))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Print the data returned by eina_list_data_get
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, (char*)eina_list_data_get(l));
+&nbsp;&nbsp;&nbsp;EINA_LIST_FREE(list, list_data)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_stringshare_del(list_data);
+&nbsp;&nbsp;&nbsp;eina_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The above example also uses <span style="font-family: Courier New,Courier,monospace;">eina_list_next()</span> to move through the list in a statement. This function moves to the next element of the linked list.</p>
+
+<p>To set data in a list member, use <span style="font-family: Courier New,Courier,monospace;">eina_list_data_set()</span>. Pass the &quot;list&quot; (node) as the first parameter and the data to set as the second.</p>
+
+<pre class="prettyprint">
+// Set a new data for the last element
+eina_list_data_set(eina_list_last(list), eina_stringshare_add(&quot;Boris&quot;));
+</pre>
+
+<p>In the above example, the <span style="font-family: Courier New,Courier,monospace;">eina_list_last()</span> function is used to return the last element of an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>.</p>
+
+<h3>Moving in a List</h3>
+
+<p>In addition to the <span style="font-family: Courier New,Courier,monospace;">eina_list_last()</span> and <span style="font-family: Courier New,Courier,monospace;">eina_list_next()</span> functions, you can use <span style="font-family: Courier New,Courier,monospace;">eina_list_prev()</span> to move within a list. It gets the previous list node before the specified list node.</p>
+
+<p>The following example shows how to scroll backwards, starting from the end of the list.</p>
+
+<pre class="prettyprint">
+for (l = eina_list_last(list); l; l = eina_list_prev(l))
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, (char*)eina_list_data_get(l));
+</pre>
+
+<h3>Counting List Elements</h3>
+
+<p>To count of the number of items in a list, use the <span style="font-family: Courier New,Courier,monospace;">eina_list_count()</span> function:</p>
+
+<pre class="prettyprint">
+printf(&quot;List size: %d\n&quot;, eina_list_count(list));
+</pre>
+
+<h3>Iterating a List</h3>
+
+<p>Like the other Eina data types, <span style="font-family: Courier New,Courier,monospace;">Eina_List</span> has iterators. They allow you to walk through the list from the beginning or from the end:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LIST_FOREACH(list, l, data)</span>
+<p>Prints the data of each &quot;List&quot; (node) of the list. The parameters are the list to iterate, an <span style="font-family: Courier New,Courier,monospace;">Eina_List*</span> to hold the current &quot;List&quot; (node) and a data parameter to receive the current data during the run.</p>
+
+<pre class="prettyprint">
+Eina_List *list = NULL;
+Eina_List *l;
+void *list_data;
+eina_init();
+list = eina_list_append(list, &quot;ls&quot;);
+list = eina_list_append(list, &quot;top&quot;);
+list = eina_list_append(list, &quot;rmdir&quot;);
+list = eina_list_append(list, &quot;uname&quot;);
+EINA_LIST_FOREACH(list, l, list_data)
+printf(&quot;%s\n&quot;, (char*)list_data);
+eina_list_free(list);
+eina_shutdown();
+</pre>
+</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LIST_REVERSE_FOREACH(list, l, data)</span>
+<p>Works like <span style="font-family: Courier New,Courier,monospace;">EINA_LIST_FOREACH</span>, but iterates from the last element of a list to the first. The parameters are the same.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LIST_FOREACH_SAFE(list, l, l_next, data)</span>
+<p>Iterates over the list from the first element to the last. It is called safe, because it stores the next &quot;List&quot; (node), and you can safely remove the current &quot;List&quot; (node) and continue the iteration.</p>
+
+<pre class="prettyprint">
+Eina_List *list;
+Eina_List *l;
+Eina_List *l_next;
+char *data;
+list = eina_list_append(list, &quot;tizen&quot;);
+list = eina_list_append(list, &quot;tizen&quot;);
+list = eina_list_append(list, &quot;tizen&quot;);
+list = eina_list_append(list, &quot;tizen&quot;);
+// Use EINA_LIST_FOREACH_SAFE to free elements that match &quot;tizen&quot;.
+EINA_LIST_FOREACH_SAFE(list, l, l_next, data)
+if (strcmp(data, &quot;tizen&quot;) == 0) 
+{
+&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;list = eina_list_remove_list(list, l);
+}
+</pre>
+</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LIST_FREE(list, data)</span>
+<p>Removes each list element while having access to the node&#39;s data. Pass the list and a pointer to hold the current data.</p>
+
+<pre class="prettyprint">
+Eina_List *list;
+char *data;
+// List is filled
+EINA_LIST_FREE(list, data)
+free(data);
+</pre></li>
+</ul>
+
+
+<h3 id="inlist" name="inlist">Inline Lists</h3>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Inlist</span> is a special data type designed to store node pointers in the same memory as the data. This way the memory is less fragmented, but operations like &#39;sort&#39; or &#39;count&#39; are slower.</p>
+
+<p>The inline list nodes can be part of a regular <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, simply added with <span style="font-family: Courier New,Courier,monospace;">eina_list_append()</span> or <span style="font-family: Courier New,Courier,monospace;">eina_list_prepend()</span>. In most cases, you can use the regular <span style="font-family: Courier New,Courier,monospace;">Eina_List</span> instead of the <span style="font-family: Courier New,Courier,monospace;">Eina_Inlist</span>.</p>
+
+<h4>Creating and Adding Items to an Inline List</h4>
+
+<p>To create an inline list:</p>
+
+<ol><li><p>Since <span style="font-family: Courier New,Courier,monospace;">Eina_Inlist</span> node pointers are part of the <span style="font-family: Courier New,Courier,monospace;">data</span> node, you must define the structure of the data before creating a list:</p>
+
+<pre class="prettyprint">
+struct my_struct
+{
+&nbsp;&nbsp;&nbsp;EINA_INLIST;
+&nbsp;&nbsp;&nbsp;int a, b;
+};
+</pre>
+
+<p>The structure is composed of 2 integers (the actual data) and the <span style="font-family: Courier New,Courier,monospace;">EINA_INLIST</span> type, which includes 3 pointers defining the inline list structure:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">Eina_Inlist *next</span>: The next node</li>
+<li><span style="font-family: Courier New,Courier,monospace;">Eina_Inlist *prev</span>: The previous node</li>
+<li><span style="font-family: Courier New,Courier,monospace;">Eina_Inlist *last</span>: The last node</li>
+</ul></li>
+
+<li><p>To create the <span style="font-family: Courier New,Courier,monospace;">Inlist</span> nodes, allocate the memory and use the <span style="font-family: Courier New,Courier,monospace;">eina_inlist_append()</span> function. The first parameter is the existing list head or <span style="font-family: Courier New,Courier,monospace;">NULL</span> to create a new list. In this example, <span style="font-family: Courier New,Courier,monospace;">NULL</span> is passed to create a new list. The second parameter is the new list node, and it cannot be <span style="font-family: Courier New,Courier,monospace;">NULL</span>. You must use the <span style="font-family: Courier New,Courier,monospace;">EINA_INLIST_GET</span> macro to get the inlist object of a <span style="font-family: Courier New,Courier,monospace;">data</span> struct.</p>
+<pre class="prettyprint">
+struct my_struct *d, *cur;
+Eina_Inlist *list, *itr, *tmp;
+d = malloc(sizeof(*d));
+d-&gt;a = 1;
+d-&gt;b = 10;
+list = eina_inlist_append(NULL, EINA_INLIST_GET(d));
+</pre></li>
+
+<li><p>Repeat this operation for each new node.</p>
+
+<pre class="prettyprint">
+d = malloc(sizeof(*d));
+d-&gt;a = 2;
+d-&gt;b = 20;
+list = eina_inlist_append(list, EINA_INLIST_GET(d));
+</pre></li></ol>
+
+<p>You can also insert data at the end of the inline list using the <span style="font-family: Courier New,Courier,monospace;">eina_inlist_prepend()</span> function.</p>
+
+<pre class="prettyprint">
+d = malloc(sizeof(*d));
+d-&gt;a = 3;
+d-&gt;b = 30;
+list = eina_inlist_prepend(list, EINA_INLIST_GET(d));
+</pre>
+
+<p>To add a node before a given node, use the <span style="font-family: Courier New,Courier,monospace;">eina_inlist_prepend_relative()</span> function. To add a node after a given node, use the <span style="font-family: Courier New,Courier,monospace;">eina_inlist_append_relative()</span> function.</p>
+<p>In the following example, the first parameter is the target list, the second parameter is the element you want to add, and the last parameter is the reference element after which the data is placed. Just as in the regular <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, everything here is a &quot;list&quot;, so the last parameter is a variable of the <span style="font-family: Courier New,Courier,monospace;">Eina_Inlist</span> type.</p>
+
+<pre class="prettyprint">
+d = malloc(sizeof(*d));
+d-&gt;a = 4;
+d-&gt;b = 40;
+list = eina_inlist_append_relative(list, EINA_INLIST_GET(d), list);
+</pre>
+
+
+<h4>Destroying an Inline List</h4>
+<p>To destroy a list, loop over the list and free each <span style="font-family: Courier New,Courier,monospace;">EINA_INLIST</span> structure as well as the memory allocated for the data. Use the <span style="font-family: Courier New,Courier,monospace;">eina_inlist_remove()</span> function on each node.</p>
+
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">EINA_INLIST_CONTAINER_GET</span> macro returns the container object of an inlist. In this case, it returns the <span style="font-family: Courier New,Courier,monospace;">EINA_INLIST</span> of <span style="font-family: Courier New,Courier,monospace;">my_struct</span>. Remove the list element and free the allocated memory of the &quot;object&quot;container.</p>
+
+<pre class="prettyprint">
+while (list)
+{
+&nbsp;&nbsp;&nbsp;struct my_struct *aux = EINA_INLIST_CONTAINER_GET(list, struct my_struct);
+&nbsp;&nbsp;&nbsp;// Remove the current list element
+&nbsp;&nbsp;&nbsp;list = eina_inlist_remove(list, list);
+&nbsp;&nbsp;&nbsp;free(aux);
+}
+</pre>
+
+<p>If this seems too complicated, use a regular <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>.</p>
+
+<p>For other operations, such as sorting, iterating, finding, or moving, see the EFL API Reference.</p>
+
+<h2 id="generic" name="generic">Generic Values</h2>
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> data type provides generic data storage and access. It comes with predefined types for number, array, list, hash, blob, and struct.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> is able to convert different data types, including a string. It is meant for simple data types, providing uniform access and release functions, useful for exchanging data while preserving the data types. You can store what you want in one type of <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> can handle the following data types:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_UCHAR</span>: Unsigned char type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_USHORT</span>: Unsigned short type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_UINT</span>: Unsigned int type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_ULONG</span>: Unsigned long type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_TIMESTAMP</span>: Unsigned long type used for timestamps</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_UINT64</span>: Unsigned integer of 64-bit type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_CHAR</span>: Char type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_SHORT</span>: Short type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_INT</span>: Int type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_LONG</span>: Long type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_INT64</span>: Integer of 64-bit type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_FLOAT</span>: Float type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_DOUBLE</span>: Double type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_STRINGSHARE</span>: Stringshared string type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_STRING</span>: String type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_ARRAY</span>: Array type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_LIST</span>: List type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_HASH</span>: Hash type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_TIMEVAL</span>: &#39;Struct timeval&#39; type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_BLOB</span>: Blob of bytes type</li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_STRUCT</span>: Struct type</li>
+</ul>
+
+<p>To use <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>:</p>
+
+<ol><li>Do some variable declarations:
+
+<pre class="prettyprint">
+// Eina_Value itself
+Eina_Value v;
+// Integer
+int i;
+// Char *
+char *newstr;
+</pre></li>
+
+<li><p>Initialize the Eina library using the <span style="font-family: Courier New,Courier,monospace;">eina_init()</span> function.</p></li>
+<li>Set up an <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> for an integer, or if you prefer, &quot;create&quot; the <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>. Use the <span style="font-family: Courier New,Courier,monospace;">eina_value_setup()</span> function. The first parameter is the <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> and the second parameter is the type.</p>
+
+<pre class="prettyprint">
+eina_value_setup(&amp;v, EINA_VALUE_TYPE_INT);
+</pre></li>
+
+<li><p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> is now created and it can receive a &quot;value&quot;. In this example, it is set up for an integer, so set an integer using the <span style="font-family: Courier New,Courier,monospace;">eina_value_set()</span> function:</p>
+
+<pre class="prettyprint">
+eina_value_set(&amp;v, 123);
+</pre></li>
+
+<li><p>To get the value, use the <span style="font-family: Courier New,Courier,monospace;">eina_value_get()</span> function. Pass the <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> as the first parameter, and a pointer of a variable to &quot;store&quot; the value as the second parameter. The target variable must have the same type as the <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>.</p>
+
+<pre class="prettyprint">
+eina_value_get(&amp;v, &amp;i);
+printf(&quot;v=%d\n&quot;, i);
+</pre>
+
+<p>This prints &quot;v=123&quot;.</p></li>
+
+<p>The above code snippet printed an int value. However, with <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>, you can print the value as strings. Use the <span style="font-family: Courier New,Courier,monospace;">eina_value_to_string()</span> function to convert an <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> to a string:</p>
+
+<pre class="prettyprint">
+newstr = eina_value_to_string(&amp;v);
+printf(&quot;v as string: %s\n&quot;, newstr);
+free(newstr);
+</pre></li>
+
+<li><p>Free the memory allocated by the <span style="font-family: Courier New,Courier,monospace;">eina_value_to_string()</span> function. Also, when you are done with the generic value, destroy it using the <span style="font-family: Courier New,Courier,monospace;">eina_value_flush()</span> function.</p>
+
+<pre class="prettyprint">
+eina_value_flush(&amp;v);
+</pre></li></ol>
+
+<p>In addition to integers, you can also set up a string, store it, and use it with <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>. The following code reuses the <span style="font-family: Courier New,Courier,monospace;">v</span> value to store a string, get its value, and print it:</p>
+
+<pre class="prettyprint">
+const char *s;
+eina_value_setup(&amp;v, EINA_VALUE_TYPE_STRING);
+eina_value_set(&amp;v, &quot;My string&quot;);
+eina_value_get(&amp;v, &amp;s);
+printf(&quot;v=%s (pointer: %p)\n&quot;, s, s);
+</pre>
+
+<p>You can use the <span style="font-family: Courier New,Courier,monospace;">eina_value_to_string()</span> function with an <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> setup for strings:</p>
+
+<pre class="prettyprint">
+char *newstr;
+newstr = eina_value_to_string(&amp;v);
+printf(&quot;v as string: %s (pointer: %p)\n&quot;, newstr, newstr);
+// Free the memory allocated by eina_value_to_string
+free(newstr);
+eina_value_flush(&amp;v);
+</pre>
+
+<p>Another way to convert from one <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> to another is the <span style="font-family: Courier New,Courier,monospace;">eina_value_convert()</span> function. This function puts the converted value in another <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span>. This function accepts pointers, so you need to pass an <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> pointer.</p>
+
+<pre class="prettyprint">
+Eina_Value v;
+Eina_Value otherv;
+// Set up 2 Eina_Value instances: 1 int and 1 string
+eina_value_setup(&amp;otherv, EINA_VALUE_TYPE_STRING);
+eina_value_setup(&amp;v, EINA_VALUE_TYPE_INT);
+// Convert from int to string
+eina_value_set(&amp;v, 123);
+eina_value_convert(&amp;v, &amp;otherv);
+eina_value_get(&amp;otherv, &amp;s);
+printf(&quot;otherv=%s\n&quot;, s);
+// Another way to do the same
+eina_value_set(&amp;otherv, &quot;33&quot;);
+eina_value_convert(&amp;otherv, &amp;v);
+eina_value_get(&amp;v, &amp;i);
+printf(&quot;v=%d\n&quot;, i);
+// Clean your values
+eina_value_flush(&amp;otherv);
+eina_value_flush(&amp;v);
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">Eina_Value</span> can be used to store an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, which corresponds to the <span style="font-family: Courier New,Courier,monospace;">EINA_VALUE_TYPE_LIST</span> type. To create an <span style="font-family: Courier New,Courier,monospace;">Eina_Value_List</span>, use the <span style="font-family: Courier New,Courier,monospace;">eina_value_list_setup()</span> function. This function initializes a list type generic value storage. The first parameter is the value &quot;object&quot;, and the second parameter manages the stored list members.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="data_types_guide.htm">Data Types</a></li>   
+  </ul> 
+ 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

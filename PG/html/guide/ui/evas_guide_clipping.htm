@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Clipping Objects</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Clipping Objects</h1> 
+  
+<p>There are 2 ways to conduct clipping on Evas:</p>
+
+<ul>
+<li>Limiting visibility
+<p>An Evas object can be clipped, meaning that its visible area is restricted to the clipper object. A clipper is a rectangle that defines what is visible.</p>
+
+<p>It is often necessary to show only part of an object. While it is possible to create an object that only contains the visible part, it is often easier to use a clipper.</p> 
+<p>Create a clipper by drawing a solid white rectangle (which is the default, so there is no need to call the <span style="font-family: Courier New,Courier,monospace;"> evas_object_color_set()</span> function) with a position and size to the object displayed. The following code is an example of showing the center half of an Evas object (<span style="font-family: Courier New,Courier,monospace;">my_evas_object</span>):</p>
+
+<pre class="prettyprint">
+Evas_Object *clipper = evas_object_rectangle_add(evas_canvas);
+evas_object_move(clipper, my_evas_object_x / 4, my_evas_object_y / 4);
+evas_object_resize(clipper, my_evas_object_width / 2, my_evas_object_height / 2);
+evas_object_clip_set(my_evas_object, clipper);
+evas_object_show(clipper);
+</pre>
+</li>
+
+<li>Creating a color layer
+<p>In the previous example, the solid white clipper did not change the color of the clipped object. To change the color of an object, use a clipper that uses a color other than white. Clippers with color multiply the colors of the clipped object. The following code shows how to remove all red from an object:</p>
+
+<pre class="prettyprint">
+Evas_Object *clipper = evas_object_rectangle_add(evas);
+evas_object_move(clipper, my_evas_object_x, my_evas_object_y);
+evas_object_resize(clipper, my_evas_object_width, my_evas_object_height);
+evas_object_color_set(clipper, 0, 255, 255, 255);
+evas_object_clip_set(obj, clipper);
+evas_object_show(clipper);
+</pre>
+</li>
+</ul>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="evas_guide.htm">Evas Rendering</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

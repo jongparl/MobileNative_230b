@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>ElmDemoTizen Sample Overview</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>ElmDemoTizen Sample Overview</h1> 
+  <p>The ElmDemoTizen sample application demonstrates how to implement an interactive application GUI using basic controls, such as a button, entry, and popup.</p>
+  
+  <p>The following figure illustrates some of the screens of the ElmDemoTizen.</p>
+  
+    <p class="figure">Figure: ElmDemoTizen screens</p> 
+  <p style="text-align:center;"><img alt="ElmDemoTizen screens" src="../images/elmdemotizen_sd.png" /></p>   
+ 
+<p>The application opens with the Tizen UI main screen, which displays a list of UI controls. To access UI control functionalities, click a list item.</p> 
+
+<h2>Source Files</h2>
+
+<p>You can create and view the sample application project including the source files in the IDE.</p>
+
+<table>  
+   <tbody> 
+    <tr> 
+     <th>File name</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">button.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">button.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the button widgets. You can view and test various button styles.
+	<p>The file contains code for handling the user events related to buttons.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">check.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">check.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the check button widgets. You can view and test various check button styles.
+	<p>The file contains code for handling user events related to check buttons.</p>
+	</td> 
+    </tr>
+		<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">colorselector.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">colorselector.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Colorselector screen. You can view and test the color selector.
+	<p>The file contains code for handling user events related to the color selector and images.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">ctxpopup.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">ctxpopup.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Ctxpopup. You can view and test the ctxpopup usage.
+	<p>The file contains code for handling user events related to key events and ctxpopup.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">datetime.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">datetime.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Datetime styles and picker. You can view and test changing the time and date with the picker.
+	<p>The file contains code for handling user events related to the Datetime picker.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">drawer.c</span></td> 
+     <td>This file creates and initializes a view, which displays a drawer implemented using the Panel widget. You can press the left edge of the screen to enable the drawer.
+	<p>The file contains code for handling user events related to the drawer.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">entry.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">entry.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the entry widgets. You can view and test various entry styles.
+	<p>The file contains code for setting entry style properties.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">fastscroll.c</span></td> 
+     <td>This file creates and initializes a view, which displays the fastscroll implemented using the Index widget. You can view and test the fastscroll usage.
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">gengrid.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Gengrid widgets. You can view and test various grid styles.
+	<p>The file contains code for handling user events related to grids, including changing the grid style using the menu key.</p>
+	</td> 
+    </tr>
+		<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">genlist.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Genlist widgets. You can view and test various list styles, such as group index, 1 line, and multiline.
+	</td> 
+    </tr>
+		<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">handler.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">handler.edc</span></td> 
+     <td>This file creates and initializes a view, which displays a vertical or horizontal scroller. You can select the scroller from a list.
+	<p>The file contains code for implementing scroller styles.</p>
+	</td> 
+    </tr>
+		<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">main.c</span></td> 
+     <td>This file creates and initializes a view, which displays the main widget list.
+	<p>The file contains code for constructing the Window, Conformant, Layout, and Naviframe, and event registrations related to the application life-cycle.</p>
+	</td> 
+    </tr>
+		<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">multibuttonentry.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">multibuttonentry.edc</span></td> 
+     <td>This file creates and initializes a view, which displays a Multibuttonentry widget.
+	<p>The file contains code for handling user events related to the Multibuttonentry widget, such as modifying sizes, states, and items.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">nocontents.c</span></td> 
+     <td>This file creates and initializes a view, which displays no content.
+	<p>The file contains code for creating views with no content.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">pagecontrol.c</span></td> 
+     <td>This file creates and initializes a view, which has entry points for horizontal and horizontal looping using the Pagecontrol widget.
+	<p>The file contains code for scrolling pages.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">pagecontrol_horizontal.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">pagecontrol.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Pagecontrol widget.
+	<p>The file contains code for scrolling pages.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">pagecontrol_horizontal_loop.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">pagecontrol.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Pagecontrol widget.
+	<p>The file contains code for loop-scrolling pages.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">popup.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Popup widget. You can view and test various pop-up styles.
+	<p>The file contains code for handling user events related to pop-ups, such as opening and closing a pop-up, and setting pop-up styles.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">progressbar.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">progressbar.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Progressbar widget. You can view and test progress bar usage.
+	<p>The file contains code for handling user events related to progress bars, such as timing and deleting the progress bar.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">radio.c</span><br/>
+		<span style="font-family: Courier New,Courier,monospace">radio.edc</span></td> 
+     <td>This file creates and initializes a view, which displays the Radio button widget. You can view and test various radio button styles.
+	<p>The file contains code for handling user events related to radio buttons.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">slider.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Slider widget. You can view and test various slider styles.
+	<p>The file contains code for setting slider styles.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">toolbar.c</span></td> 
+     <td>This file creates and initializes a view, which has entry points for Tabbar and Navigationbar widgets. You can view and test tab and navigation list item styles.
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">toolbar_tab.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Tabbar widget.
+	 <p>The file contains code for setting tab bar styles using the Toolbar widget.</p>
+	</td> 
+    </tr>
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">toolbar_navigationbar.c</span></td> 
+     <td>This file creates and initializes a view, which displays the Navigationbar widget.
+	 <p>The file contains code for setting navigation bar styles using the Toolbar widget.</p>
+	</td> 
+    </tr>
+   </tbody> 
+  </table> 
+
+  <h2>Where to Go Next</h2> 
+  <ul>
+   <li><a href="sample_descriptions.htm">Native Sample Applications</a></li> 
+  </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

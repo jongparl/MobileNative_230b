@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Settings</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Settings</h1> 
+  <p>The settings button on the toolbar opens the <strong>Settings</strong> dialog box, which is used to adjust the dynamic analyzer functions during operation or stop.</p>
+  <p>The <strong>Settings</strong> dialog box consists of the following tabs:</p>
+  <ul>
+	<li><strong>Features</strong> 
+	<p>The target shows a list of the currently supported profiles.</p>
+	<p>The template is a combination of several useful features and you can set up a template for each target. When you select a template, the template description is displayed on the screen.</p>
+	 <p class="figure">Figure: Features tab</p> 
+     <p style="text-align:center;"><img alt="Features tab" src="../images/features_tab.png" /></p>
+	 <p>The following templates are provided:</p>
+	 <ul>
+		<li><strong>Bottleneck</strong>: This template shows where can be the most bottleneck point while you are using your program.</li>
+		<li><strong>Memory Leaks</strong>: This template shows the memory leak detected by this tool.</li>
+		<li><strong>Process Activity</strong>: This template shows the overall activities of your concerning processes (process CPU load and memory usage).</li>
+		<li><strong>File</strong>: This template shows the operations (open, close, read, write, and lock) of the files that were accessed by your application.</li>
+		<li><strong>Thread Activity</strong>: This template measures CPU usage of threads, visualizes life-cycle of each thread and relationship between threads.</li>
+		<li><strong>Wait Status</strong>: This template shows various information that cause the process become wait status.</li>
+		<li><strong>Network</strong>: This template shows the TCP/UDP network activity of the glibc socket.</li>
+		<li><strong>OpenGL</strong>: This template shows detailed information of the openGL layer.</li>
+		<li><strong>Energy</strong>: This template informs you of power consumption of target device.</li>
+		<li><strong>Custom</strong>: This template can be configured by selecting the desired features. If you change a feature in another template, the change effects the custom template.</li>
+	 </ul>	 
+	 
+	 <p>When you click the <strong>Details</strong> button in the Features tab, the <strong>Feature details</strong> dialog appears on the screen.</p>
+	 <p class="figure">Figure: Feature details</p> 
+     <p style="text-align:center;"><img alt="Features tab" src="../images/feature_details.png" /></p>
+	 
+	 <p>The Feature detail dialog contains the following settings for feature analysis:</p>
+	 <ul>
+	    <li><strong>System</strong>: Displays the system information.</li>
+		<li><strong>Function profiling</strong>: Displays the function profile.</li>
+		<li><strong>Function sampling</strong>: Displays the function sampling.</li>
+		<li><strong>Memory allocation</strong>: Displays the heap memory allocation.</li>
+		<li><strong>File analysis</strong>: Displays the file usage analysis on the <strong>File</strong> tab and the file chart on the <strong>Timeline</strong> tab.</li>
+		<li><strong>Thread analysis</strong>: Displays information about thread and synchronization.</li>
+	
+		<li><strong>OpenGL ES analysis</strong>: Displays information about the OpenGL Layer.</li>
+		<li><strong>Screenshot</strong>: Displays application screenshots.</li>
+		<li><strong>UI Event</strong>: Displays UI events that occur on the device.</li>
+		<li><strong>Recording</strong>: Repeats a previous analysis.</li>
+	 </ul></li>
+	 
+    <li><strong>Option</strong> 
+	<p>The configuration settings define the dynamic analyzer configuration.</p>
+	<p>If you do not select the <strong>Use this as the default and do not ask again</strong> check box, the <strong>Welcome</strong> dialog box is displayed each time the dynamic analyzer starts. It shows the <strong>Features</strong> tab content and also controls, whether to display the <strong>Welcome</strong> dialog box again.</p>
+	<p>The replaying feature reproduces the information that was saved through the dynamic analyzer previously. This stored information has an end time. Select <strong>Auto-stop while replaying</strong> to terminate at the same time as previously.</p>
+	 <p class="figure">Figure: Option tab</p> 
+     <p style="text-align:center;"><img alt="Option tab" src="../images/config_tab.png" /></p></li>
+  </ul>
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_overview.htm">Dynamic Analyzer</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

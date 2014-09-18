@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+
+<head>
+ <script type="text/javascript" src="../../snippet.js"></script>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+ <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+ <title>Form Tutorial</title>
+</head>
+
+<body onload="prettyPrint()">
+
+<!--<div id="banner">Tizen</div>-->
+
+<h1>Form Tutorial</h1>
+
+<p>This tutorial demonstrates how you can create a basic application that displays a list of contacts and provides a form for displaying and editing contact information when a contact is selected from the list.</p>
+
+<p>To learn about the <a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL</a> API features, see the <a href="../../guide/ui/ui.htm">UI Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#init">Creating the Basic Application</a>
+<p>Create an Elementary application.</p></li>
+<li><a href="#list">Creating the List and Form Views</a>
+	<p>Create a list and form views.</p></li>
+
+</ul>
+
+
+<h2 id="init" name="init">Creating the Basic Application</h2>
+
+<p>To create an Elementary application with a single window:</p>
+
+<pre class="prettyprint">EAPI_MAIN int
+elm_main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;win = elm_win_util_standard_add(&quot;main&quot;, &quot;Form Tutorial&quot;);
+&nbsp;&nbsp;&nbsp;elm_win_conformant_set(win, EINA_TRUE);
+&nbsp;&nbsp;&nbsp;evas_object_show(win);
+&nbsp;&nbsp;&nbsp;evas_object_resize(win, 480, 800);
+&nbsp;&nbsp;&nbsp;elm_run();
+&nbsp;&nbsp;&nbsp;elm_shutdown();
+&nbsp;&nbsp;&nbsp;return EXIT_FAILURE;
+}
+ELM_MAIN()</pre>
+
+<h2 id="list" name="list">Creating the List and Form Views</h2>
+
+<p>In this example, a naviframe is used to switch between different views. The first view displayed is the list of contacts. When the user selects an item from the list, information about the contact is displayed in a form. Both the list and the form are added to the naviframe. The naviframe automatically handles the animations between these 2 views. The naviframe also automatically creates a back button in the top bar of the form view, launches the back animation when the user selects the back button, deletes the form view, and shows the list view again.</p>
+
+<h3>Creating the Naviframe</h3>
+
+<p>The naviframe forms the main layout of the window, so it must fill all the available space. To do this, use the <span style="font-family: Courier New,Courier,monospace">elm_win_resize_object_add()</span> function. The first parameter is the main window, and the second parameter is the naviframe object. The function tells the window that the naviframe is to be resized with the window. Also ask the naviframe to fill its parent by calling the <span style="font-family: Courier New,Courier,monospace">evas_object_resize_hint_weight_set()</span> function on the naviframe object. The naviframe is expanded along both the x and y axis. Finally, ask Evas to show the naviframe on the screen.</p>
+
+<pre class="prettyprint">nav = elm_naviframe_add(win);
+evas_object_size_hint_weight_set(nav, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+elm_win_resize_object_add(win, nav);
+evas_object_show(nav);</pre>
+
+<h3>Creating the Contact List</h3>
+
+<p>The contact list is created with the <span style="font-family: Courier New,Courier,monospace">_create_contact_list()</span> function. This function takes the parent object as its parameter, the naviframe in this case, and returns the genlist.</p>
+
+<p>First, create the genlist:</p>
+
+<pre class="prettyprint">static Evas_Object *win;
+_create_contact_list(Evas_Object *parent)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *list;
+&nbsp;&nbsp;&nbsp;int i;
+
+&nbsp;&nbsp;&nbsp;list = elm_genlist_add(parent);
+&nbsp;&nbsp;&nbsp;evas_object_show(list);
+
+&nbsp;&nbsp;&nbsp;itc = elm_genlist_item_class_new();
+&nbsp;&nbsp;&nbsp;itc-&gt;item_style = &quot;default&quot;;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.text_get = _genlist_text_get;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.content_get = _genlist_content_get;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.state_get = NULL;
+&nbsp;&nbsp;&nbsp;itc-&gt;func.del = NULL;</pre>
+
+<p><span style="font-family: Courier New,Courier,monospace">itc</span> is a static variable containing the item class. The item class contains all the functions that are called back when an item is created. In this case, create the <span style="font-family: Courier New,Courier,monospace">_genlist_text_get()</span> and <span style="font-family: Courier New,Courier,monospace">_genlist_content_get()</span> callbacks, which are called when the labels and icons of the genlist are created, respectively.</p>
+
+<p>The contact list is contained in an array of <span style="font-family: Courier New,Courier,monospace">Contacts</span>:</p>
+
+<pre class="prettyprint">static Contact contacts[] = {
+&nbsp;&nbsp;&nbsp;{&quot;Alexander Holmes&quot;, &quot;+1234567896&quot;, &quot;&quot;, &quot;alexander_holmes@tizen.org&quot;, &quot;c1.png&quot;},
+&nbsp;&nbsp;&nbsp;{&quot;Lara Alvaréz&quot;,     &quot;+9876543216&quot;, &quot;&quot;, &quot;lara_alvares@tizen.org&quot;, &quot;c2.png&quot;    },
+&nbsp;&nbsp;&nbsp;{&quot;Aksel Møller&quot;,     &quot;+1679432846&quot;, &quot;&quot;, &quot;aksel_moller@tizen.org&quot;, &quot;c3.png&quot;    },
+&nbsp;&nbsp;&nbsp;{&quot;Anir Amghar&quot;,      &quot;+1679432846&quot;, &quot;&quot;, &quot;anir_amghar@tizen.org&quot;, &quot;c4.png&quot;     },
+&nbsp;&nbsp;&nbsp;{&quot;Noémie Cordier&quot;,   &quot;+1679432846&quot;, &quot;&quot;, &quot;noemie_cordier@tizen.org&quot;, &quot;c5.png&quot;  },
+&nbsp;&nbsp;&nbsp;{&quot;Henry Thompson&quot;,   &quot;+1679432846&quot;, &quot;&quot;, &quot;henry_thompson@tizen.org&quot;, &quot;c6.png&quot;  },
+&nbsp;&nbsp;&nbsp;{&quot;Mai Phan&quot;,         &quot;+1679432846&quot;, &quot;&quot;, &quot;mai_phan@tizen.org&quot;, &quot;c7.png&quot;        },
+};</pre>
+
+<p>You can now create a genlist item for each item in the array:</p>
+
+<pre class="prettyprint">for (i = 0; i &lt; EINA_C_ARRAY_LENGTH(contacts); i++)
+{
+&nbsp;&nbsp;&nbsp;elm_genlist_item_append(list, itc,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(void *)(uintptr_t)i,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELM_GENLIST_ITEM_NONE,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_contact_selected_cb,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(void *)(uintptr_t)(i));
+}</pre>
+
+<p>Attach the <span style="font-family: Courier New,Courier,monospace">_contact_selected_cb()</span> callback to each genlist item. When the user selects an item from the list, this callback function is called with the data pointer passed as a parameter. Here, the parameter is the index of the array. Also pass the index of the contact in the array to all the item class callbacks.</p>
+
+<p>The list can now be pushed to the top of the naviframe:</p>
+
+<pre class="prettyprint">list = _create_contact_list(win);
+elm_naviframe_item_push(nav, NULL, NULL, NULL, list, NULL);</pre>
+
+<p>When the list is created, the item class functions are called.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">_genlist_text_get()</span> function is called first:</p>
+
+<pre class="prettyprint">static char *
+_genlist_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+&nbsp;&nbsp;&nbsp;int i = (int)(uintptr_t)data;
+&nbsp;&nbsp;&nbsp;printf(&quot;part %s\n&quot;, part);
+&nbsp;&nbsp;&nbsp;return strdup(contacts[i].name);
+}</pre>
+
+<p>You receive the index of the contact in the array, and return a freshly allocated string with the name of the contact.</p>
+
+<p>When the user selects an item from the list, the <span style="font-family: Courier New,Courier,monospace">_contact_selected_cb()</span> callback is called. Retrieve the index of the array passed in the data, and then create the contact form based on the index.</p>
+
+<p>Next, the <span style="font-family: Courier New,Courier,monospace">_genlist_content_get()</span> callback is called. This function can be called several times, depending on the style of the item created. In this case, with the default style for the genlist item, you have 2 different swallow parts. A swallow part is a container in the edje file of the genlist item, which can contain an Evas object. The following figure shows the layout of the different parts of a genlist item using the default style.</p>
+
+<p class="figure">Figure: Genlist item parts</p>
+<p style="text-align:center;"><img alt="Genlist item parts" src="../../images/genlist_item.png" /></p>
+
+<p>There are 2 <span style="font-family: Courier New,Courier,monospace">elm.swallow</span> parts. When the callback function for creating the icons is called, the part name is passed in the part variable. You can compare this variable to <span style="font-family: Courier New,Courier,monospace">elm.swallow.icon</span> for the first object and to <span style="font-family: Courier New,Courier,monospace">elm.swallow.end</span> for the icon at the end.</p>
+
+<h3>Creating the Icon</h3>
+
+<p>Now that you know that the callback is for the icon, you can create the icon by using an <span style="font-family: Courier New,Courier,monospace">elm_icon</span> object:</p>
+
+<pre class="prettyprint">_genlist_content_get(void *data, Evas_Object *obj, const char *part)
+{
+&nbsp;&nbsp;&nbsp;int i = (int)(uintptr_t)data;
+&nbsp;&nbsp;&nbsp;printf(&quot;part %s\n&quot;, part);
+&nbsp;&nbsp;&nbsp;if (!strcmp(part, &quot;elm.swallow.icon&quot;))
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evas_Object *ic = elm_icon_add(obj);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_image_file_set(ic, contacts[i].icon, NULL);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ic;
+&nbsp;&nbsp;&nbsp;}
+return NULL;</pre>
+
+<p>Return this freshly created Evas object.</p>
+
+<table class="note">
+ <tbody>
+  <tr>
+   <th class="note">Note</th>
+  </tr>
+  <tr>
+   <td class="note">In case of <span style="font-family: Courier New,Courier,monospace">elm.swallow.end</span>, return <span style="font-family: Courier New,Courier,monospace">NULL</span>, meaning no icon is created.</td>
+  </tr>
+ </tbody>
+</table>
+
+<p>Although creating a genlist and items with callbacks seems complicated in this example, consider a situation with a list of thousands of items. If you use a simple list, Elementary creates and displays all graphical items at once. In the case of a genlist, however, only those items that are currently displayed on the screen are created. This is done by calling the callbacks you provide in the genlist item class. When you scroll up or down, the items are created on-the-fly by calling the respective callback functions.</p>
+
+<table class="note">
+ <tbody>
+  <tr>
+   <th class="note">Note</th>
+  </tr>
+  <tr>
+   <td class="note">When the genlist is first created, Elementary must know the height of the list. Because of different styles, the elements in the list may not be of the same size. Elementary therefore creates all the items at once to determine their sizes, and then displays the scroll bar accordingly. If all your items have the same height, you can use the <span style="font-family: Courier New,Courier,monospace">elm_genlist_homogeneous_set()</span> function to set the same height to all items. In this case, Elementary does not create the complete list, since the global size is a multiple of the height of the first item. This saves CPU time.</td>
+  </tr>
+ </tbody>
+</table>
+
+<h3>Creating the Contact Form</h3>
+
+<p>The contact list is created inside the <span style="font-family: Courier New,Courier,monospace">_create_contact_form()</span> function. This function returns an <span style="font-family: Courier New,Courier,monospace">Evas_Object</span>, and takes a parent <span style="font-family: Courier New,Courier,monospace">Evas_Object</span> and a contact item as parameters. The parent is the naviframe object, and the contact item contains the information about the contact.</p>
+
+<p>To display the contact information, use boxes:</p>
+
+<p class="figure">Figure: Contact information structure</p>
+<p style="text-align:center;"><img alt="Contact information structure" src="../../images/form_contact_layout.png" /></p>
+
+<p>The first box is a vertical box:</p>
+
+<pre class="prettyprint">Evas_Object *vbox;
+
+vbox = elm_box_add(parent);
+elm_box_align_set(vbox, 0, 0);
+evas_object_show(vbox);</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">elm_box_align_set()</span> function is used to keep the box aligned to the top left corner.</p>
+
+<p>You can add the icon using the same code you used to create the icon in the genlist item. Since you want a bigger icon, ask Evas to set the minimum size of the icon object to 96x96 pixels.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">elm_box_pack_end()</span> function is used to add the icon object to the end of the box. Since the icon is the first object to be added, it is displayed at the top of the box.</p>
+
+<pre class="prettyprint">ic = elm_icon_add(vbox);
+elm_image_file_set(ic, contacts[contact_nb].icon, NULL);
+evas_object_size_hint_min_set(ic, 96, 96);
+evas_object_show(ic);
+elm_box_pack_end(vbox, ic);</pre>
+
+<p>Next, add the contact information:</p>
+
+<ul>
+ <li>Name</li>
+ <li>Mobile phone number</li>
+ <li>Street address</li>
+ <li>E-mail address</li>
+</ul>
+
+<p>For each piece of information, create a label and an edit line. The label contains the name of the piece of information, and the edit line contains the information itself. Since you want the widgets in a horizontal layout, use a horizontal box:</p>
+
+<pre class="prettyprint">hbox = elm_box_add(vbox);
+elm_box_horizontal_set(hbox, EINA_TRUE);
+elm_box_padding_set(hbox, 32, 32);
+evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, 0);
+evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, 0);
+evas_object_show(hbox);</pre>
+
+<p>To change the orientation of the box, use the <span style="font-family: Courier New,Courier,monospace">elm_box_horizontal_set()</span> function. To add space between the elements of the vertical box, set the padding to 32 pixels, and use the <span style="font-family: Courier New,Courier,monospace">evas_object_size_hint_weight_set()</span> function to ask the application not to expand the box vertically.</p>
+
+<p>Next, create the label object (<span style="font-family: Courier New,Courier,monospace">elm_label</span>). You can set its text, and you can define  not to align or expand it.</p>
+
+<pre class="prettyprint">label = elm_label_add(hbox);
+elm_object_text_set(label, form_items[i]);
+evas_object_size_hint_weight_set(label, 0, 0);
+evas_object_size_hint_align_set(label, 0, 0);
+evas_object_show(label);</pre>
+
+<p>Then create the edit line (<span style="font-family: Courier New,Courier,monospace">elm_entry</span>):</p>
+
+<pre class="prettyprint">edit = elm_entry_add(hbox);
+evas_object_size_hint_weight_set(edit, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+evas_object_size_hint_align_set(edit, EVAS_HINT_FILL, EVAS_HINT_FILL);
+evas_object_show(edit);
+if (!strcmp(form_items[i], &quot;name :&quot;))
+&nbsp;&nbsp;&nbsp;str = contacts[contact_nb].name;
+else if (!strcmp(form_items[i], &quot;mobile :&quot;))
+&nbsp;&nbsp;&nbsp;str = contacts[contact_nb].mobile;
+else if (!strcmp(form_items[i], &quot;address :&quot;))
+&nbsp;&nbsp;&nbsp;str = contacts[contact_nb].address;
+else if (!strcmp(form_items[i], &quot;email :&quot;))
+&nbsp;&nbsp;&nbsp;str = contacts[contact_nb].email;
+else
+&nbsp;&nbsp;&nbsp;str = NULL;
+
+elm_object_text_set(edit, str);</pre>
+
+<p>Finally, add the label and the edit line inside the horizontal box, and add the horizontal box to the vertical box:</p>
+
+<pre class="prettyprint">elm_box_pack_end(hbox, label);
+elm_box_pack_end(hbox, edit);
+elm_box_pack_end(vbox, hbox);</pre>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="ui_tutorial.htm">UI Tutorials</a></li>
+ <li><a href="../../guide/ui/ui.htm">UI Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__EFL__Group.html">UI EFL API Reference</a></li>
+</ul>
+
+<div id="footer">
+ <hr size="1" />
+ <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+</div>
+
+<!--start-->
+
+<script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-25976949-1']);
+ _gaq.push(['_trackPageview']);
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>
+
+<!--end-->
+
+</body>
+
+</html>

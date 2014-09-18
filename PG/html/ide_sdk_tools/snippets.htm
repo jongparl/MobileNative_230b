@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Snippets</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Snippets</h1> 
+  <p>Snippets allow you to create blocks of code that can be entered into your document by double-clicking the snippet from the <strong>Snippet Tree</strong> view. A text trigger can also be assigned to a snippet, allowing you to type the text trigger followed by a keyboard shortcut to add the snippet to your document.</p> 
+  
+  <p>To launch the <strong>Snippet Tree</strong> view, select <strong>Window &gt; Show View &gt; Snippet Tree View</strong>.</p> 
+  <p class="figure">Figure: Snippet Tree view</p> 
+  <p style="text-align:center;"><img alt="Snippet Tree view" src="../images/snippet_tree_view.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  <ol> 
+   <li><strong>Refresh snippet tree view</strong></li> 
+   <li><strong>Insert the selected snippet into the document</strong> <p>It can used by the <a href="#insert">accelerator key with trigger text</a>.</p> </li> 
+   <li><strong>Create a new snippet</strong></li> 
+   <li><strong>Edit the selected snippet</strong></li> 
+   <li><strong>Delete the selected snippet</strong></li> 
+   <li><strong>Create a new snippet package</strong> <p>A package consists of a snippet and has the same concept.</p> </li> 
+   <li><strong>Delete the selected snippet package</strong> <p>A package must be empty for it to be deleted.</p> </li> 
+   <li><strong>Packages and snippets</strong> <p>A snippet can be used without a package.</p> </li> 
+   <li><strong>Preview</strong> <p>Shows a preview of the snippet content.</p> </li> 
+  </ol> 
+  <h2 id="create" name="create">Creating a Snippet</h2> 
+  <p>Click the <strong>Create a new snippet</strong> button in the <strong>Snippet Tree</strong> view. If you want to create a package before creating a new snippet, click the <strong>Create a new snippet package</strong> button first. In the <strong>New Snippet</strong> window, fill in the following details:</p> 
+  <ul> 
+   <li>Snippet name</li> 
+   <li>Trigger text <p>Define the text to use as an accelerator key</p> </li> 
+   <li>Snippet description</li> 
+   <li>Snippet starting and closing block <p>Snippet implementation, which is inserted at the current cursor position in the editor</p> </li> 
+  </ul> 
+  <p>When defining snippets, you can use dynamic snippet variables of the default form. You can define snippets as shown below:</p> 
+  <ul> 
+   <li> <p>When you insert the following snippet, you are prompted for the values of &#39;variable name&#39; and &#39;default&#39;.</p> <pre class="prettyprint">&lt;&quot;$${variable name}&quot; default=&quot;$${default}&quot;/&gt;</pre> </li> 
+   <li> <p>When you insert the following snippet, the input box for the &#39;default&#39; value is pre-filled with &quot;string&quot;.</p> <pre class="prettyprint">&lt;&quot;$${variable name}&quot; default=&quot;$${default:string}&quot;/&gt;</pre> <p class="figure">Figure: Snippet with variable whose default value is shown in the input box</p> <p style="text-align:center;"><img alt="Snippet with variable whose default value is shown in the input box" src="../images/snippet_starting_block.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> <p style="text-align:center;"><img alt="Snippet with variable whose default value is shown in the input box" src="../images/snippet_default_dialog_box.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> </li> 
+   <li> <p>When you insert the following snippet, the input box allows you to select from the pre-suggested enumerated values.</p> <pre class="prettyprint">&lt;&quot;$${variable name}&quot; default=&quot;$${default:string|boolean|date}&quot;/&gt;</pre> <p class="figure">Figure: Snippet with variable whose pre-suggested values are available in the input box</p> <p style="text-align:center;"><img alt="Snippet with variable whose pre-suggested values are available in the input box" src="../images/snippet_presuggested_values.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> <p style="text-align:center;"><img alt="Snippet with variable whose pre-suggested values are available in the input box" src="../images/snippet_presuggested_dialog_box.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> </li> 
+  </ul> 
+  <h2 id="insert" name="insert">Inserting a Snippet</h2> 
+  <p>To insert a snippet, you can use the <strong>Snippet Tree</strong> view or the trigger text:</p> 
+  <ul> 
+   <li>In the <strong>Snippet Tree</strong> view, select the snippet and click the <strong>Insert the selected snippet into the document</strong> button.</li> 
+   <li>In your code, type the trigger text and press the accelerator key on the keyboard (<strong>Ctrl + Shift + I</strong>).</li> 
+  </ul> 
+  <p>If you are inserting a snippet that uses variables, you are prompted for the needed values.</p> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="native_ide.htm">Native IDE</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

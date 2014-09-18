@@ -1,0 +1,573 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+  <link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Native Application Programming - Getting Started</title>
+</head>
+
+<body onload="prettyPrint()">
+
+
+<h1>Native Application API</h1>
+
+<p>The following figure and tables illustrate the native API layout and describe the API functionality.</p>
+
+<p class="figure">Figure: Native API subsystem</p> 
+<p style="text-align:center;"> <img alt="API layout" src="../images/api_layout.png"/></p>
+
+<table border="1" style="width: 100%"> 
+	  <caption>Table: API modules</caption>
+	<tbody> 
+		<tr> 
+			<th>Category</th>
+			<th>Description</th>					
+			<th>API module</th> 
+			<th>Functionality</th> 
+		</tr>	
+		<tr>
+			<td rowspan="10"><span>Application Framework</span></td>
+			<td rowspan="10"><span>The Application Framework API contains submodules for application development, including application life-cycle management, usage of the functionality exported by other applications through App Control, and access to the application registry and resources.
+			<p>For more information on the Application Framework features, see the <a href="../guide/app/application.htm">Application Framework Programming Guide</a>.</p></span></td>
+			<td><span>Application</span></td>
+			<td><span>Managing the main event loop, application state change events, and basic system events, getting information about the application, and launching other applications.
+			</span>
+           </td>
+        </tr>
+        <tr>
+			<td><span>Application Manager</span></td>
+			<td>Getting information about the current application and other installed or running applications.</td>
+        </tr>
+		 <tr>
+			<td><span>Badge</span></td>
+			<td>Creating and removing badge for the application icon. Setting and getting the badge value and visibility.</td>
+        </tr>
+        <tr>
+			<td><span>Bundle</span></td>
+			<td>A string-based Dictionary ADT. Creating and managing a dictionary (an ordered or unordered list of key-element pairs, where keys are used to locate elements in the list).</td>
+        </tr>    
+        <tr>
+			<td><span>Data Control</span></td>
+			<td>Exchanging specific data between applications.</td>
+        </tr> 
+        <tr>
+			<td><span>Message Port</span></td>
+			<td>Sending and receiving messages between applications.</td>
+        </tr>   
+        <tr>
+			<td><span>Notification</span></td>
+			<td>Creating, inserting, and updating notifications.</td>
+        </tr>    
+        <tr>
+			<td><span>Package Manager</span></td>
+			<td>Managing packages (for example, installing, uninstalling, and updating). Storing and retrieving information related to packages installed on the device. </td>
+        </tr> 
+       <tr>
+			<td><span>Service Application</span></td>
+			<td>Handling Tizen service application state changes or system events. Starting and exiting the main loop event of the service application. Equivalent of the Application module, but for service applications.</td>
+        </tr>   
+        <tr>
+			<td><span>Shortcut</span></td>
+			<td>Adding shortcuts to and removing them from the Home screen.</td>
+        </tr> 
+		<tr>
+			<td rowspan="3"><span>Base</span></td>
+			<td rowspan="3"><span><p>The Base API contains submodules for getting the latest error code, internationalization support, and various open source libraries.</p>
+			<p>For more information on the Base features, see the <a href="../guide/base/base.htm">Base Programming Guide</a>.</p></span></td>
+			<td>Common Error Code</td>
+			<td>Getting and setting the value of the latest error code.</td>
+        </tr>
+        <tr>
+			<td><span>Utils</span></td>
+			<td>Internationalization support (i18n). Flexibly generating number or date format patterns and formatting and parsing dates and numbers for any locale.</td>
+        </tr>
+		<tr>
+			<td><span>Open source libraries</span></td>
+			<td>Parsing XML documents (libXML2), processing files in the ZIP format (Minizip), a lightweight SQL database (SQLite), a client-side URL transfer (Curl), Standard Template Library (C++ Standard Library), programming facilities (Glib), shared-memory multiprocessing programming (OpenMP), OAuth (libOAuth), and standard C library (Eglibc).</td>
+        </tr>  		
+		<tr>
+			<td rowspan="3"><span>Content</span></td>
+			<td rowspan="3"><span>The Content category contains APIs for managing the most common media data types, such as image, audio, and video on the device. It also provides operations to search content and content information stored on the device, to download content from servers through a HTTP connection, and to access Exif information from an image file.
+			<p>For more information on the Content features, see the <a href="../guide/content/content.htm">Content Programming Guide</a>.</p></span></td>
+			<td>Download</td>
+			<td>Creating and managing download requests. Downloading content from servers through an HTTP access.</td>
+        </tr>
+        <tr>
+			<td><span>MIME Type</span></td>
+			<td>Mapping MIME types to file extensions and the other way around.</td>
+        </tr>  
+        <tr>
+			<td><span>Media Content</span></td>
+			<td>Connecting to and disconnecting from the media content service. Adding, updating, and removing media file information in the database. Managing common media data types, such as image, audio, and video, on the device. Searching content and content information stored on the device. Accessing Exif information from image files.</td>
+        </tr>                  
+		<tr>
+			<td rowspan="1"><span>Context</span></td>
+			<td rowspan="1"><span>The Context category contains APIs to control information of the user and device, including motions, activities, and health-related information. <p>For more information on the Context features, see the <a href="../guide/context/context.htm">Context Programming Guide</a>.</p></span></td>
+			<td><span>Context Manager</span></td>
+			<td><span>Detecting contextual information of the user and device.</span></td>
+        </tr>
+		<tr>
+			<td rowspan="1"><span>Location</span></td>
+			<td rowspan="1"><span><p>The Location category contains APIs and interfaces for location-related information and services.</p>
+			<p>For more information on the Location features, see the <a href="../guide/location/location.htm">Location Programming Guide</a>.</p></span></td>
+			<td><span>Location Manager</span></td>
+			<td><span>Obtaining information related to the geographical location. Receiving notifications about position changes, velocity, and crossing boundary &quot;fences&quot; detected by the device. Converting the location into a physical address.</span></td>
+        </tr>
+		<tr>
+         <td rowspan="3"><span>Messaging</span></td>
+		 <td rowspan="3"><span>The Messaging category contains APIs for accessing the messaging capabilities of the device.
+		<p>For more information on the Messaging features, see the <a href="../guide/messaging/messaging.htm">Messaging Programming Guide</a>.</p>
+
+</span></td>
+         <td><span>Email</span></td>
+         <td><span>Composing and sending email messages.</span></td>
+        </tr>
+        <tr>
+         <td><span>Messages</span></td>
+         <td>Composing and sending SMS and MMS messages.</td>
+        </tr>            
+        <tr>
+         <td><span>Push</span></td>
+         <td>Receiving push notifications from the push server.</td>
+        </tr>
+   				
+				<tr>
+         <td rowspan="12"><span>Multimedia</span></td>
+		 <td rowspan="12"><span>The Multimedia category contains APIs and interfaces for integrating an application with audio, video, and image processing functions easily.
+<p>For more information on the Multimedia features, see the <a href="../guide/media/media.htm">Multimedia Programming Guide</a>.</p></span></td>
+         <td><span>Audio I/O</span></td>
+         <td><span>Controlling audio devices. Accessing the HW layer of the sound card using a professional multichannel audio interface. Getting raw audio data buffers (PCM format).</span></td>
+        </tr>
+        <tr>
+         <td><span>Camera</span></td>
+         <td>Accessing camera preview, focusing, and capturing images.</td>
+        </tr>      	     
+        <tr>
+         <td><span>Image Util</span></td>
+         <td>Encoding and decoding JPEG images.</td>
+        </tr>
+		<tr>
+         <td><span>Metadata Extractor</span></td>
+         <td>Extracting metadata from an input media file.</td>
+        </tr>
+        <tr>
+         <td><span>Player</span></td>
+         <td>Playing media and controlling playback attributes.</td>
+        </tr>
+		<tr>
+         <td><span>Radio</span></td>
+         <td>Starting, stopping, and getting the radio state. Seeking the radio frequency. Scanning radio signals.</td>
+        </tr>		
+        <tr>
+         <td><span>Recorder</span></td>
+         <td>Recording audio and video.</td>
+        </tr>        
+		<tr>
+         <td><span>Sound Manager</span></td>
+         <td>Getting and setting sound parameters, such as volume and route policy. Managing sound output.</td>
+        </tr>
+		<tr>
+         <td><span>Tone Player</span></td>
+         <td>Playing tones.</td>
+        </tr>		
+		<tr>
+         <td><span>Video Utility</span></td>
+         <td>Transcoding media files.</td>
+        </tr>
+		<tr>		
+         <td><span>WAV Player</span></td>
+         <td>Playing the Waveform Audio File Format.</td>
+        </tr>
+		<tr>		
+         <td><span>Open Source Library</span></td>
+         <td>Enabling 3D positional audio (OpenAL).</td>
+        </tr>  		
+        <tr>
+         <td rowspan="3"><span>Network</span></td>
+		 <td rowspan="3"><span>The Network category contains APIs for  data communication. It is responsible for managing connections and accounts, and maintaining IP addresses and connections to the system through Bluetooth, Hypertext Transfer Protocol (HTTP), Near Field Communication (NFC), Sockets, and Wi-Fi. It also provides methods for retrieving information about a specific host from the Internet Domain Name System (DNS).
+		 <p>For more information on the Network features, see the <a href="../guide/net/network.htm">Network Programming Guide</a>.</p>
+
+</span></td>
+         <td><span>Bluetooth</span></td>
+         <td><span>Managing Bluetooth devices. Launching the Bluetooth adapter. Discovering, connecting, and bonding with other Bluetooth devices. </span></td>
+        </tr>
+        <tr>
+         <td><span>Connection</span></td>
+         <td>Managing modem data connections. Getting connection data, such as IP address, proxy information, gateway information, and connection statistics.</td>
+        </tr>
+         <tr>
+         <td><span>Wifi</span></td>
+         <td>Managing Wi-Fi connectivity and monitoring the Wi-Fi state.</td>
+        </tr>       
+        <tr>
+         <td rowspan="2"><span>Security</span></td>
+		 <td rowspan="2"><span>The Security category contains APIs for basic cryptographic functions and various utility functions (openssl open source library) and providing a secure password-protected repository for keys, certificates, and sensitive data.
+		<p>For more information on the Security features, see the <a href="../guide/security/security.htm">Security Programming Guide</a>.</p></span></td>
+         <td><span>Key Manager</span></td>
+         <td><span>Providing a secure repository for keys, certificates, and sensitive data.</span></td>
+        </tr>
+		<tr>
+         <td><span>Open Source Library</span></td>
+         <td><span>Providing APIs for basic cryptographic functions and various utility functions (OpenSSL).</span></td>
+        </tr>
+				<tr>
+         <td rowspan="3"><span>Social</span></td>
+		 <td rowspan="3"><span>The Social category contains APIs to manage personal data, such as contacts and calendar on a device.
+		 <p>For more information on the Social features, see the <a href="../guide/social/social.htm">Social Programming Guide</a>.</p></span></td>
+         <td><span>Account Manager</span></td>
+         <td><span>Managing account information. Providing the CRUD (Create, Read, Update, and Delete) account management functionality.</span></td>
+        </tr>
+        <tr>
+         <td><span>Calendar</span></td>
+         <td>Managing calendars, including events, and tasks. Storing and querying calendar information.</td>
+        </tr>
+        <tr>
+         <td><span>Contacts</span></td>
+         <td>Managing phone contacts.</td>
+        </tr>
+				<tr>
+         <td rowspan="7"><span>System</span></td>
+		 <td rowspan="7"><span>The System category contains APIs for system management.
+		 <p>For more information on the System features, see the <a href="../guide/system/system.htm">System Programming Guide</a>.</p> 
+
+</span></td>
+         <td><span>Device</span></td>
+         <td><span>Controlling devices and monitoring their status (for example, battery, display, haptic, LED, and power).</span></td>
+        </tr>
+        <tr>
+         <td><span>Runtime Information</span></td>
+         <td>Obtaining runtime information (for example, audio jack connection and GPS status).</td>
+        </tr>
+        <tr>
+         <td><span>Sensor</span></td>
+         <td>Starting and stopping sensors and receiving sensor data.</td>
+        </tr>   
+        <tr>
+         <td><span>Storage</span></td>
+         <td>Obtaining storage information, such as root directory, storage type (internal or external), storage status, and total available space size.</td>
+        </tr> 
+        <tr>
+         <td><span>System Information</span></td>
+         <td>Obtaining information about the device, such as the platform and API version, device model, supported device features, and screen dimensions.</td>
+        </tr>      
+        <tr>
+         <td><span>System Settings</span></td>
+         <td>Managing system settings, such as lock screen settings.</td>
+        </tr>                              	     
+        <tr>
+         <td><span>Dlog</span></td>
+         <td>Sending log output and filtering log messages.</td>
+        </tr>
+        <tr>
+         <td rowspan="1"><span>Telephony</span></td>
+		 <td rowspan="1"><span>The Telephony category contains APIs to enable an application to access the telephony capabilities of the device, such as the call facility (call information and status), the network query services, and the SIM module.
+		 <p>For more information on the Telephony features, see the <a href="../guide/telephony/telephony.htm">Telephony Programming Guide</a>.</p></span></td>
+         <td><span>Telephony Information</span></td>
+         <td>Obtaining call, network, and SIM information.</td>
+        </tr>   
+        <tr>
+         <td rowspan="4"><span>UI</span></td>
+		 <td rowspan="4"><span>The UI category contains APIs for 2D and 3D graphics, text, and imaging capabilities.
+		 For more information on the UI features, see the <a href="../guide/ui/ui.htm">UI Programming Guide</a>.</span></td>
+         <td><span>EFL</span></td>
+         <td><span>EFL is a collection of libraries that are independent or may build on top of each-other to provide useful features that complement the existing environment.</span></td>
+        </tr>
+        <tr>
+         <td><span>EFL UTIL</span></td>
+         <td>Getting and setting the priority order of the notification windows.</td>
+        </tr>
+		<tr>
+         <td><span>TBM Surface</span></td>
+         <td>Managing the TBM Surface.</td>
+        </tr>
+		<tr>
+         <td><span>Open Source Libraries</span></td>
+         <td>Providing 2D and 3D graphics, text, and imaging capabilities. Containing comprehensive features for rendering geometric primitives, text, font, color, and images in a flexible framework for developing rich user interfaces, sophisticated drawing applications, and image editors (Cairo, Fontconfig, Freetype, and OpenGL ES 1.1/2.0).</td>
+        </tr>
+				<tr>
+         <td rowspan="2"><span>Web</span></td>
+		 <td rowspan="2"><span>The Web category contains APIs and interfaces for browsing, tracking browsing history, downloading Web content, and manipulating JSON documents (json-glib).
+		 <p>For more information on the Web features, see the <a href="../guide/web/web.htm">Web Programming Guide</a>.</p></span></td>
+         <td><span>Web View</span></td>
+         <td><span>Displaying and controlling Web pages. Browsing, tracking browsing history and downloading Web content.</span></td>
+        </tr>
+				 <tr>
+         <td><span>Open Source Library</span></td>
+         <td><span>Manipulating JSON documents (json-glib).</span></td>
+        </tr>
+		    </tbody> 
+		  </table>
+
+<h2 id="open" name="open">Open Source Libraries</h2>
+
+<p>The following table lists and describes the open source modules available in the native API.</p>
+
+<table border="1" style="width: 100%"> 
+	  <caption>Table: Open source libraries</caption>
+	    <col>
+      <col>
+			<tbody> 
+				<tr> 
+					<th>Library</th>
+					<th>Version</th> 
+					<th>Description</th> 
+				</tr>
+				<tr> 
+					<td>EFL</td>
+					<td>1.7</td> 
+					<td>Fundamental set of libraries underlying the native API.</td> 
+				</tr>
+				<tr> 
+					<td>libEXIF</td>
+					<td>0.6.21</td> 
+					<td>Image file format used by camera and scanner devices (extends existing formats such as JPEG and TIFF). Many Tizen devices have a camera and emit this format, libexif allows decoding.</td> 
+				</tr>
+				<tr> 
+					<td>Json-glib</td>
+					<td>0.10.4</td> 
+					<td>Library for serializing and deserializing Javascript Object Notation (JSON) using Glib and Gobject data types.</td> 
+				</tr>
+				<tr> 
+					<td>Eglibc</td>
+					<td>2.13</td> 
+					<td>Standard C library, must be available for applications written in the ISO C language.</td> 
+				</tr>
+				<tr> 
+					<td>Glib</td>
+					<td>2.32.3</td> 
+					<td>Application building blocks, which add data types and other programming facilities for C-language programs.</td> 
+				</tr>
+				<tr> 
+					<td>Curl</td>
+					<td>7.28.1_17</td> 
+					<td>A client-side URL transfer library supporting HTTP, HTTPS, FTP, file URIs, and many other protocols. Allows applications to perform URL-related activities without a Web browser.</td> 
+				</tr>
+				<tr> 
+					<td>libXML2</td>
+					<td>2.7.8</td> 
+					<td>Library for parsing XML documents.</td> 
+				</tr>
+				<tr> 
+					<td>Fontconfig (TBD)</td>
+					<td>2.9.0</td> 
+					<td>Font-handling library to let applications find a specific font or a closely matching font.</td> 
+				</tr>
+				<tr> 
+					<td>Freetype (TBD)</td>
+					<td>2.4.9</td> 
+					<td>Text-rendering library.</td> 
+				</tr>
+				<tr> 
+					<td>Minizip</td>
+					<td>1.2.5</td> 
+					<td>Lightweight library building on top of zlib for processing files in the ZIP format.</td> 
+				</tr>
+				<tr> 
+					<td>Sqlite</td>
+					<td>3.7.13</td> 
+					<td>Implements a lightweight SQL database within a library, widely used for embedded client-local storage.</td> 
+				</tr>
+				<tr> 
+					<td>Cairo (TBD)</td>
+					<td>1.12.14</td> 
+					<td>Library for drawing 2D vector graphics.</td> 
+				</tr>
+				<tr> 
+					<td>OpenSSL</td>
+					<td>1.0.1g_1</td> 
+					<td>Library implementation of secure sockets layer (SSL) and transport layer security (TLS) to enable secure internet communication.</td> 
+				</tr>
+				<tr> 
+					<td>OpenAL</td>
+					<td>1.1</td> 
+					<td>Audio API designed for efficient rendering of 3D positional audio.</td> 
+				</tr>
+				<tr> 
+					<td>OpenMP</td>
+					<td>3</td> 
+					<td>API for shared-memory multiprocessing programming (C and C++), useful for complex tasks on multi-core processors.</td> 
+				</tr>
+				<tr> 
+					<td>OpenGL ES</td>
+					<td>1.1./2.0</td> 
+					<td>Library for rendering 3D and 2D graphics in embedded systems.</td> 
+				</tr>
+				<tr> 
+					<td>C++ Standard Library</td>
+					<td>4.5.3</td> 
+					<td>Standard C library, needs to be available for programs written in ISO C++ language
+					<p>C++ Standard Library conformance: ISO/IEC 14882-2003 and ISO/IEC TR 19768:2007(C++ TR1)</p></td> 
+				</tr>
+				<tr> 
+					<td>libOAuth</td>
+					<td>1.0</td> 
+					<td>Implementing the OAuth Core RFC 5849  protocol (OAuth 1.0).</td> 
+				</tr>				
+		    </tbody> 
+		  </table>
+
+<h2 id="codec" name="codec">Supported Codecs</h2>
+
+<p>The following table lists the codecs supported by all Tizen mobile devices.</p>
+
+<table border="1" style="width: 100%"> 
+	  <caption>Table: Supported codecs</caption>
+	    <col>
+      <col>
+			<tbody> 
+				<tr> 
+					<th>Type</th>
+					<th>Codec</th> 
+				</tr>
+				<tr> 
+					<td rowspan="8">Audio (decoder)</td>
+					<td>AAC LC</td> 
+				</tr>
+				<tr> 
+					<td>AAC+</td> 
+				</tr>
+				<tr> 
+					<td>Enhanced AAC+</td> 
+				</tr>
+				<tr> 
+					<td>AMR-NB</td> 
+				</tr>
+				<tr> 
+					<td>AMR-WB</td> 
+				</tr>
+				<tr> 
+					<td>MP3</td> 
+				</tr>
+				<tr> 
+					<td>Vorbis</td> 
+				</tr>
+				<tr> 
+					<td>PCM (raw PCM)</td> 
+				</tr>
+				<tr> 
+					<td rowspan="3">Audio (encoder)</td>
+					<td>AAC LC</td> 
+				</tr>
+				<tr> 
+					<td>AMR-NB</td> 
+				</tr>
+				<tr> 
+					<td>PCM (raw PCM)</td> 
+				</tr>
+				<tr> 
+					<td rowspan="3">Video (decoder)</td>
+					<td>H.263</td> 
+				</tr>
+				<tr> 
+					<td>H.264 Baseline Profile</td> 
+				</tr>
+				<tr> 
+					<td>MPEG-4 part 2</td> 
+				</tr>
+				<tr> 
+					<td rowspan="2">Video (encoder)</td>
+					<td>H.263</td> 
+				</tr>
+				<tr> 
+					<td>MPEG-4 part 2</td> 
+				</tr>
+				<tr> 
+					<td rowspan="4">Image (decoder)</td>
+					<td>BMP</td> 
+				</tr>
+				<tr> 
+					<td>GIF</td> 
+				</tr>
+				<tr> 
+					<td>JPEG</td> 
+				</tr>
+				<tr> 
+					<td>PNG</td> 
+				</tr>
+				<tr> 
+					<td rowspan="3">Image (encoder)</td>
+					<td>BMP</td> 
+				</tr>
+				<tr> 
+					<td>JPEG</td> 
+				</tr>
+				<tr> 
+					<td>PNG</td> 
+				</tr>
+			</tbody> 
+</table>
+
+<p>The following table lists the file types and container formats supported by all Tizen mobile devices.</p>
+
+<table border="1" style="width: 100%"> 
+	  <caption>Table: Supported codecs</caption>
+	    <col>
+      <col>
+			<tbody> 
+				<tr> 
+					<th>Type</th>
+					<th>File type (container format)</th> 
+				</tr>
+				<tr> 
+					<td rowspan="5">Audio</td>
+					<td>MPEG-4 (<span style="font-family: Courier New,Courier,monospace;">.mp4</span>, <span style="font-family: Courier New,Courier,monospace;">.m4a</span>)</td> 
+				</tr>
+				<tr> 
+					<td>AMR (<span style="font-family: Courier New,Courier,monospace;">.amr</span>)</td> 
+				</tr>
+				<tr> 
+					<td>MP3 (<span style="font-family: Courier New,Courier,monospace;">.mp3</span>)</td> 
+				</tr>
+				<tr> 
+					<td>Ogg (<span style="font-family: Courier New,Courier,monospace;">.ogg</span>)</td> 
+				</tr>
+				<tr> 
+					<td>WAV (<span style="font-family: Courier New,Courier,monospace;">.wav</span>)</td> 
+				</tr>
+				<tr> 
+					<td rowspan="2">Video</td>
+					<td>3GPP (<span style="font-family: Courier New,Courier,monospace;">.3gp</span>)</td> 
+				</tr>
+				<tr> 
+					<td>MPEG-4 (<span style="font-family: Courier New,Courier,monospace;">.mp4</span>)</td> 
+				</tr>
+				<tr> 
+					<td rowspan="4">Image</td>
+					<td>BMP (<span style="font-family: Courier New,Courier,monospace;">.bmp</span>)</td> 
+				</tr>
+				<tr> 
+					<td>GIF (<span style="font-family: Courier New,Courier,monospace;">.gif</span>)</td> 
+				</tr>
+				<tr> 
+					<td>JPEG (<span style="font-family: Courier New,Courier,monospace;">.jpg</span>)</td> 
+				</tr>
+				<tr> 
+					<td>PNG (<span style="font-family: Courier New,Courier,monospace;">.png</span>)</td> 
+				</tr>
+		</tbody> 
+</table>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

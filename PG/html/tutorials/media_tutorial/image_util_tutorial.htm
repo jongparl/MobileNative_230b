@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <script type="text/javascript" src="../../snippet.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+  <title>Image Util Tutorial</title>
+ </head>
+ <body onload="prettyPrint()">
+  <!--<div id="banner">
+Tizen</div>-->
+<h1>Image Util Tutorial</h1>
+
+<p>This tutorial demonstrates how you can convert, resize, rotate, and crop an image, and decode and encode a JPEG image.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;image_util.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__IMAGE__UTIL__MODULE.html">Image Util API</a>.
+
+<p>To learn about the Image Util API features, see the <a href="../../guide/media/image_util.htm">Image Util Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#colorspace">Converting the Color Space</a>
+  <p>Convert an image from one color space to another.</p>
+ </li>
+ <li><a href="#resize">Resizing an Image</a>
+  <p>Resize an image.</p>
+ </li>
+ <li><a href="#rotate">Rotating an Image</a>
+  <p>Rotate an image.</p>
+ </li>
+ <li><a href="#crop">Cropping an Image</a>
+  <p>Crop an image.</p>
+ </li>
+ <li><a href="#decode">Decoding from a File or Memory</a>
+  <p>Decode a JPEG image from a file or memory.</p>
+ </li>
+ <li><a href="#encode">Encoding to a File or Memory</a>
+  <p>Encode raw image data to a JPEG file or to memory in JPEG format.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Include the necessary header file, and declare the required variables:</p>
+
+<pre class="prettyprint">#include &lt;image_util.h&gt;
+#define SAMPLE_FILENAME &quot;/tmp/sample_image.jpg&quot;
+#define OUTPUT_ROTATED_JPEG &quot;/tmp/rotated_image.jpg&quot;
+
+static const image_util_colorspace_e colorspace = IMAGE_UTIL_COLORSPACE_RGB888;
+static unsigned char *img_rotate_target = NULL;
+static unsigned char *img_source = NULL;
+static int ret = 0;
+static int width = 0, height = 0;
+static unsigned int size_decode = 0;</pre>
+
+<p>To ensure that a function has been properly executed, always check its return value. If the return value is different from <span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ERROR_NONE</span>, an error has occurred.</p>
+
+<p>The Image Util API supports the following color spaces defined in the <span style="font-family: Courier New,Courier,monospace">image_util_colorspace_e</span>:</p>
+
+<pre class="prettyprint">IMAGE_UTIL_COLORSPACE_YV12,       // YV12 - YCrCb planar format
+IMAGE_UTIL_COLORSPACE_YUV422,     // YUV422 - planar 
+IMAGE_UTIL_COLORSPACE_I420,       // YUV420 - planar 
+IMAGE_UTIL_COLORSPACE_NV12,       // NV12- planar 
+IMAGE_UTIL_COLORSPACE_UYVY,       // UYVY - packed 
+IMAGE_UTIL_COLORSPACE_YUYV,       // YUYV - packed 
+IMAGE_UTIL_COLORSPACE_RGB565,     // RGB565, high-byte is Blue
+IMAGE_UTIL_COLORSPACE_RGB888,     // RGB888, high-byte is Blue 
+IMAGE_UTIL_COLORSPACE_ARGB8888,   // ARGB8888, high-byte is Blue 
+IMAGE_UTIL_COLORSPACE_BGRA8888,   // BGRA8888, high-byte is Alpha 
+IMAGE_UTIL_COLORSPACE_RGBA8888,   // RGBA8888, high-byte is Alpha 
+IMAGE_UTIL_COLORSPACE_BGRX8888,   // BGRX8888, high-byte is X 
+IMAGE_UTIL_COLORSPACE_NV21,       // NV12 - planar 
+IMAGE_UTIL_COLORSPACE_NV16,       // NV16 - planar 
+IMAGE_UTIL_COLORSPACE_NV61,       // NV61 - planar</pre>
+
+<p>To find out which color spaces are encoded, use the <span style="font-family: Courier New,Courier,monospace">image_util_foreach_supported_jpeg_colorspace()</span> function:</p>
+
+<pre class="prettyprint">int image_util_foreach_supported_jpeg_colorspace(image_util_supported_jpeg_colorspace_cb callback, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void * user_data);</pre>
+
+<p>For more information about the YUV color space, see <a href="http://www.fourcc.org/yuv.php" target="blank">http://www.fourcc.org/yuv.php</a>.</p>
+
+<h2 id="colorspace" name="colorspace">Converting the Color Space</h2>
+
+<p>To convert an image from one color space to another:</p>
+<ol><li>Create a buffer for writing the raw image data.</p>
+
+<p>To calculate the buffer size, use the <span style="font-family: Courier New,Courier,monospace">image_util_calculate_buffer_size()</span> function:</p>
+
+<pre class="prettyprint">ret = image_util_calculate_buffer_size(width, height, colorspace, &amp;size_decode);
+</pre></li>
+<li>
+<p>To convert the image, use the <span style="font-family: Courier New,Courier,monospace">image_util_convert_colorspace()</span> function.</p>
+
+<p>You must manually allocate the memory for the target image buffer based on the calculated buffer size. To allocate the memory, use the <span style="font-family: Courier New,Courier,monospace">malloc()</span> function. After you have converted the image, free the allocated memory by using the <span style="font-family: Courier New,Courier,monospace">free()</span> function.</p>
+
+<pre class="prettyprint">img_target = malloc(size_decode);
+ret = image_util_convert_colorspace(img_target, dest_colorspace, img_source, width, height, colorspace);</pre>
+
+<table class="note"> 
+ <tbody> 
+  <tr> 
+   <th class="note">Note</th> 
+  </tr> 
+  <tr> 
+   <td class="note"><ul><li>The function only converts the color space. It does not change the image width or height.</li>
+   <li>Because of the restrictions of the image processing library, not all color space combinations are supported for conversion. For example, the NV12 format is commonly used in hardware chips, but it is not supported by the library.</li></ul></td>
+  </tr> 
+ </tbody> 
+</table></li></ol>
+
+
+<h2 id="resize" name="resize">Resizing an Image</h2>
+
+<p>To resize an image:</p>
+
+<ol><li><p>Create a buffer for writing the raw image data.</p>
+
+<p>To calculate the buffer size, use the <span style="font-family: Courier New,Courier,monospace">image_util_calculate_buffer_size()</span> function:</p>
+
+
+<pre class="prettyprint">ret = image_util_calculate_buffer_size(width, height, colorspace, &amp;size_decode);
+</pre></li>
+
+<li>Resize the image with the <span style="font-family: Courier New,Courier,monospace">image_util_resize()</span> function.</p>
+
+<p>You must manually allocate the memory for the target image buffer based on the calculated buffer size.</p>
+
+<pre class="prettyprint">int dest_width = width/2;
+int dest_height = height/2;
+ret = image_util_resize (img_resized_target, &amp;dest_width, &amp;dest_height, img_source, width, height, colorspace);</pre>
+
+
+<p>Since the source format is the same as the target format, you can use <span style="font-family: Courier New,Courier,monospace">src_format</span>.</p>
+
+<p>If the color space is YUV, the target image width and height must be multiples of 8. This restriction does not apply to the RGB images.</p></li></ol>
+
+
+<h2 id="rotate" name="rotate">Rotating an Image</h2>
+
+<p>To rotate an image:</p>
+
+<ol><li><p>Create a buffer for writing the raw image data.</p>
+
+<p>To calculate the buffer size, use the <span style="font-family: Courier New,Courier,monospace">image_util_calculate_buffer_size()</span> function:</p>
+
+
+<pre class="prettyprint">ret = image_util_calculate_buffer_size(width, height, colorspace, &amp;size_decode);
+</pre></li>
+
+<li>Rotate the image with the <span style="font-family: Courier New,Courier,monospace">image_util_rotate()</span> function.</p>
+
+<p>You must manually allocate the memory for the target image buffer based on the calculated buffer size.</p>
+
+<pre class="prettyprint">img_rotate_target = malloc(size_decode);
+int dest_width = 0, dest_height = 0;
+image_util_rotation_e dest_rotation = IMAGE_UTIL_ROTATION_90;
+ret = image_util_rotate(img_rotate_target, &amp;dest_width, &amp;dest_height, dest_rotation, img_source, width, height, colorspace);</pre>
+
+<p>The possible values for the <span style="font-family: Courier New,Courier,monospace">dest_rotation</span> parameter are:</p>
+
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_NONE</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_90</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_180</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_270</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_FLIP_HORZ</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">IMAGE_UTIL_ROTATION_FLIP_VERT</span></li>
+</ul>
+
+<p>Since the source format is the same as the target format, you can use <span style="font-family: Courier New,Courier,monospace">src_format</span>.</p>
+
+<p>If the color space is YUV, the target image width and height must be multiples of 8. This restriction does not apply to the RGB images.</p>
+</li></ol>
+
+<h2 id="crop" name="crop">Cropping an Image</h2>
+
+<p>To crop an image:</p>
+
+<ol><li><p>Create a buffer for writing the raw image data.</p>
+
+<p>To calculate the buffer size, use the <span style="font-family: Courier New,Courier,monospace">image_util_calculate_buffer_size()</span> function.</p>
+
+<p>You must manually allocate the memory for the target image buffer based on the calculated buffer size.</p>
+
+<pre class="prettyprint">ret = image_util_calculate_buffer_size(width, height, colorspace, &amp;size_decode);</pre></li>
+
+<li>Crop the image with the <span style="font-family: Courier New,Courier,monospace">image_util_crop()</span> function:</p>
+
+<pre class="prettyprint">ret = image_util_crop(dest, x, y, width, height, src, src_width, src_height, colorspace);</pre>
+
+<table class="note"> 
+ <tbody> 
+  <tr> 
+   <th class="note">Note</th> 
+  </tr> 
+  <tr> 
+   <td class="note">Because of a YUV restriction, and because the crop start position might otherwise be set arbitrarily, the cropped image width and height must be even.</td>
+  </tr> 
+ </tbody> 
+</table></li></ol>
+
+
+<h2 id="decode" name="decode">Decoding from a File or Memory</h2>
+
+<p>To decode a JPEG image:</p>
+
+<ul><li>To decode from a file, use the <span style="font-family: Courier New,Courier,monospace">image_util_decode_jpeg()</span> function.</p>
+
+<p>You must manually allocate the memory for the image buffer based on a calculated buffer size.</p>
+
+<pre class="prettyprint">ret = image_util_decode_jpeg(SAMPLE_FILENAME, colorspace, &amp;img_source, &amp;width, &amp;height, &amp;size_decode);</pre></li>
+
+<li><p>To decode from memory, use the <span style="font-family: Courier New,Courier,monospace">image_util_decode_jpeg_from_memory()</span> function.</p>
+
+<p>You must manually allocate the memory for the image buffer based on a calculated buffer size.</p>
+
+<pre class="prettyprint">ret = image_util_decode_jpeg_from_memory(jpeg_buffer, jpeg_size, colorspace, image_buffer, width, height, size);</pre></li></ul>
+
+
+<h2 id="encode" name="encode">Encoding to a File or Memory</h2>
+
+<p>To encode a rotated or flipped image:</p>
+
+<ul><li>To encode to a JPEG file, use the <span style="font-family: Courier New,Courier,monospace">image_util_encode_jpeg()</span> function:</p>
+
+<pre class="prettyprint">ret = image_util_encode_jpeg(img_flip_target, dest_width, dest_height, colorspace, 100, OUTPUT_ROTATED_JPEG);</pre></li>
+
+<li>To encode to memory in JPEG format, use the <span style="font-family: Courier New,Courier,monospace">image_util_encode_jpeg_to_memory()</span> function:</p>
+
+<pre class="prettyprint">ret = image_util_encode_jpeg_to_memory(img_flip_target, dest_width, dest_height, colorspace, 100, jpeg_buffer, jpeg_size);</pre></li></ul>
+
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/image_util.htm">Image Util Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__IMAGE__UTIL__MODULE.html">Image Util API Reference</a></li>
+</ul>
+
+  <div id="footer">
+   <hr size="1" />
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+  </div>
+  <!--start-->
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+  <!--end-->
+ </body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+	<extension point="org.eclipse.help.toc">
+		<toc file="index.xml" primary="true" />
+	</extension>
+	<extension point="org.eclipse.help.contexts">
+        <contexts file="contexts_NativeIDE.xml" plugin="org.tizen.ide.native"/>
+    </extension>
+</plugin>

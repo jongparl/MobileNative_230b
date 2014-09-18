@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Debugging with Logs</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+
+<h1>Debugging with Logs</h1>
+
+<p>EFL provides a tool (<span style="font-family: Courier New,Courier,monospace;">EINA_LOG</span>) for logging information. It has the following levels:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVEL_CRITICAL = 0</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVEL_ERR = 1</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVEL_WARN = 2</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVEL_INFO = 3</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVEL_DBG = 4</span></li>
+</ul>
+
+<p>Execute the application using one of the following commands:</p>
+<pre class="prettyprint">
+EINA_LOG_LEVEL=1 ./sample
+// OR
+export EINA_LOG_LEVEL=1
+</pre>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">EINA_LOG_LEVELS=elementary:1,evas:4</span> parameters to see the logs domain by domain, and change the log level using <span style="font-family: Courier New,Courier,monospace;">EINA_LOG_ABORT_LEVEL</span>.</p>
+<p>To terminate the application when <span style="font-family: Courier New,Courier,monospace;">EINA_LOG</span> is shown, use <span style="font-family: Courier New,Courier,monospace;">EINA_LOG_ABORT=1</span>.</p>
+
+<h2>Already Deleted Parameter Log</h2>
+<p>The following log is shown when the <span style="font-family: Courier New,Courier,monospace;">ecore_idler_del()</span> function is used and the pointer address is deleted again.</p>
+<p>When you use <span style="font-family: Courier New,Courier,monospace;">ecore_timer</span>, <span style="font-family: Courier New,Courier,monospace;">ecore_animator</span>, and <span style="font-family: Courier New,Courier,monospace;">ecore_idler</span>, you can often see this log.</p>
+
+<pre class="prettyprint">
+ERR&lt;4268&gt;:ecore ecore.c:558 _ecore_magic_fail()
+*** ECORE ERROR: Ecore Magic Check Failed!!!
+*** IN FUNCTION: ecore_idler_del()
+ERR&lt;4268&gt;:ecore ecore.c:562 _ecore_magic_fail()&nbsp;&nbsp;&nbsp;Input handle has already been freed!
+ERR&lt;4268&gt;:ecore ecore.c:571 _ecore_magic_fail() *** NAUGHTY PROGRAMMER!!!
+*** SPANK SPANK SPANK!!!
+*** Now go fix your code. Tut tut tut!
+</pre>
+
+<p>To fix the problem:</p>
+
+<ol><li><p>Make a new <span style="font-family: Courier New,Courier,monospace;">ecore_idler</span> and save the pointer address to <span style="font-family: Courier New,Courier,monospace;">myidler</span>:</p>
+
+<pre class="prettyprint">Ecore_Idler *myidler = ecore_idler_add(_idler_cb, data);</pre></li>
+
+<li><p>Define the idler callback. When it returns <span style="font-family: Courier New,Courier,monospace;">ECORE_CALLBACK_CANCEL</span>, the <span style="font-family: Courier New,Courier,monospace;">ecore_idler</span> is deleted. The pointer address in <span style="font-family: Courier New,Courier,monospace;">myidler</span> is not deleted. So you add <span style="font-family: Courier New,Courier,monospace;">myidler = NULL</span>:</p>
+<pre class="prettyprint">
+static Eina_Bool
+_idler_cb(void *data)
+{
+&nbsp;&nbsp;&nbsp;myidler = NULL; 
+&nbsp;&nbsp;&nbsp;return ECORE_CALLBACK_CANCEL;
+}
+</pre>
+<p>Similarly, if you use the <span style="font-family: Courier New,Courier,monospace;">ecore_idler_del()</span> function, add <span style="font-family: Courier New,Courier,monospace;">myidler = NULL</span>:</p>
+<pre class="prettyprint">
+if (myidler)
+{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ecore_idler_del(myidler);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myidler = NULL;
+}
+</pre></li></ol>
+
+<h2>Parameter Logs</h2>
+<p>The following log is shown when the <span style="font-family: Courier New,Courier,monospace;">ecore_idler_del()</span> parameter is of the wrong type:</p>
+<pre class="prettyprint">
+ERR&lt;4266&gt;:ecore ecore.c:558 _ecore_magic_fail()
+*** ECORE ERROR: Ecore Magic Check Failed!!!
+*** IN FUNCTION: ecore_idler_del()
+ERR&lt;4266&gt;:ecore ecore.c:568 _ecore_magic_fail()&nbsp;&nbsp;&nbsp;Input handle is wrong type
+&nbsp;&nbsp;&nbsp;Expected: f7c614f3 - Ecore_Idler (Idler)
+&nbsp;&nbsp;&nbsp;Supplied: 71737723 - &lt;UNKNOWN&gt;
+ERR&lt;4266&gt;:ecore ecore.c:571 _ecore_magic_fail() *** NAUGHTY PROGRAMMER!!!
+*** SPANK SPANK SPANK!!!
+*** Now go fix your code. Tut tut tut!
+</pre>
+
+
+<h2>Part Name Logs</h2>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function is often used as follows:</p>
+<pre class="prettyprint">
+btn = elm_button_add(win)
+elm_object_part_content_set(btn, &quot;hahaha&quot;, tmp);
+</pre>
+<p>The following log is shown when the <span style="font-family: Courier New,Courier,monospace;">hahaha</span> swallow part does not exist:</p>
+<pre class="prettyprint">
+ERR&lt;6919&gt;:elementary elm_layout.c:969 _elm_layout_elm_container_content_set() could not swallow 0x80000005a000002e into part 'hahaha'
+</pre>
+
+<h2>Premultiplied Color Log</h2>
+<p>Evas supports a premultiplied color, where the RGB color values must be less than the alpha value:</p>
+
+<pre class="prettyprint">evas_object_color_set(rect, 255, 0, 0, 100);</pre>
+<p>If you write the above code, the following ERR log is shown:</p>
+
+<pre class="prettyprint">ERR&lt;4639&gt;:evas_main lib/evas/canvas/evas_object_main.c:1313 _evas_object_color_set() Evas only handles pre multiplied colors!</pre>
+
+<h2>EDC Logs</h2>
+<p>The following examples are common mistakes when writing EDC:</p>
+
+<ul><li>
+<pre class="prettyprint">
+collections 
+{
+&nbsp;&nbsp;&nbsp;group 
+&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;circular_dependency&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parts 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;bg&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 255 255 255 255;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;part1&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 127 0 0 127;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min: 100 100;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// FIXME: Circular Dependency !!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel1.to: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel2.to: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 0 0 127 127;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min: 100 100;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// FIXME: Circular Dependency !!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel1.to: &quot;part1&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel2.to: &quot;part1&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+
+<p>If you write the EDC code like above, part1 is calculated by part2 and part2 is calculated by part1. The following log is shown because a recursive calculation has happened:</p>
+
+<pre class="prettyprint">
+ERR&lt;4365&gt;:edje lib/edje/edje_calc.c:3144 _edje_part_recalc() Circular dependency when calculating part &quot;part1&quot;. Already calculating XY [03] axes. Need to calculate Y [02] axes
+</pre></li>
+
+<li><pre class="prettyprint">
+collections 
+{
+&nbsp;&nbsp;&nbsp;group 
+&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;fixed&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parts 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;bg&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 255 255 255 255;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;part1&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 127 0 0 127;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min: 100 100;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// FIXME: Ambiguous Size Setting
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel1.to: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rel2.to: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;part2&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: RECT;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 0 0 127 127;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min: 50 50;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max: 50 50;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fixed: 1 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+
+<p>Part1 is calculated by part2 and part1 is of the minimum size, (100, 100). But the size of part2 is no bigger than 50. So edje has no idea how to calculate part1. Use <span style="font-family: Courier New,Courier,monospace;">fixed: 1 1;</span> on part1 for the correct calculation to fix the problem:</p>
+
+<pre class="prettyprint">ERR&lt;4357&gt;:edje lib/edje/edje_util.c:3069 _edje_object_size_min_restricted_calc() file, group fixed has a non-fixed part 'part1'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.
+</pre></li></ul>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="debugging_overview.htm">Debugging Overview</a></li>  
+  </ul> 
+
+  <div id="footer"> 
+<hr size="1" /> 
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

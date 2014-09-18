@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Filter Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Filter Tutorial</h1> 
+ 
+<p>This tutorial demonstrates how you can filter results provided by various search functions.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__FILTER__MODULE.html">Media Filter</a> API.</p>
+
+<p>To learn about the Media Filter API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+	<li><a href="#init">Initialization and Prerequisites</a></li>
+
+	<li><a href="#filter">Setting up a Filter</a>
+	<p>Create a filter and set its properties.</p></li>
+
+	<li><a href="#media">Using Filters to Find Media Items</a>
+	<p>Use a filter to find media items.</p></li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>Open the connection to the Content Service by calling the <span style="font-family: Courier New,Courier,monospace">media_content_connect()</span> function before using the Media Filter API:</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>When the service is no longer needed, close the connection:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+<h2 id="filter" name="filter">Setting up a Filter</h2>
+<p>To create a filter and set its properties: offset, condition, and sorting order.</p>
+
+<ol>
+<li>Create a filter.
+<p>Create a filter using the <span style="font-family: Courier New,Courier,monospace">media_filter_create()</span> function:</p>
+
+<pre class="prettyprint">filter_h filter = NULL;
+
+media_filter_create(&amp;filter);
+</pre>
+
+<p>When the filter is no longer needed, destroy it using the <span style="font-family: Courier New,Courier,monospace">media_filter_destroy()</span> function:</p>
+
+<pre class="prettyprint">media_filter_destroy(filter);</pre>
+</li>
+
+<li>Set the condition.
+
+<p>Set the condition using the <span style="font-family: Courier New,Courier,monospace">media_filter_set_condition()</span> function.</p>
+<p>The following code sets the condition which finds albums with the artist name &quot;Samsung&quot; and the condition is case insensitive:</p>
+
+<pre class="prettyprint">#define BUFLEN 200
+char buf[BUFLEN] = { &#39;\0&#39; };
+
+snprintf(buf, BUFLEN, &quot;%s = &#39;Samsung&#39;&quot;, MEDIA_ARTIST);
+ret = media_filter_set_condition(filter, buf, MEDIA_CONTENT_COLLATE_NOCASE);</pre>
+
+<p>The function parameters are:</p>
+<ul><li>Filter handle</li>
+<li>Condition string used for filtering the search results
+<p>Queries made with the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__FRAMEWORK.html">Content</a> API are passed to a SQL database. A part of each query is a <span style="font-family: Courier New,Courier,monospace">WHERE</span> clause that determines which properties correspond to certain conditions. The condition string defines the <span style="font-family: Courier New,Courier,monospace">WHERE</span> clause and must match the following pattern:</p>
+<pre class="prettyprint">&lt;property&gt; &lt;relation&gt; &lt;value&gt;
+
+// If the relation is =, &gt;, &gt;=, &lt;, or &lt;=, the following is also valid
+&lt;value&gt; &lt;relation&gt; &lt;property&gt;</pre>
+
+<p>The valid relations are:</p>
+
+<pre class="prettyprint">=, &gt;, &gt;=, &lt;, &lt;=, IN, NOT IN, LIKE</pre>
+
+<p>Conditions can be joined by <span style="font-family: Courier New,Courier,monospace">OR</span> and <span style="font-family: Courier New,Courier,monospace">AND</span> to form more complex conditions.</p>
+
+<p>Condition properties are defined by a series of <span style="font-family: Courier New,Courier,monospace">#define</span> directives. Each Content submodule contains definitions for properties used in the submodule.</p></li>
+<li>Collation type determining how the strings are compared
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CONTENT__MODULE.html#ga31a20f732fe262e81f112416bfefe13c">media_content_collation_e</a> enumerator defines the available collation types.</p></li></ul>
+
+<p>To read the condition of an existing filter, use the <span style="font-family: Courier New,Courier,monospace">media_filter_get_condition()</span> function:</p>
+
+<pre class="prettyprint">char *check_condition = NULL;
+media_content_collation_e check_collate_type = MEDIA_CONTENT_COLLATE_DEFAULT;
+
+media_filter_get_condition(filter, &amp;check_condition, &amp;check_collate_type);</pre>
+</li>
+
+<li>Set the sorting order.
+
+<p>The sorting order is set using the <span style="font-family: Courier New,Courier,monospace">media_filter_set_order()</span> function. For example, the following code sets the order by the artist name, ascending, case sensitive.</p>
+
+<pre class="prettyprint">media_filter_set_order(filter, MEDIA_CONTENT_ORDER_ASC, MEDIA_ARTIST, MEDIA_CONTENT_COLLATE_DEFAULT);</pre>
+
+<p>The second and fourth parameters determine the order and collation types, and the available types are defined in the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CONTENT__MODULE.html#gaa4e5eece5a509c7414afb96e7a2c3fa2">media_content_order_e</a> and <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CONTENT__MODULE.html#ga31a20f732fe262e81f112416bfefe13c">media_content_collation_e</a> enumerators.</p>
+
+<p>To read the order settings of a filter, use the <span style="font-family: Courier New,Courier,monospace">media_filter_get_order()</span> function:</p>
+
+<pre class="prettyprint">media_content_order_e check_order_type = MEDIA_CONTENT_ORDER_ASC;
+char *check_order_keyword = NULL;
+media_content_collation_e check_order_collate_type = MEDIA_CONTENT_COLLATE_DEFAULT;
+
+media_filter_get_order(filter, &amp;check_order_type, &amp;check_order_keyword, &amp;check_order_collate_type);</pre>
+</li>
+
+<li>Set the offset.
+
+<p>To avoid receiving all results returned by the query, use the <span style="font-family: Courier New,Courier,monospace">media_filter_set_offset()</span> function.</p>
+
+<p>For example, set the offset to return results starting from the beginning (offset 0), and get a maximum of 5 results:</p>
+
+<pre class="prettyprint">media_filter_set_offset(filter, 0, 5);</pre>
+
+<p>You can use the offset to get specific results. For example, if you sort the items by size in an ascending order and set the offset to 10, the 10 smallest items are not included in the results.</p>
+
+<p>To read the filter offset settings, use the <span style="font-family: Courier New,Courier,monospace">media_filter_get_offset()</span> function:</p>
+
+<pre class="prettyprint">int check_offset = 0;
+int check_count = 0;
+
+media_filter_get_offset(filter, &amp;check_offset, &amp;check_count);</pre>
+</li>
+</ol>
+
+<h2 id="media" name="media">Using Filters to Find Media Items</h2>
+<p>To use a filter to find media items:</p>
+
+<p>The filter construction depends on what kind of a query it is used for. The condition string contains different properties (columns), depending on the submodule.</p>
+
+<p>The following example finds media items with the following conditions:</p>
+
+<ul><li>The artist is &#39;Samsung&#39;</li>
+<li>Search for the artist is case-insensitive</li>
+<li>Results are ordered by the artist, ascending, case-sensitive</li>
+<li>At most 5 results are provided, starting from the first result</li></ul>
+
+
+<pre class="prettyprint">filter_h filter = NULL;
+char buf[BUFLEN] = { &#39;\0&#39; };
+
+media_filter_create(&amp;filter);
+
+media_filter_set_offset(filter, 0, 5);
+snprintf(buf, BUFLEN, &quot;%s = &#39;Samsung&#39;&quot;, MEDIA_ARTIST);
+media_filter_set_condition(filter, buf, MEDIA_CONTENT_COLLATE_NOCASE);
+media_filter_set_order(filter, MEDIA_CONTENT_ORDER_ASC, MEDIA_ARTIST, MEDIA_CONTENT_COLLATE_DEFAULT);
+
+media_info_foreach_media_from_db(filter, media_cb, NULL);</pre>
+
+<h2>Where to Go Next</h2>
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__FILTER__MODULE.html">Media Filter API Reference</a></li>    
+  </ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

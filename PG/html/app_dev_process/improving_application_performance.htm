@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Improving Application Performance</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Improving Application Performance</h1> 
+  <p>An application that performs poorly and gives delayed responses to user actions mars good user experience. Some parts of the code can be optimized to avoid these delays.</p> 
+  <p>Most processors that are used today in mobile phones are based on multi-core technologies and so you must consider utilizing this hardware feature. To effectively utilize multi-core capabilities, you need to divide your code to run on several cores simultaneously. Traditionally, this is done by using <span style="font-family: Courier New,Courier,monospace">pthreads</span>, but this method has an overhead of initialization and termination of threads, and can generate potential runtime errors. Several solutions exist to exploit multi-core capabilities easily. These solutions abstract <span style="font-family: Courier New,Courier,monospace">pthreads</span>, allowing you to focus on the native application development without worrying about thread level management.</p> 
+
+  <p>To improve the performance of an application:</p> 
+  <ol> 
+   <li>Identify the bottlenecks which need to be optimized.</li> 
+   <li>Optimize the bottlenecks by code refactoring.</li> 
+   <li><a href="improving_application_performance.htm#measure">Measure performance</a> to compare refactoring gains.</li> 
+   <li>If the performance goal is met, you can stop the process, else go to step 2 and repeat till the goal is met.</li> 
+  </ol> 
+  <h2 id="measure" name="measure">Measuring Application Performance</h2> 
+  <p>Tizen SDK supports various tools which help to measure performance and increase performance at runtime:</p> 
+  <ul>
+	<li><a href="../ide_sdk_tools/da_overview.htm"><Strong>Dynamic Analyzer</Strong></a></li>
+	<p>Dynamic Analyzer helps to identify bottlenecks and improve resource usage patterns. For more information on its usage, see <a href="da_analysis_core.htm">Dynamic Analysis of Native Applications</a>.</p>
+
+	<li><a href="../ide_sdk_tools/valgrind.htm"><strong>Valgrind</strong></a> <p>Valgrind detects memory errors or leaks. This tool helps to improve memory usage patterns. For more information on its usage, see <a href="valgrind_analysis_core.htm">Valgrind Analysis of Native Applications</a>.</p></li>
+  </ul>
+  <p>Measuring performance allows you to identify bottlenecks that take a critical amount of time during the program execution and to compare the code execution time before and after optimization.</p> 
+  <p>Profiling can show unexpected bottleneck locations that you have not noticed otherwise. Once bottlenecks are identified, you can consider applying threading mechanism to clear them. This solution does not work in all situations or for all algorithms, but it can be worth spending your time to investigate the possibilities. Code refactoring is required to apply the threading mechanism.</p> 
+  <h2 id="performance" name="performance">Performance Tips</h2> 
+  <p>A faster application can increase battery life. If your application is not as fast as expected, you can look at profiling data to identify bottlenecks. Fixing these bottlenecks increases the application speed with minimal effort.</p> 
+  <p>Some general tips to improve the performance of your application are:</p> 
+  <ul> 
+   <li>Select the right algorithm and data structures.</li> 
+   <li>High-level optimization is important because it can change the order of complexity. If your code includes <span style="font-family: Courier New,Courier,monospace">sort</span>, <span style="font-family: Courier New,Courier,monospace">search</span>, or <span style="font-family: Courier New,Courier,monospace">compare</span>, use optimal algorithms and data structures.</li> 
+   <li>Split a task which contains both high and low priority jobs to prevent low priority jobs delaying high priority jobs. Running high and low priority jobs in a single task causes delays.</li> 
+   <li>Do not run heavy calculations in the same thread as your GUI.</li> 
+   <li>Use optimization options provided by toolchains.</li> 
+  </ul> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="debugging_app.htm">Running and Debugging Applications</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

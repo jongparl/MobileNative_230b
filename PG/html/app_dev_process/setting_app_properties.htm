@@ -1,0 +1,82 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../styles.css" rel="StyleSheet" type="text/css" />
+<link href="../snippet.css" rel="StyleSheet" type="text/css" />
+<title>Setting Project Properties</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>Setting Project Properties</h1> 
+  <p>Before you implement the actual application functionality, define all the necessary properties for your application project. To set the application project properties, right-click the project in the Tizen IDE <strong>Project Explorer</strong> view and select <strong>Properties</strong>. After setting or changing a property, click <strong>Apply</strong>.</p> 
+  <table class="note"><tbody>
+<tr>
+<th class="note">Note</th> 
+    </tr>
+<tr>
+<td class="note">Only modify the <a href="setting_app_manifest.htm">project properties in the manifest file</a> by using the manifest editor in the Tizen IDE. If you create or edit the <span style="font-family: Courier New,Courier,monospace">tizen-manifest.xml</span> file using any other text editor, your application may not work as expected.</td> 
+    </tr>
+</tbody></table>
+<p>The settings that you can define in the application project properties include:</p> 
+  <ul>
+<li><a href="#api">API usage check</a></li> 
+   <li><a href="#chapi">API privilege check</a></li>
+  </ul>
+<p>After you have finished setting the project properties, you are ready to <a href="implementing_app.htm">design the UI and implement the application code</a>.</p> 
+  <h2 id="api" name="api">Checking API Usage</h2> 
+  <p>You can check the source code in your project for any violation of API usage. To enable the API check:</p> 
+  <ol>
+<li><p>In the <strong>Properties</strong> window, select <strong>C/C++ Build &gt; Tizen Settings &gt; API and Privilege Checker</strong>.</p></li> 
+   <li>
+<p>Select the required <a href="../ide_sdk_tools/api_privilege_checker.htm#API">API problems</a> in the <strong>API Check</strong> panel.</p> </li> 
+  </ol>
+<p>To perform API usage checks automatically, select the required option in the <strong>Launching</strong> panel: </p> 
+  <ul>
+<li>During the <a href="building_app.htm">build process</a>, select the <strong>Run API and privilege checks with build</strong> option.</li> 
+   <li>During code editing, select the <strong>Run API and privilege checks while editing</strong> option.</li> 
+  </ul>
+<p>You can also <a href="../ide_sdk_tools/api_privilege_checker.htm">perform the API usage checks manually</a> after building the application by selecting <strong>Project &gt; Check API and Privilege Violations</strong>. The results are displayed in the <strong>Problems</strong> view.</p> 
+  <table class="note"><tbody>
+<tr>
+<th class="note">Note</th> 
+    </tr>
+<tr>
+<td class="note">If the application has conflicting API versions, the build fails and the results are displayed in the <strong>Problems</strong> view.</td> 
+    </tr>
+</tbody></table>
+<h2 id="chapi" name="chapi">Checking API Privileges</h2> 
+  <p>You can check the source code in your project for any violation of privileges. To enable the privilege check:</p> 
+  <ol>
+<li>In the <strong>Properties</strong> window, select <strong>C/C++ Build &gt; Tizen Settings &gt; API and Privilege Checker</strong>.</li> 
+   <li>
+<p>Select the required <a href="../ide_sdk_tools/api_privilege_checker.htm#privilege">privilege problems</a> in the <strong>Privilege Check</strong> panel.</p> </li> 
+  </ol>
+<p>To perform privilege checks automatically, select the required option in the <strong>Launching</strong> panel: </p> 
+  <ul>
+<li>During the <a href="building_app.htm">build process</a>, select the <strong>Run API and privilege checks with build</strong> option.</li> 
+   <li>During code editing, select the <strong>Run API and privilege checks while editing</strong> option.</li> 
+  </ul>
+<p>You can also <a href="../ide_sdk_tools/api_privilege_checker.htm">perform privilege checks manually</a> after building the application by selecting <strong>Project &gt; Check API and Privilege Violations</strong>. The results are displayed in the <strong>Problems</strong> view.</p> 
+  
+<h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="creating_app_project.htm">Creating the Application Project</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1" />
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Email Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Email Tutorial</h1> 
+ 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MESSAGING__EMAIL__MODULE.html">Email API</a> in the Email module. Functions in this API allow sending emails with attachments.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;email.h&gt;</span> header. This header file has to be included in all applications that use the Email API.</p>
+<p>To learn about the Email API features, see the <a href="../../guide/messaging/email.htm">Email Messaging Programming Guide</a>.</p>
+
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+<li><a href="#init">Initialization and Prerequisites</a></li>
+<li><a href="#creatingmail">Creating and Sending Email</a>
+<p>Create and send a message after adding attachments and recipients.</p></li></ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<ul><li>At least one email account must be set up on your device before sending an email.</li>
+
+<li>To build your application with the Email API, package dependencies and the build option must be configured: 
+
+<ol><li>Add the below line to the spec file.
+
+<pre class="prettyprint">BuildRequires:capi-messaging-email</pre></li>
+
+<li>Add <span style="font-family: Courier New,Courier,monospace">capi-messaging-email</span> to pkg_check_modules in the <span style="font-family: Courier New,Courier,monospace;">CMakeList.txt</span> file.</li></ol></li></ul>
+
+
+<h2 id="creatingmail" name="creatingmail">Creating and Sending Email</h2>
+<p>The Email module does not need any initialization or connection opening before the API usage. Email creation and sending functions can be used without any additional preparation.</p>
+
+<ol><li>Create an email message.
+<p>To create an email message and receive its handle, use the <span style="font-family: Courier New,Courier,monospace;">email_create_message()</span> function. The function return code informs about success or failure:</p>
+<pre class="prettyprint">email_h msg;
+int error_code = EMAILS_ERROR_NONE;
+error_code = email_create_message(&amp;msg);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to create email message\n&quot;);
+}</pre>
+<p>One of the possible error codes that is not related to the Email module itself is <span style="font-family: Courier New,Courier,monospace;">EMAIL_ERROR_ACCOUNT_NOT_FOUND</span>. This error occurs if no email account has been configured on a device.</p></li>
+
+<li>Add recipients and attachments.
+<p>Email recipients can be added to the email message one by one. There is no possibility to add lists of recipients in one function call. Each address has to be given as a character string, and the address type (TO, CC, BCC) has to be declared:</p>
+<pre class="prettyprint">error_code = email_add_recipient(msg, EMAIL_RECIPIENT_TYPE_TO, &quot;example@mail.com&quot;);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to add recipient\n&quot;);
+}</pre>
+<p>To add an attachment to the email message, you need a full path to the attachment file. Currently, files with size up to 10 MB are supported.</p>
+    <pre class="prettyprint">error_code = email_add_attach(msg, &quot;/full/path/to/attachment&quot;);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to add attachment\n&quot;);
+}</pre></li>
+
+<li>Remove recipients or attachments.
+<p>You can remove added recipients and attachments. In both cases, all recipients or attachments are removed at once. It is not possible to remove one selected item. As all functions from the Email API, <span style="font-family: Courier New,Courier,monospace;">email_remove_all_attachments()</span> and <span style="font-family: Courier New,Courier,monospace;">email_remove_all_recipients()</span> inform about success or failure by the returned error code:</p>
+<pre class="prettyprint">error_code = email_remove_all_recipients(msg);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to add remove recipients\n&quot;);
+}
+error_code = email_remove_all_attachments (msg);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to remove attachments\n&quot;);
+}</pre></li>
+
+<li>Define the email sending status callback.
+<p>Email sending is an asynchronous operation, and thus the sending status cannot be checked directly in the return code from <span style="font-family: Courier New,Courier,monospace;">email_send_message()</span>. To receive notifications about sending success or failure, a callback function must be defined:</p>
+<pre class="prettyprint">static void email_send_status(email_h email, email_sending_e result, void *user_data) 
+{
+&nbsp;&nbsp;&nbsp;if (result == EMAIL_SENDING_FAILED) 
+{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to send email\n&quot;);
+&nbsp;&nbsp;&nbsp;
+}
+else if (result == EMAIL_SENDING_SUCCEEDED) 
+{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Sending was successful
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Email sending finished with success\n&quot;);
+&nbsp;&nbsp;&nbsp;
+}
+}</pre></li>
+
+<li>Send the email.
+<p>If the email message object is ready and the sending status callback is defined, the message can be sent:</p>
+<pre class="prettyprint">error_code = email_set_message_sent_cb(msg, email_send_status, NULL);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to set sending status callback\n&quot;);
+}
+
+error_code = email_send_message(msg, false);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;&quot;);
+}</pre>
+<p>When the message is sent or if sending was canceled and the message is no longer needed, delete it using the <span style="font-family: Courier New,Courier,monospace;">email_destroy_message()</span> function. The callback registered for the specified message must also be unset (<span style="font-family: Courier New,Courier,monospace;">email_unset_message_sent_cb()</span>):</p>
+<pre class="prettyprint">error_code = email_unset_message_sent_cb(msg);
+if (error_code  != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to unset status callback\n&quot;);
+}
+
+error_code = email_destroy_message(msg);
+if (error_code != EMAILS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Failed to delete email message\n&quot;);
+}</pre></li></ol>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="messaging_tutorial.htm">Messaging Tutorials</a></li>
+	<li><a href="../../guide/messaging/email.htm">Email Messaging Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MESSAGING__EMAIL__MODULE.html">Email API Reference</a></li>    
+  </ul> 
+
+  
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

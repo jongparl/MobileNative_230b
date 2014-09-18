@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Building Applications</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Building Applications</h1> 
+  <p>You must build your native application project before you can <a href="debugging_app.htm">run and debug the application</a>. </p> 
+  <p>The build configuration is the <a href="building_properties.htm">set of properties</a> which are used in the build process. The build configuration includes the following properties:</p> 
+  <ul> 
+   <li>Build (compile and link) options</li> 
+   <li>Source files to build</li> 
+   <li>Compiler toolchain, such as compiler, linker, and archiver</li> 
+  </ul> 
+  <p>In the Tizen IDE, different build configurations are available for different development steps:</p> 
+  <ul> 
+   <li>The <strong>Debug</strong> build is used to debug and test the application. <p>The binary, data, and debug files are stored in a <span style="font-family: Courier New,Courier,monospace">Debug</span> folder under the project in the workspace.</p> <p>This is the default build configuration.</p><p>In the debug mode, the debug level is Maximum (-g3) and optimization level is None (-O0).</p></li> 
+   <li>The <strong>Release</strong> build is used for the tested, release-ready version of the application. 
+   	  <p>The compiled binary file is stored in a <span style="font-family: Courier New,Courier,monospace">Release</span> folder 
+   		under the project in the workspace.</p> 
+   		<p>In the release mode, the debug level is Default (-g) and optimization level is Optimize most (-O3).</p> 
+   		<p>The release mode build itself does not strip the debug symbol. 
+   			Stripping is done only in the packaging step for the ARM architecture.</p> 
+
+    <table class="note"> 
+     <tbody> 
+      <tr> 
+       <th class="note">Note</th> 
+      </tr> 
+      <tr> 
+       <td class="note">The Tizen IDE automatically switches application logging off in the release mode. To enable logging in the release mode:<p></p> 
+        <ol> 
+         <li>In the IDE menu, select <strong>Project &gt; Properties</strong>.</li> 
+         <li>In the <strong>Properties</strong> window, go to <strong>C/C++Build &gt; Settings &gt; C Complier &gt; Debugging</strong>.</li> 
+         <li>Select the <strong>Enable application logging</strong> check box.</li> 
+        </ol></td> 
+      </tr> 
+     </tbody> 
+    </table></li> 
+  </ul>
+
+<p>To set the target architecture:</p>
+        <ol> 
+         <li>In the IDE menu, select <strong>Project &gt; Properties</strong>.</li> 
+         <li>In the <strong>Properties</strong> window, go to <strong>C/C++Build &gt; Tizen Settings &gt; Platform</strong>.</li> 
+         <li>From the <strong>Architecture</strong> drop-down list, select the appropriate architecture.</li> 
+        </ol>
+  
+  <h2 id="build" name="build">Building the Application in the IDE</h2> 
+  <p>To create an application project build:</p> 
+  <ol> 
+   <li><p>Select the build configuration: </p> 
+    <ol> 
+     <li><p>Right-click the project in the Tizen IDE <strong>Project Explorer</strong> view.</p></li> 
+     <li><p>Select <strong>Build Configurations &gt; Set Active</strong>, and select the build configuration you need.</p></li> 
+    </ol> </li> 
+   <li><p>Build the project:</p> 
+    <ul> 
+     <li>Automatic build <p>If you select <strong>Project &gt; Build Automatically</strong> in the IDE menu, whenever you make any change to a source or resource and save the project, the IDE automatically recognizes the change and rebuilds the changed source on your project.</p></li> 
+     <li>Manual build <p>Build the application binaries for executing the code:</p> 
+      <ol> 
+       <li><p>Select the project in the <strong>Project Explorer</strong> view.</p></li> 
+       <li><p>In the IDE menu, select <strong>Project &gt; Build Project</strong>. </p></li> 
+      </ol> </li> 
+    </ul> </li> 
+   <li><p>Check your application project source code for any 
+API or privilege violations, which are displayed in the <strong>Problems</strong> view.</p> </li> 
+  </ol> 
+  
+ 
+  
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="overview_of_app_dev.htm">Native Application Development Process</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

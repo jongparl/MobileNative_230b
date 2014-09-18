@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Bookmark Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Bookmark Tutorial</h1> 
+ 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__BOOKMARK__MODULE.html">Media Bookmark API</a>. Functions in this module allow you to bookmark chosen moments in a video or audio file.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> header. This header file has to be included in all applications that use the Bookmark API.</p>
+
+<p>To learn about the Bookmark API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul><li><a href="#init">Initialization and Prerequisites</a>
+<p>Open the connection to the Content Service, and close it when no longer needed.</p></li>
+
+<li><a href="#inserting">Inserting a Bookmark</a>
+<p>Set a bookmark for a video file.</p></li>
+
+<li><a href="#finding">Finding Bookmarks</a>
+<p>Find bookmarks using a filter.</p></li>
+
+<li><a href="#reading">Reading Bookmark Information</a>
+<p>Read the details of a given bookmark.</p></li>
+
+<li><a href="#removing">Removing a Bookmark</a>
+<p>Remove a bookmark from a video file.</p></li></ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Before using bookmarks, open a connection to the Content Service by calling the <span style="font-family: Courier New,Courier,monospace">media_content_connect()</span> function.</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>Close the connection when the service is no longer needed:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+
+
+<h2 id="inserting" name="inserting">Inserting a Bookmark</h2>
+<p>Set a bookmark for a video file at a given timestamp using <span style="font-family: Courier New,Courier,monospace">media_bookmark_insert_to_db()</span>:</p>
+
+<pre class="prettyprint">char* thumbnail_path = &quot;path/to/image/file&quot;;
+
+media_bookmark_insert_to_db(media_id, 220, thumbnail_path);
+media_bookmark_insert_to_db(media_id, 210, thumbnail_path);</pre>
+
+<p>The parameters are the media ID of the video file, the moment (time in seconds from the beginning) in the video to bookmark, and the image used as a thumbnail for the bookmark. You can use the same thumbnail for more than 1 bookmark.</p>
+
+
+
+
+<h2 id="finding" name="finding">Finding Bookmarks</h2>
+<p>To find a media item&#39;s bookmarks and filter the results:</p>
+
+<h3>Finding All Bookmarks</h3>
+
+<p>To find the bookmarks set for a media item, use the <span style="font-family: Courier New,Courier,monospace">media_info_foreach_bookmark_from_db()</span> function:</p>
+
+<pre class="prettyprint">media_info_foreach_bookmark_from_db(media_id, NULL, get_bookmarks_cb, NULL);</pre>
+
+<p>The media ID, required as the first parameter, can be obtained by calling the <span style="font-family: Courier New,Courier,monospace">*_get_media_id()</span> functions. The handles that these functions require can be obtained from various sources. For example, <span style="font-family: Courier New,Courier,monospace">media_info_h</span> (needed for <span style="font-family: Courier New,Courier,monospace">media_info_get_media_id()</span>) is provided after calling <span style="font-family: Courier New,Courier,monospace">media_info_foreach_media_from_db()</span> or <span style="font-family: Courier New,Courier,monospace">media_info_insert_to_db()</span>.</p>
+
+<p>You can find the bookmarks satisfying certain criteria or otherwise modify the results with a filter. If the filter parameter is NULL, no filtering is performed and all bookmarks are returned.</p>
+
+<p>The callback is called for each bookmark in the media item. If the callback returns <span style="font-family: Courier New,Courier,monospace">true</span>, calling of the callback continues, if there are more bookmarks for which the callback has not been called yet. If the return value is <span style="font-family: Courier New,Courier,monospace">false</span>, the callback iteration stops.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">media_info_foreach_bookmark_from_db()</span> function is synchronous. It blocks until the callback is called for all bookmarks or returns <span style="font-family: Courier New,Courier,monospace">false</span>.</p>
+
+<h3>Finding Bookmarks Using a Filter</h3>
+
+<p>To filter the bookmarks, create a filter and set its properties:</p>
+
+<ol><li><p>Create a filter:</p>
+
+<pre class="prettyprint">filter_h filter = NULL;
+
+media_filter_create(&amp;filter);</pre></li>
+
+<li><p>Set a condition. For example, you can receive a bookmark set after a certain time. In this example, only the bookmarks set at the 220th second of the file or later are returned.</p>
+
+<pre class="prettyprint">#define BUFLEN 200
+char buf[BUFLEN] = { &#39;\0&#39; };
+
+snprintf(buf, BUFLEN, &quot;%s &gt;= 220&quot;, BOOKMARK_MARKED_TIME);
+media_filter_set_condition(filter, buf, MEDIA_CONTENT_COLLATE_DEFAULT);</pre></li>
+
+<li><p>Set the offset for the filter:</p>
+
+<pre class="prettyprint">media_filter_set_offset(filter,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0, // Offset
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3 // Count
+);</pre>
+
+<p>The count sets the limit on the number of returned bookmarks, and the offset determines which of the found bookmarks counts as the &quot;first&quot;. For example, if you sort the bookmarks in an ascending order and the offset is set to 1, you do not receive the earliest bookmark.</li>
+
+<li><p>Define the sorting order. The following code causes the filter to sort the results by time, in an ascending order:</p>
+
+<pre class="prettyprint">media_filter_set_order(filter, MEDIA_CONTENT_ORDER_ASC, BOOKMARK_MARKED_TIME, MEDIA_CONTENT_COLLATE_NOCASE);</pre></li>
+
+<li><p>Apply the filter:</p>
+
+<pre class="prettyprint">media_info_foreach_bookmark_from_db(media_id, filter, get_bookmarks_cb, NULL);</pre>
+
+<p>For information on how to implement the callback, see the &quot;Reading Bookmark Information&quot; use case.</p></li></ol>
+
+
+
+
+<h2 id="reading" name="reading">Reading Bookmark Information</h2>
+
+<p>Read the bookmark information within a callback after finding the bookmark.</p>
+
+<p>The following callback prints the thumbnail path and marked time for each found bookmark:</p>
+
+<pre class="prettyprint">bool get_bookmarks_cb(media_bookmark_h bookmark, void* user_data)
+{
+&nbsp;&nbsp;&nbsp;char *thumb = NULL;
+
+&nbsp;&nbsp;&nbsp;if(bookmark != NULL) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_bookmark_get_thumbnail_path(bookmark, &amp;thumb);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Thumbnail path: %s\n&quot;, thumb);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(thumb);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_t time;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_bookmark_get_marked_time(bookmark, &amp;time);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Marked time [s]: %d\n&quot;, (int) time);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return true;
+
+}</pre>
+
+<p>Free the thumbnail path after use.</p>
+
+<h2 id="removing" name="removing">Removing a Bookmark</h2>
+
+<p>To remove a bookmark:</p>
+<ol><li><p>Acquire the bookmark ID:</p>
+
+<pre class="prettyprint">media_bookmark_h bookmark = NULL;
+
+// Assuming you have the bookmark handle (media_bookmark_h)
+int bookmark_id = -1;
+media_bookmark_get_bookmark_id(bookmark, &amp;bookmark_id);</pre></li>
+
+<li><p>Delete the bookmark:</p>
+
+<pre class="prettyprint">media_bookmark_delete_from_db(bookmark_id);</pre></li></ol>
+
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+    <li><a href="../../guide/content/content.htm">Content Programming Guide</a></li>	
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__BOOKMARK__MODULE.html">Media Bookmark API Reference</a></li>    
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

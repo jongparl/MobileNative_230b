@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Fundamentals</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+ 
+<h1>Application Fundamentals</h1>
+
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application</a> API handles application state changes and system events, and provides mechanisms for launching other applications.</p>
+<p>A Tizen native application is similar to a conventional Linux application, with some additional features optimized for mobile devices. The additional features have constraints, such as a relatively small screen size and lack of system resources compared to a larger system. For example, for power management reasons, the application can take actions to reduce usage when it finds out that it has its display window covered over by another application window. State change events are delivered to make it possible to detect these situations.</p>
+
+<p>The Application API provides interfaces for the following categories:</p>
+<ul>
+  <li><a href="#loop">Starting or exiting the main event loop</a> (mandatory for every Tizen native application)</li>
+  <li><a href="#callback">Registering callbacks for application state change events</a></li>
+  <li><a href="#callback">Registering callbacks for basic system events</a></li>
+  <li><a href="#info">Getting information about the application</a></li>
+</ul>
+  
+  <h2 id="loop" name="loop">Managing the Event Loop</h2>
+<p>In order for an application to operate successfully, it must receive events from the platform. For this, it must start the main event loop - this is mandatory for all Tizen native applications.</p>
+<p>The <span style="font-family: Courier New,Courier,monospace">app_main()</span> function is used to start the event loop. Before calling this function, set up the <span style="font-family: Courier New,Courier,monospace">app_event_callback_s structure</span> variable, which is passed to the function.<p>
+
+<p>For more information about launching applications, see <a href="app_controls.htm">Launching Applications</a>.</p>
+
+<h2 id="callback" name="callback">Registering Callbacks for Events</h2>
+<p>The following table lists the application state change events.</p>
+
+  <table> 
+   <caption>
+     Table: Application state change events
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Callback</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_create_cb()</span></td> 
+     <td>Used to take necessary actions before the main event loop starts. Place the UI generation code here to prevent missing any events from your application UI.</td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_pause_cb()</span></td> 
+     <td>Used to take necessary actions when the application becomes invisible. For example, release memory resources so other applications can use them. Do not starve the foreground application that is interacting with the user.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_resume_cb()</span></td> 
+     <td>Used to take necessary actions when the application becomes visible. If you relinquish anything in the  <span style="font-family: Courier New,Courier,monospace">app_pause_cb()</span> callback, re-allocate those resources here before the application resumes.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_terminate_cb()</span></td> 
+     <td>Used to take necessary actions when the application is terminating. Release all resources, especially any allocations and shared resources, so that other running applications can fully use any shared resources.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  
+<p>For more information, see <a href="state_transitions.htm">Application States and Transitions</a>.</p>
+
+<p>The following table lists the system event events.</p>
+
+  <table> 
+   <caption>
+     Table: Callbacks for system events
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Callback</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_low_memory_cb()</span></td> 
+     <td><p>Used to take necessary actions in low memory situations.</p>
+       <p>Save data in the main memory to a persistent memory or storage, to avoid data loss in case the Tizen platform Low Memory Killer kills your application to get more free memory. Release any cached data in the main memory to secure more free memory.</p></td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_low_battery_cb()</span></td> 
+     <td><p>Used to take necessary actions in low battery situations.</p>
+	    <p>Save data in the main memory to a persistent memory or storage, to avoid data loss in case the power goes off completely. Stop heavy CPU consumption or power consumption activities to save the remaining power.</p></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_device_orientation_cb()</span></td> 
+     <td>Used to take necessary actions for handling a device orientation change.
+<p>Change the display orientation to match the device orientation.</p></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_language_changed_cb()</span></td> 
+     <td>Used to take necessary actions for handling a language change event.
+<p>Refresh the display into the new language.</p></td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">app_region_format_changed_cb()</span></td> 
+     <td>Used to take necessary actions for handling a region change event.
+<p>A region change means a different time zone; updater the time in the application UI to reflect the time zone change.</p></td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+<h2 id="info" name="info">Getting Application Information</h2>
+<p>The Application API provides functions for obtaining the application package name and absolute path to specified resources, such as Image, Sound, Video, and UI layout (EDJ). It also provides functions to:</p>
+<ul>
+  <li>Get the current orientation of the device.</li>
+  <li>Get the internal and external root folders which are shared among all applications.</li>
+</ul>
+
+<p> The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application Manager</a> API provides information about installed and running applications.</p>
+
+<p>Iterator functions step through a list of applications. The <span style="font-family: Courier New,Courier,monospace">app_manager_foreach_app_context()</span> function is used in running applications and <span style="font-family: Courier New,Courier,monospace">app_manager_foreach_app_info()</span> function is used in available (installed, but not necessarily running) applications. Each function calls a callback function (<span style="font-family: Courier New,Courier,monospace">app_manager_app_context_cb</span> or <span style="font-family: Courier New,Courier,monospace">app_manager_app_info_cb</span>), passing the package name of each application found. A query function responds whether the application represented by a particular package name is running.</p>
+
+ 
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="application.htm">Application Framework Programming Guide</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>PCM Audio Input</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>PCM Audio Input</h1>
+  <p>The Pulse Code Modulated (PCM) data contains non-compressed audio. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__AUDIO__IN__MODULE.html">Audio Input</a> API enables your application to record such data from a microphone type input device.</p> 
+  <p>Audio data is captured periodically, so to receive the audio PCM data from the input device, you must implement the audio input interface to notify the application of audio data events, such as the end of filling audio data.</p> 
+  <p>Before recording audio, you must define the following PCM data settings:</p> 
+  <ul> 
+   <li>Input device type: 
+    <ul class="indent"> 
+     <li>Microphone</li> 
+    </ul> </li> 
+   <li>Audio channels: 
+    <ul class="indent"> 
+     <li>Mono (1 channel)</li> 
+     <li>Stereo (2 channels)</li> 
+    </ul> </li> 
+   <li>Audio sample type: 
+    <ul class="indent"> 
+     <li>Unsigned 8-bit PCM</li> 
+     <li>Signed 16-bit little endian PCM</li> 
+    </ul> </li> 
+   <li>Audio sample rate:</li> 
+   <ul class="indent"> 
+    <li>8000 ~ 48000 Hz</li> 
+   </ul> 
+  </ul> 
+  <p>To minimize the overhead of the audio input API, use the optimal channel type, sample type and sampling rate, which can be retrieved using the <span style="font-family: Courier New,Courier,monospace">audio_in_get_channel()</span>, <span style="font-family: Courier New,Courier,monospace">audio_in_get_sample_type()</span> and <span style="font-family: Courier New,Courier,monospace">audio_in_get_sample_rate()</span> functions, respectively.</p> 
+
+  <p>The following figures illustrate the general audio input states, and how the state changes when the audio input is interrupted by the system.</p> 
+  <p class="figure">Figure: Audio input states</p> 
+  <p style="text-align:center;"><img src="../../images/audio_input.png" alt="Audio input states" /></p> 
+  <p class="figure">Figure: Audio input states when interrupted by system</p> 
+  <p style="text-align:center;"><img src="../../images/audio_input_interrupt_state.png" alt="Audio input states when interrupted by system" /></p> 
+
+<h2>Where to Go Next</h2>
+<ul><li><a href="media.htm">Multimedia Programming Guide</a></li>
+ <li><a href="../../tutorials/media_tutorial/pcmaudio_tutorial.htm">Audio IO Tutorial</a></li>
+</ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

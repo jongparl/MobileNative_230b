@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>System Information Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>System Information Tutorial</h1>
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SYSTEM__INFO__MODULE.html">System Information API</a>. The functions contained in this API allow you to obtain information about the device, such as platform versions, device model, and supported device features.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">system_info.h</span> header. This header file must be included in all applications that use the System Information API.</p>
+
+<p>To learn about the System Information API features, see the <a href="../../guide/system/sysinfo.htm">System Information Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+<li><a href="#device">Getting the Device Model Name</a></li>
+<li><a href="#camera">Checking Whether a Camera is Provided</a></li>
+</ul>
+ 
+<h2 name="device" id="device">Getting the Device Model Name</h2>
+<p>System information consists of &quot;key, value&quot; pairs. To get the device model name, use the <span style="font-family: Courier New,Courier,monospace;">http://tizen.org/system/model_name</span> key.</p>
+<p>The type of the value is String, which means that the <span style="font-family: Courier New,Courier,monospace;">system_info_get_platform_string()</span> function is used for the information. The value of the key must be released by the <span style="font-family: Courier New,Courier,monospace;">free()</span> function.</p>
+ 
+<pre class="prettyprint">
+#include &lt;system_info.h&gt;
+void func(void)
+{
+&nbsp;&nbsp;&nbsp;char *value;
+&nbsp;&nbsp;&nbsp;int ret;
+
+&nbsp;&nbsp;&nbsp;ret = system_info_get_platform_string(&quot;tizen.org/system/model_name&quot;, &amp;value);
+&nbsp;&nbsp;&nbsp;if (ret != SYSTEM_INFO_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Model name: %s&quot;, value);
+
+&nbsp;&nbsp;&nbsp;free(value); // Release after use 
+} 
+</pre>
+
+
+<h2 name="camera" id="camera">Checking Whether a Camera is Provided</h2>
+<p>To check whether the device provides any kind of a camera, use the <span style="font-family: Courier New,Courier,monospace;">http://tizen.org/feature/camera</span> key.</p>
+<p>The type of the value is bool, which means that the <span style="font-family: Courier New,Courier,monospace;">system_info_get_platform_bool()</span> function is used for the information.</p>
+
+<pre class="prettyprint">
+#include &lt;stdbool.h&gt;
+#include &lt;system_info.h&gt;
+
+void func(void)
+{
+&nbsp;&nbsp;&nbsp;bool value;
+&nbsp;&nbsp;&nbsp;int ret;
+
+&nbsp;&nbsp;&nbsp;ret = system_info_get_platform_bool(&quot;tizen.org/feature/camera&quot;, &amp;value);
+&nbsp;&nbsp;&nbsp;if (ret != SYSTEM_INFO_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, LOG_TAG, &quot;Camera: %s&quot;, value ? &quot;Supported&quot; : &quot;Not supported&quot;);
+}
+</pre>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="system_tutorial.htm">System Tutorials</a></li>
+	<li><a href="../../guide/system/sysinfo.htm">System Information Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SYSTEM__INFO__MODULE.html">System Information API Reference</a></li>
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+
+ </body>
+</html>

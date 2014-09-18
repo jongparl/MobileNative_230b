@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Folder Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Folder Tutorial</h1> 
+
+<p>This tutorial demonstrates how you can obtain information about media folders and their content.</p> 
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__FOLDER__MODULE.html">Media Folder</a> API.</p>
+
+<p>To learn about the Media Folder API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul><li><a href="#init">Initialization and Prerequisites</a></li>
+
+<li><a href="#find">Finding All Media Folders</a>
+<p>List all available media folders.</p></li>
+
+<li><a href="#filter">Finding Folders Using a Filter</a>
+<p>Find folders satisfying a given condition, and sort the results.</p></li>
+
+<li><a href="#contents">Finding Folder Content</a>
+<p>List folder content and get information about media items in the folders.</p></li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Open the connection to the Content Service by calling the <span style="font-family: Courier New,Courier,monospace">media_content_connect()</span> function before using the Media Folder API:</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>When the service is no longer needed, close the connection:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+<h2 id="find" name="find">Finding All Media Folders</h2>
+<p>To list all available media folders and their content:</p>
+
+<ol>
+<li>Request all folders.
+<p>Find folders using the <span style="font-family: Courier New,Courier,monospace">media_folder_foreach_folder_from_db()</span> function. This function finds all folders meeting the criteria given in a filter (when set to <span style="font-family: Courier New,Courier,monospace">NULL</span>, all folders available on the system are returned) and calls the callback for each such folder.</p>
+ 
+<pre class="prettyprint">media_folder_foreach_folder_from_db(NULL, folder_cb, NULL);</pre>
+
+<p>This function is synchronous; it continues until the callback is called for all available folders or the callback returns <span style="font-family: Courier New,Courier,monospace">false</span>.</p>
+</li>
+
+<li>Read folder details within the callback:
+
+<pre class="prettyprint">bool folder_cb(media_folder_h folder, void *user_data)
+{</pre>
+
+<p>The return value determines if the iterative calls of the callback continue (<span style="font-family: Courier New,Courier,monospace">true</span>) or are stopped (<span style="font-family: Courier New,Courier,monospace">false</span>).</p>
+
+<p>Once you have the folder handle (<span style="font-family: Courier New,Courier,monospace">media_folder_h</span>), you can read the folder information:</p>
+
+<ul><li><p>Use <span style="font-family: Courier New,Courier,monospace">media_folder_get_folder_id()</span>, <span style="font-family: Courier New,Courier,monospace">media_folder_get_name()</span>, and <span style="font-family: Courier New,Courier,monospace">media_folder_get_path()</span> to read the folder ID, name, and path:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;char *folder_id = NULL;
+&nbsp;&nbsp;&nbsp;char *name = NULL;
+&nbsp;&nbsp;&nbsp;char *path = NULL;
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_folder_id(folder, &amp;folder_id);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder id: %s\n&quot;, folder_id);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_name(folder, &amp;name);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder name: %s\n&quot;, name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(name);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_path(folder, &amp;path);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder path: %s\n&quot;, path);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(path);
+&nbsp;&nbsp;&nbsp;}</pre>
+
+<p>Free <span style="font-family: Courier New,Courier,monospace">name</span> and <span style="font-family: Courier New,Courier,monospace">path</span> at the end. The <span style="font-family: Courier New,Courier,monospace">folder_id</span> is freed later, since it is still needed.</p></li>
+
+<li><p>Read the folder storage type using the <span style="font-family: Courier New,Courier,monospace">media_folder_get_storage_type()</span> function:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;media_content_storage_e storage_type = MEDIA_CONTENT_STORAGE_INTERNAL;
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_storage_type(folder, &amp;storage_type);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch (storage_type) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case MEDIA_CONTENT_STORAGE_INTERNAL:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder storage type: Internal\n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case MEDIA_CONTENT_STORAGE_EXTERNAL:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder storage type: External\n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Folder storage type: Unknown\n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}</pre></li>
+
+<li><p>Get the last modified time:</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;time_t time = 0;
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_modified_time(folder, &amp;time);
+&nbsp;&nbsp;&nbsp;if (MEDIA_CONTENT_ERROR_NONE != ret) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;Modified time: %s&quot;, ctime(&amp;time));
+&nbsp;&nbsp;&nbsp;}</pre></li>
+
+<li><p>Get the media item count in the folder with the <span style="font-family: Courier New,Courier,monospace">media_folder_get_media_count_from_db()</span> function. The second argument is the filter. If it is set to<span style="font-family: Courier New,Courier,monospace"> NULL</span>, all media is counted.</p>
+
+<p>Free the <span style="font-family: Courier New,Courier,monospace">folder_id</span> value after it is used for the <span style="font-family: Courier New,Courier,monospace">media_folder_get_media_count_from_db()</span> function.</p>
+
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;int item_count = -1; 
+
+&nbsp;&nbsp;&nbsp;ret = media_folder_get_media_count_from_db(folder_id, NULL, &amp;item_count);
+&nbsp;&nbsp;&nbsp;if (MEDIA_CONTENT_ERROR_NONE != ret) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Number of media contents: %d\n&quot;, item_count);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;free(folder_id);
+
+&nbsp;&nbsp;&nbsp;return true;
+}</pre></li></ul>
+</li>
+</ol>
+
+<h2 id="filter" name="filter">Finding Folders Using a Filter</h2>
+<p>Use filters to choose which folders are found by the <span style="font-family: Courier New,Courier,monospace">media_folder_foreach_folder_from_db()</span> function. For example, find folders which meet certain conditions, such as a name containing a given substring. Other modifications of the results, such as sorting, are also possible.</p>
+
+<ol>
+<li>Create a filter.
+<p>Create a filter using the <span style="font-family: Courier New,Courier,monospace">media_filter_create()</span> function:</p>
+
+<pre class="prettyprint">filter_h filter = NULL;
+
+media_filter_create(&amp;filter);</pre>
+
+<p>Destroy the filter when it is no longer needed:</p>
+
+<pre class="prettyprint">media_filter_destroy(filter);</pre>
+</li>
+
+<li>Set the condition.
+<p>Set the condition with the <span style="font-family: Courier New,Courier,monospace">media_filter_set_condition()</span> function.</p>
+
+<p>The condition is the string used as the argument to the WHERE clause in the SQL query. The general format is &quot;&lt;property&gt; &lt;relation&gt; &lt;value&gt;&quot;, such as &quot;&lt;name property identifier&gt; = &#39;Downloads&#39;&quot;.</p>
+<ul><li>Condition for the &#39;Downloads&#39; folder name:</p>
+
+<pre class="prettyprint">#define BUFLEN 200
+char buf[BUFLEN] = { &#39;\0&#39; };
+
+snprintf(buf, BUFLEN, &quot;%s = &#39;Downloads&#39;&quot;, FOLDER_NAME);</pre></li>
+
+<li><p>Condition for the internal folder storage type:</p>
+
+<pre class="prettyprint">snprintf(buf, BUFLEN, &quot;%s = %d&quot;, FOLDER_STORAGE_TYPE, MEDIA_CONTENT_STORAGE_INTERNAL);</pre></li></ul>
+
+<p>The following code finds the folders in the device internal storage. The results are sorted with respect to the modified time, in an ascending order.</p>
+
+<pre class="prettyprint">#define BUFLEN 200
+char buf[BUFLEN] = { &#39;\0&#39; };
+
+snprintf(buf, BUFLEN, &quot;%s = %d&quot;, FOLDER_STORAGE_TYPE, MEDIA_CONTENT_STORAGE_INTERNAL);
+
+media_filter_set_condition(filter, buf, MEDIA_CONTENT_COLLATE_NOCASE);
+
+media_filter_set_order(filter, MEDIA_CONTENT_ORDER_ASC, FOLDER_MODIFIED_TIME, MEDIA_CONTENT_COLLATE_DEFAULT);
+
+media_folder_foreach_folder_from_db(filter, folder_cb, NULL);
+
+media_filter_destroy(filter);</pre>
+</li>
+</ol>
+
+<h2 id="contents" name="contents">Finding Folder Content</h2>
+<p>To list folder content and get information about media items in the folders.</p>
+
+<ol>
+<li>Request folder content.
+<p>To find all media items from the folder with the given ID, use the <span style="font-family: Courier New,Courier,monospace">media_folder_foreach_media_from_db()</span> function. The function is synchronous; it blocks until the callback calls are finished.</p>
+
+<pre class="prettyprint">media_folder_foreach_media_from_db(folder_id, NULL, media_cb, NULL);</pre>
+
+<p>The callback is iterated until it has been called for all items or it returns <span style="font-family: Courier New,Courier,monospace">false</span>.</p>
+</li>
+
+<li>Receive folder content.
+
+<p>List the content using the <span style="font-family: Courier New,Courier,monospace">media_folder_foreach_media_from_db()</span> function (this is very similar to using the <span style="font-family: Courier New,Courier,monospace">media_album_foreach_media_from_db()</span> function, since both functions call callbacks of the same type). To implement the callback, see the <a href="album_tutorial.htm#receive">media_album_foreach_media_from_db() callback  implementation</a>.</p>
+
+<p>The following example prints the title of the media item for which it was called.</p>
+
+<pre class="prettyprint">bool media_cb(media_info_h media, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;char *title = NULL;
+
+&nbsp;&nbsp;&nbsp;ret = media_info_get_title(media, &amp;title);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Title: %s\n&quot;, title);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(title);
+&nbsp;&nbsp;&nbsp;}   
+
+&nbsp;&nbsp;&nbsp;return true;
+}</pre>
+</li>
+</ol>
+
+<h2>Where to Go Next</h2>
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__FOLDER__MODULE.html">Media Folder API Reference</a></li>    
+  </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

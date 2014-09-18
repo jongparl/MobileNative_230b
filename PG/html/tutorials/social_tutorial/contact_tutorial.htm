@@ -1,0 +1,1086 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Contacts Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Contacts Tutorial</h1> 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts API</a>. Functions contained in this module allow you to manage contacts and groups, and to convert contact details to and from the vCard format.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;contacts.h&gt;</span> header. This header file has to be included in all applications that use the Contacts API.</p>
+<p>To learn about the Contacts API features, see the <a href="../../guide/social/contact.htm">Contacts Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+<li><a href="#init">Initialization and Prerequisites</a>
+<p>Initialize and deinitialize the Contacts API.</p></li>
+
+<li>Managing contacts
+<ul><li><a href="#create_contact">Creating a Contact</a>
+<p>Create a new contact.</p></li>
+
+<li><a href="#set_contact">Setting Contact Properties</a>
+<p>Set contact properties, such as name and image.</p></li>
+
+<li><a href="#insert_contact">Inserting a Contact to the Database</a>
+<p>Insert a contact to the Contacts database.</p></li>
+
+<li><a href="#get_contact">Getting Contacts</a>
+<p>Retrieve single contacts or a list of contacts.</p></li>
+
+<li><a href="#update_contact">Updating a Contact</a>
+<p>Update contact details.</p></li>
+
+<li><a href="#delete_contact">Deleting a Person</a>
+<p>Delete the person from the database.</p></li>
+
+<li><a href="#link_contact">Linking and Unlinking Contacts</a>
+<p>Link and unlink contacts to persons.</p></li>
+
+<li><a href="#manage_contact">Managing Favorites</a>
+<p>Set or unset a person to be a favorite.</p></li>
+
+<li><a href="#monitor_contact">Monitoring Person Changes</a>
+<p>Receive notifications when changes occur in persons.</p></li>
+</ul></li>
+
+<li>Managing groups
+<ul><li><a href="#create">Creating a Group</a>
+<p>Create a new group.</p></li>
+
+<li><a href="#set">Setting Group Properties</a>
+<p>Set group properties, such as name and image.</p></li>
+
+<li><a href="#insert">Inserting a Group to the Database</a>
+<p>Insert a group to the Contacts database.</p></li>
+
+<li><a href="#get">Getting Groups</a>
+<p>Retrieve single groups or a list of groups.</p></li>
+
+<li><a href="#update">Updating a Group</a>
+<p>Update group details.</p></li>
+
+<li><a href="#delete">Deleting a Group</a>
+<p>Delete the group from the database.</p></li>
+
+<li><a href="#manage">Managing Group Members</a>
+<p>Add, remove, and retrieve group members.</p></li>
+
+<li><a href="#monitor">Monitoring Group Changes</a>
+<p>Receive notifications when changes occur in groups.</p></li>
+</ul></li>
+
+<li>Managing vCards
+<ul><li><a href="#make">Making a vCard</a>
+<p>Make a vCard stream from a person record.</p></li>
+<li><a href="#parse">Parsing a vCard</a>
+<p>Parse a vCard from a file and insert to the database.</p></li>
+</ul></li></ul>
+
+ <h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>To start with the Contact Service:
+<ol><li>Include to your application the <span style="font-family: Courier New,Courier,monospace">contacts.h</span> header.</li>
+<li>Most of the API functions return error codes, therefore define at the beginning of your code the <span style="font-family: Courier New,Courier,monospace">int</span> type, which is used to store error codes. Each time when a function returns error codes, verify the result of the operation.</p></li>
+<li><p>Call the <span style="font-family: Courier New,Courier,monospace">contacts_connect()</span> function, which connects your application with the Contact Service. Without this function, you cannot get access to the Contacts database.</p> 
+<pre class="prettyprint">int error_code;
+error_code = contacts_connect();
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts connect failed: %x\n&quot;, error_code);</pre></li>
+<li>When the Contacts APIs are not needed anymore, you have to disconnect from the service using the <span style="font-family: Courier New,Courier,monospace">contacts_disconnect()</span> function:
+<pre class="prettyprint">error_code = contacts_disconnect();
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts connect failed: %x\n&quot;, error_code);</pre></li></ol>
+
+
+
+<h2 id="create_contact" name="create_contact">Creating a Contact</h2>
+<p>To create a contact record:</p>
+<pre class="prettyprint">contacts_record_h contact;
+
+error_code = contacts_record_create(_contacts_contact._uri, &amp;contact);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);</pre>
+
+<p>The first argument determines the type of the created record. Use <span style="font-family: Courier New,Courier,monospace">_contacts_contact._uri</span> to create contact type records.</p>
+<p>This record, however, contains no additional information, like a name or phone number. To add them, you must set contact properties by creating additional records and setting them as child records of the contact record. Note that records created this way are objects in the memory, with <span style="font-family: Courier New,Courier,monospace">contacts_record_h</span> type variables as their handles. Changes made to these objects are not reflected in the database until your explicit request, using <span style="font-family: Courier New,Courier,monospace">contacts_db_insert_record()</span> or <span style="font-family: Courier New,Courier,monospace">contacts_db_update_record()</span>.</p>
+
+<h2 id="set_contact" name="set_contact">Setting Contact Properties</h2>
+<p>To set the contact name, birthday, and phone number:</p>
+<ol><li>Add the contact name.
+<ol><li>Create a name record:
+<pre class="prettyprint">contacts_record_h name;
+
+error_code = contacts_record_create(_contacts_name._uri, &amp;name);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);</pre></li>
+<li>To set the first name, set the value of a string type property identified by <span style="font-family: Courier New,Courier,monospace">_contacts_name.first</span>.
+<pre class="prettyprint">error_code = contacts_record_set_str(name, _contacts_name.first, &quot;John&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre>
+<p>The <span style="font-family: Courier New,Courier,monospace">contacts_record_set_str()</span> function is used to set string field values. There are other similar functions for other types, such as integer and double. The <span style="font-family: Courier New,Courier,monospace">name</span> variable is the record handle created above. The second argument – <span style="font-family: Courier New,Courier,monospace">_contacts_name.first</span> – is the property identifier, and the third argument is the value to be assigned.</p></li>
+<li>Set the last name similarly:
+<pre class="prettyprint">error_code = contacts_record_set_str(name, _contacts_name.last, &quot;Smith&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts records set string failed: %x\n&quot;, error_code);</pre>
+</li>
+<li>Associate the <span style="font-family: Courier New,Courier,monospace">name</span> record with the <span style="font-family: Courier New,Courier,monospace">contact</span> record, by setting the name as the contact&#39;s child record. In this example, it is achieved using <span style="font-family: Courier New,Courier,monospace">contacts_record_add_child_record()</span>.
+<pre class="prettyprint">error_code = contacts_record_add_child_record(contact, _contacts_contact.name, name);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record add child record failed: %x\n&quot;, error_code);</pre>
+<p>The second argument – <span style="font-family: Courier New,Courier,monospace">_contacts_contact.name</span> – is the parent property to which the child record is assigned. See <span style="font-family: Courier New,Courier,monospace">_contacts_contact</span> view description in the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__VIEW__MODULE.html">Contacts API</a>. In the API, the <span style="font-family: Courier New,Courier,monospace">name</span> property is listed as one of the <span style="font-family: Courier New,Courier,monospace">record</span> type properties, which means that other records can be assigned to this property as child records (&quot;single&quot; means that only 1 <span style="font-family: Courier New,Courier,monospace">_contacts_name</span> type child record is allowed). The required type of the child record is specified in the API. </p></li></ol></li>
+<li>Add an image.
+<ol><li>Create an image record:
+<pre class="prettyprint">contacts_record_h image;
+
+error_code = contacts_record_create(_contacts_image._uri, &amp;image);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);</pre></li>
+<li>To set the image, set the value of a string type property identified by <span style="font-family: Courier New,Courier,monospace">_contacts_image.path</span>:
+<pre class="prettyprint">error_code = contacts_record_set_str(image, _contacts_image.path, &quot;/opt/usr/media/caller_id.jpg&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+<li>Set the image record as the contact&#39;s child record:
+<pre class="prettyprint">error_code = contacts_record_add_child_record(contact, _contacts_contact.image, image);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record add child record failed: %x\n&quot;, error_code);</pre></li></ol></li>
+<li>Add an event.
+<p>You can add a birthday event associated with the contact. An event contains the date and the event type, among other properties.</p>
+<ol><li>Create an event record:
+<pre class="prettyprint">contacts_record_h event;
+
+error_code = contacts_record_create(_contacts_event._uri, &amp;event);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);</pre></li>
+<li>Set the event date. The date is an integer, equal to year * 10000 + month * 100 + day.
+<pre class="prettyprint">int year = 1990;
+int month = 5;
+int day = 21; 
+int int_date = year * 10000 + month * 100 + day;
+
+error_code = contacts_record_set_int(event, _contacts_event.date, int_date);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set integer failed: %x\n&quot;, error_code);</pre></li>
+<li>Set the event type to birthday. For available types, see <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__RECORD__MODULE.html#ga434cc4b7cec62ccab70fa4825ce0801d">contacts_event_type_e</a> enumeration.
+<pre class="prettyprint">error_code = contacts_record_set_int(event, _contacts_event.type, CONTACTS_EVENT_TYPE_BIRTH);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set integer failed: %x\n&quot;, error_code);</pre></li>
+<li>If the type is <span style="font-family: Courier New,Courier,monospace">CONTACTS_EVENT_TYPE_CUSTOM</span>, you can set a custom label (see <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__VIEW__MODULE.html">_contacts_event view</a>).
+<pre class="prettyprint">error_code = contacts_record_set_int(event, _contacts_event.type, CONTACTS_EVENT_TYPE_CUSTOM);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set integer failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_str(event, _contacts_event.label, &quot;Event description&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+<li>Set the event record as the contact&#39;s child record:
+<pre class="prettyprint">error_code = contacts_record_add_child_record(contact, _contacts_contact.event, event);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record add child record failed: %x\n&quot;, error_code);</pre></li></ol></li>
+<li>Add a phone number.
+<p>The phone number is added to a parent record using an alternative method.</p>
+<ol><li>Create a phone number record and set the <span style="font-family: Courier New,Courier,monospace">number</span> property:
+<pre class="prettyprint">contacts_record_h number;
+
+error_code = contacts_record_create(_contacts_number._uri, &amp;number);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_str(number, _contacts_number.number, &quot;+8210-1234-5678&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+<li>Set the number record as the contact&#39;s child record:
+<pre class="prettyprint">error_code = contacts_record_add_child_record(contact, _contacts_contact.number, number);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record add child record failed: %x\n&quot;, error_code);</pre></li></ol></li></ol>
+
+   <h2 id="insert_contact" name="insert_contact">Inserting a Contact to the Database</h2>
+<p>When the data is set for the contact and name records, you can insert them into the database. When you insert a parent record, all child records added to it using <span style="font-family: Courier New,Courier,monospace">contacts_record_add_child_record()</span> are inserted automatically.</p>
+
+<ol><li>Insert a contact record:
+
+<pre class="prettyprint">int id = -1;
+
+error_code = contacts_db_insert_record(contact, &amp;id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db insert record failed: %x\n&quot;, error_code);</pre></li>
+<li>When the records are in the database, the objects representing them in the memory are no longer needed and must be destroyed. 
+<pre class="prettyprint">contacts_record_destroy(contact, true);</pre>
+<p>If the second parameter is <span style="font-family: Courier New,Courier,monospace">true</span>, child records of the given record (objects representing them in the memory) are also destroyed. This does not depend on the way the child records were added.</p></li></ol>
+
+<h2 id="get_contact" name="get_contact">Getting Contacts</h2>
+
+<p>A person is an aggregation of one or more contacts associated with the same person. The person is created automatically when inserting a contact record. To use the contact information in your application, you must learn to print basic person information.</p>
+
+<ol><li>Get a single person record.
+<p>If you want to get a single person record, you can use its ID to retrieve it:</p>
+<pre class="prettyprint">contacts_record_h person  = NULL;
+const int person_id = ... // Acquire person ID
+int error_code;
+
+error_code = contacts_db_get_record(_contacts_person._uri, person_id, &amp;person);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);</pre></li>
+<li>Get a person record list.
+<p>To get a list of all persons, use the <span style="font-family: Courier New,Courier,monospace">contacts_db_get_all_records()</span> function.</p>
+<pre class="prettyprint">contacts_list_h list = NULL;
+
+error_code = contacts_db_get_all_records(_contacts_person._uri, 0, 0, &amp;list);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get all records failed: %x\n&quot;, error_code);</pre></li>
+<li>Filter a list.
+<p>Before retrieving the person list, you can filter it based on various parameters.</p>
+<ol><li>To get a person list with filtering, create a record list and a query:
+<pre class="prettyprint">contacts_list_h list = NULL;
+contacts_query_h query = NULL;
+
+error_code = contacts_query_create(_contacts_person._uri, &amp;query);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts query create failed: %x\n&quot;, error_code);</pre></li>
+
+<li>Create a filter:
+<pre class="prettyprint">contacts_filter_h filter = NULL;
+
+error_code = contacts_filter_create(_contacts_person._uri, &amp;filter);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter create failed: %x\n&quot;, error_code);</pre></li>
+<li>Add a condition, such as display_name:
+<pre class="prettyprint">error_code = contacts_filter_add_str(filter, _contacts_person.display_name, CONTACTS_MATCH_CONTAINS, &quot;John&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add string failed: %x\n&quot;, error_code);</pre></li>
+<li>To add multiple conditions, you must define an operator between the conditions:
+<pre class="prettyprint">error_code = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_AND);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add operator failed: %x\n&quot;, error_code);
+
+error_code = contacts_filter_add_bool(filter, _contacts_person.is_favorite, true);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add boolean failed: %x\n&quot;, error_code);</pre></li>
+<li>Connect the query with the list:
+<pre class="prettyprint">error_code = contacts_query_set_filter(query, filter);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts query set filter failed: %x\n&quot;, error_code);
+
+error_code = contacts_db_get_records_with_query(query, 0, 0, &amp;list);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get records with query failed: %x\n&quot;, error_code);</pre>
+<p>The third parameter refers to a limit of the results. If 0 is passed, there are no limits. Remember that after all operations, the list must be released.</p></li></ol></li>
+<li>Search for contacts.
+<p>The Contact Service provides an API for contact search. The <span style="font-family: Courier New,Courier,monospace">contacts_db_search_records()</span> function provides an easy way to find records based on a given keyword. This example shows how to find the contact records which contain the &quot;John&quot; keyword.</p>
+<pre class="prettyprint">contacts_list_h list = NULL;
+
+error_code = contacts_db_search_records(_contacts_person._uri, &quot;John&quot;, 0, 0, &amp;list);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db search records failed: %x\n&quot;, error_code);</pre></li>
+<li>Iterate the list and read the records.
+<ol><li><p>To get records from the list, use <span style="font-family: Courier New,Courier,monospace">contacts_list_get_current_record_p()</span>, and <span style="font-family: Courier New,Courier,monospace">contacts_list_next()</span> or <span style="font-family: Courier New,Courier,monospace">contacts_list_prev()</span>. Inside the loop, get the details of each record.</p>
+<p>Note on the returned values&#39; ownership: some functions have the <span style="font-family: Courier New,Courier,monospace">_p</span> postfix. It means that the returned value must not be freed by the application, as it is a pointer to the data in an existing record.</p>
+<pre class="prettyprint">contacts_record_h record;
+while (contacts_list_get_current_record_p(list, &amp;record) == CONTACTS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;char* display_name;
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str_p(record, _contacts_person.display_name, &amp;display_name);
+&nbsp;&nbsp;&nbsp;printf(&quot;display_name: %s\n&quot;, display_name);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+}</pre></li>
+<li>If you want to get more details of each record, use the <span style="font-family: Courier New,Courier,monospace">contacts_gl_person_data_t</span> structure like below: 
+<pre class="prettyprint">contacts_gl_person_data_t *gl_person_data = NULL;
+contacts_record_h record;
+while (contacts_list_get_current_record_p(list, &amp;record) == CONTACTS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;gl_person_data = _create_gl_person_data(record);
+&nbsp;&nbsp;&nbsp;// You can get, for example, display name:
+&nbsp;&nbsp;&nbsp;// gl_person_data-&gt;display_name
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+}</pre></li>
+<li>The memory for the record data is allocated, and the data is copied from the record by the functions listed further on in this document. 
+<pre class="prettyprint">typedef struct _contacts_gl_person_data 
+{
+&nbsp;&nbsp;&nbsp;int id;
+&nbsp;&nbsp;&nbsp;char *display_name;
+&nbsp;&nbsp;&nbsp;char *default_phone_number;
+&nbsp;&nbsp;&nbsp;contacts_list_h associated_contacts;
+} contacts_gl_person_data_t;
+
+static void _free_gl_person_data(contacts_gl_person_data_t *gl_person_data)
+{
+&nbsp;&nbsp;&nbsp;if (NULL == gl_person_data)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;free(gl_person_data-&gt;display_name);
+&nbsp;&nbsp;&nbsp;free(gl_person_data-&gt;default_phone_number);
+&nbsp;&nbsp;&nbsp;contacts_list_destroy(gl_person_data-&gt;associated_contacts, true);
+&nbsp;&nbsp;&nbsp;free(gl_person_data);
+}
+
+static contacts_gl_person_data_t* _create_gl_person_data(contacts_record_h record)
+{
+&nbsp;&nbsp;&nbsp;contacts_gl_person_data_t *gl_person_data;
+
+&nbsp;&nbsp;&nbsp;gl_person_data = malloc(sizeof(contacts_gl_person_data_t));
+&nbsp;&nbsp;&nbsp;memset(gl_person_data, 0x0, sizeof(contacts_gl_person_data_t));
+&nbsp;&nbsp;&nbsp;if (contacts_record_get_int(record, _contacts_person.id, &amp;gl_person_data-&gt;id) != CONTACTS_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;get person id failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_person_data(gl_person_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (false == _get_display_name(record, &amp;gl_person_data-&gt;display_name)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;_get_display_name() failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_person_data(gl_person_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (false == _get_default_phone_number(record, &amp;gl_person_data-&gt;default_phone_number)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;_get_default_phone_number() failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_person_data(gl_person_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (false == _get_associated_contacts(record, &amp;gl_person_data-&gt;associated_contacts)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;_get_associated_contacts() failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_person_data(gl_person_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return gl_person_data;
+}</pre></li>
+<li>Get person details.
+<ul><li>Get the display name.
+<p>Assuming that you have the person record handle (<span style="font-family: Courier New,Courier,monospace">contacts_record_h</span>), you can access the <span style="font-family: Courier New,Courier,monospace">display_name</span> property. You can read the display name property and print it:</p>
+<pre class="prettyprint">static bool _get_display_name(contacts_record_h record, char **display_name)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(record, _contacts_person.display_name, display_name);
+&nbsp;&nbsp;&nbsp;printf(&quot;display name: %s\n&quot;, *display_name);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;
+&nbsp;&nbsp;&nbsp;return true;
+}</pre></li>
+<li>Get associated contacts.
+<p>You can get the associated contacts of a person by query. In this example, you get the associated contact records.</p>
+<pre class="prettyprint">static bool _get_associated_contacts(contacts_record_h record, contacts_list_h *associated_contacts)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+&nbsp;&nbsp;&nbsp;int person_id;
+&nbsp;&nbsp;&nbsp;contacts_query_h query = NULL;
+&nbsp;&nbsp;&nbsp;contacts_filter_h filter = NULL;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_int(record, _contacts_person.id, &amp;person_id);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get integer failed: %x\n&quot;, error_code);
+   
+&nbsp;&nbsp;&nbsp;error_code = CONTACTS_ERROR_NONE;
+&nbsp;&nbsp;&nbsp;error_code += contacts_query_create(_contacts_contact._uri, &amp;query);
+&nbsp;&nbsp;&nbsp;error_code += contacts_filter_create(_contacts_contact._uri, &amp;filter);
+&nbsp;&nbsp;&nbsp;error_code += contacts_filter_add_int(filter, _contacts_contact.person_id, CONTACTS_MATCH_EQUAL, person_id);
+&nbsp;&nbsp;&nbsp;error_code += contacts_query_set_filter(query, filter);
+
+&nbsp;&nbsp;&nbsp;error_code += contacts_db_get_records_with_query(query, 0, 0, associated_contacts);
+
+&nbsp;&nbsp;&nbsp;contacts_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;contacts_query_destroy(query);
+
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;
+&nbsp;&nbsp;&nbsp;return true;
+}</pre></li>
+<li>Get phone numbers.
+<p>You can get the numbers of a person by iterating the contacts list. In this example, you get all the number records and print them.</p>
+<pre class="prettyprint">static void _print_phone_numbers(contacts_list_h associated_contacts)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+&nbsp;&nbsp;&nbsp;contacts_record_h contact;
+&nbsp;&nbsp;&nbsp;while (contacts_list_get_current_record_p(associated_contacts, &amp;contact) == CONTACTS_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int count = 0;
+   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_child_record_count(contact, _contacts_contact.number, &amp;count);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; count; i++) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_h number = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_child_record_at_p(contact, _contacts_contact.number, i, &amp;number);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int number_id;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_int(number, _contacts_number.id, &amp;number_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;number id: %d\n&quot;, number_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *number_str = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_str_p(number, _contacts_number.number, &amp;number_str);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;number: %s\n&quot;, number_str);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(associated_contacts);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+&nbsp;&nbsp;&nbsp;}
+}</pre></li>
+<li>Get the default phone number.
+<p>If a contact has multiple phone numbers, one of them is defined as the default phone number. A person also has a default phone number. You can get the default phone number of a person by query. The Contact Service provides the <span style="font-family: Courier New,Courier,monospace">_contacts_person_number</span> view for getting the default phone number of a person. In the default phone number record, the <span style="font-family: Courier New,Courier,monospace">is_primary_default</span> property value is <span style="font-family: Courier New,Courier,monospace">true</span>. This example shows how to get the default phone number of a person by query.</p>
+<pre class="prettyprint">static bool _get_default_phone_number(contacts_record_h record, char **default_phone_number) 
+{
+&nbsp;&nbsp;&nbsp;contacts_query_h query = NULL;
+&nbsp;&nbsp;&nbsp;contacts_filter_h filter = NULL;	
+&nbsp;&nbsp;&nbsp;contacts_list_h list = NULL;
+&nbsp;&nbsp;&nbsp;contacts_record_h record_person_number = NULL;
+&nbsp;&nbsp;&nbsp;int person_id;
+&nbsp;&nbsp;&nbsp;int error_code = CONTACTS_ERROR_NONE;
+
+&nbsp;&nbsp;&nbsp;error_code += contacts_record_get_int(record, _contacts_person.id, &amp;person_id);
+
+&nbsp;&nbsp;&nbsp;error_code += contacts_query_create(_contacts_person_number._uri, &amp;query);
+&nbsp;&nbsp;&nbsp;error_code += contacts_filter_create(_contacts_person_number._uri, &amp;filter);
+&nbsp;&nbsp;&nbsp;error_code += contacts_filter_add_bool(filter, _contacts_person_number.is_primary_default, true);
+&nbsp;&nbsp;&nbsp;error_code += contacts_query_set_filter(query, filter);
+&nbsp;&nbsp;&nbsp;error_code += contacts_db_get_records_with_query(query, 0, 0, &amp;list);
+&nbsp;&nbsp;&nbsp;error_code += contacts_list_get_current_record_p(list, &amp;record_person_number);
+
+&nbsp;&nbsp;&nbsp;error_code += contacts_record_get_str(record_person_number, _contacts_person_number.number, default_phone_number);
+
+&nbsp;&nbsp;&nbsp;contacts_list_destroy(list, true);
+&nbsp;&nbsp;&nbsp;contacts_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;contacts_query_destroy(query);
+
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;
+&nbsp;&nbsp;&nbsp;return true;
+}</pre></li>
+<li>Get events.
+<p>You can get the events by iterating the contacts list.</p>
+<pre class="prettyprint">static void _print_events(contacts_list_h associated_contacts)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+&nbsp;&nbsp;&nbsp;contacts_record_h contact;
+&nbsp;&nbsp;&nbsp;while (contacts_list_get_current_record_p(associated_contacts, &amp;contact) == CONTACTS_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int count = 0;
+   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_child_record_count(contact, _contacts_contact.event, &amp;count);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; count; i++) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_h event = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_child_record_at_p(contact, _contacts_contact.event, i, &amp;event);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int event_id;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_int(event, _contacts_event.id, &amp;event_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;event id: %d\n&quot;, event_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int date;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_record_get_int(event, _contacts_event.date, &amp;date);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;event: %d\n&quot;, date);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(associated_contacts);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+&nbsp;&nbsp;&nbsp;}
+}</pre></li></ul></li></ol></li></ol>
+
+<h2 id="update_contact" name="update_contact">Updating a Contact</h2>
+
+<p>You can change the name, birthday, and phone number of an existing contact.</p>
+<ol><li>Get the contact.
+<p>To modify a record, you need to have a handle (<span style="font-family: Courier New,Courier,monospace">contacts_record_h</span> type variable) to a memory object representing the record in the database. One of the ways to acquire it is to use the contact ID:</p>
+<pre class="prettyprint">int contact_id = ... // Acquire contact ID
+contacts_record_h contact = NULL;
+
+error_code = contacts_db_get_record(_contacts_contact._uri, contact_id, &amp;contact);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);</pre>
+<p>Such handles are also provided by search functions, such as <span style="font-family: Courier New,Courier,monospace">contacts_db_get_records_with_query()</span>.</p></li>
+<li>Change the name.
+<ol><li><p>To modify the contact name, get the name record with the <span style="font-family: Courier New,Courier,monospace">contacts_record_get_child_record_at_p()</span> function, which provides a list of the child records of a given type.</p>
+<pre class="prettyprint">contacts_record_h name = NULL;
+
+error_code = contacts_record_get_child_record_at_p(contact, _contacts_contact.name, 0, &amp;name);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get child record failed: %x\n&quot;, error_code);</pre>
+
+<p>The function parameters are the parent record, the child record type, a child record index, and the resulting child record. Since there can be only one child record of type <span style="font-family: Courier New,Courier,monospace">_contacts_contact.name</span>, the index is set to 0 to get the first (and only) child record.</p></li>
+
+<li>Change the first name:
+<pre class="prettyprint">error_code = contacts_record_set_str(name, _contacts_name.first, &quot;Mark&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre>
+<p>This only changes the data in the memory object, not in the database. To insert the new value, the <span style="font-family: Courier New,Courier,monospace">name</span> record must be inserted. However, if you acquire this record using <span style="font-family: Courier New,Courier,monospace">contacts_record_get_child_record_at_p()</span> (as in this example), you only need to update the parent record.</li></ol></li>
+<li>Change the birthday event.
+<ol><li>If only 1 event is set for the contact, you can call <span style="font-family: Courier New,Courier,monospace">contacts_record_get_child_record_at_p()</span> to get the event record. If there are more events, you must iterate over the child records.
+<pre class="prettyprint">contacts_record_h event = NULL;
+error_code = contacts_record_get_child_record_at_p(contact, _contacts_contact.event, 0, &amp;event);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get child record failed: %x\n&quot;, error_code);</pre></li>
+
+<li>Update the record:
+<pre class="prettyprint">int new_date = 1990 * 10000 + 6 * 100 + 21;
+
+error_code = contacts_record_set_int(event, _contacts_event.date, new_date);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set integer failed: %x\n&quot;, error_code);</pre></li></ol></li>
+<li>Update the contact record.
+<p>Update the contact. Any changes in the child records (such as name and birthday) are also inserted.</p>
+<pre class="prettyprint">error_code = contacts_db_update_record(contact);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db update record failed: %x\n&quot;, error_code);</pre></li>
+<li>When the record handle is no more needed, use the <span style="font-family: Courier New,Courier,monospace">contacts_record_destroy()</span> function to destroy the record handle and free the allocated memory:
+<pre class="prettyprint">contacts_record_destroy(contact, true);</pre></li></ol>
+
+<h2 id="delete_contact" name="delete_contact">Deleting a Person</h2>
+
+<p>To delete a person, call the <span style="font-family: Courier New,Courier,monospace">contacts_db_delete_record()</span> function with <span style="font-family: Courier New,Courier,monospace">_contacts_person._uri</span> as the first parameter and the person ID as the second one.:</p>
+<pre class="prettyprint">int person_id = ... // Acquire person ID
+
+error_code = contacts_db_delete_record(_contacts_person._uri, person_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db delete record failed: %x\n&quot;, error_code);</pre>
+
+<h2 id="link_contact" name="link_contact">Linking and Unlinking Contacts</h2>
+
+<p>You can link contacts manually and automatically. You can link a person manually to another person. Also, you can link a contact to a person automatically when creating.</p>
+
+<p>To link and unlink contacts:</p> 
+<ul><li>To link a person to another person manually, call the <span style="font-family: Courier New,Courier,monospace">contacts_person_link_person()</span> function with base person ID as the first parameter and another person ID as the second one.
+<pre class="prettyprint">int person_id1 = ... // Acquire base person ID
+int person_id2 = ... // Acquire another person ID
+
+error_code = contacts_person_link_person(person_id1, person_id2);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts person link person failed: %x\n&quot;, error_code);</pre></li>
+<li>To link a contact automatically, set the <span style="font-family: Courier New,Courier,monospace">link_mode</span> property to <span style="font-family: Courier New,Courier,monospace">CONTACTS_CONTACT_LINK_MODE_NONE</span> when inserting. 
+<p>The Contact Service determines the link based on the <span style="font-family: Courier New,Courier,monospace">number</span> and <span style="font-family: Courier New,Courier,monospace">email</span> properties. If the links leads to  a contact in the same address book, the link does not work.</p>
+<pre class="prettyprint">contacts_record_h contact = NULL;
+
+error_code = CONTACTS_ERROR_NONE;
+error_code += contacts_record_create(_contacts_contact._uri, &amp;contact);
+error_code += contacts_record_set_int(contact, _contacts_contact.link_mode, CONTACTS_CONTACT_LINK_MODE_NONE);
+
+contacts_record_h name = NULL;
+error_code += contacts_record_create(_contacts_name._uri, &amp;name);
+error_code += contacts_record_set_str(name, _contacts_name.first, &quot;John&quot;);
+error_code += contacts_record_add_child_record(contact, _contacts_contact.name, name);
+
+contacts_record_h number = NULL;
+error_code += contacts_record_create(_contacts_number._uri, &amp;number);
+error_code += contacts_record_set_str(number, _contacts_number.number, &quot;+8210-1234-5678&quot;);
+error_code += contacts_record_add_child_record(contact, _contacts_contact.number, number);
+
+// Contact is linked automatically if an existing person has the same number in a different address book
+error_code += contacts_db_insert_record(contact, NULL);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db insert record: %x\n&quot;, error_code);
+
+contacts_record_destroy(contact, true);</pre></li>
+<li>To unlink a contact from a person, call the <span style="font-family: Courier New,Courier,monospace">contacts_person_unlink_contact()</span> function with the base person ID as the first parameter and the contact ID as the second one. A new person is created when unlinking. You can get the new person ID as the third parameter.
+<pre class="prettyprint">int person_id = ... // Acquire base person ID
+int contact_id = ... // Acquire contact ID
+int unlinked_person_id;
+
+error_code = contacts_person_unlink_contact(person_id, contact_id, &amp;unlinked_person_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts person unlink contact failed: %x\n&quot;, error_code);</pre></li></ul>
+
+<h2 id="manage_contact" name="manage_contact">Managing Favorites</h2>
+
+<p>To manage person favorites:</p>
+<ul><li>To set a person as favorite when creating a contact, use the <span style="font-family: Courier New,Courier,monospace">is_favorite</span> property of the <span style="font-family: Courier New,Courier,monospace">person</span> record. If the property is set to <span style="font-family: Courier New,Courier,monospace">true</span> when creating a contact, the person is set as favorite:</p>
+<pre class="prettyprint">contacts_record_h contact = NULL;
+
+error_code = CONTACTS_ERROR_NONE;
+error_code += contacts_record_create(_contacts_contact._uri, &amp;contact);
+error_code += contacts_record_set_bool(contact, _contacts_contact.is_favorite, true);
+// Set other properties
+
+// New person is set as favorite
+error_code += contacts_db_insert_record(contact, NULL);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db insert record failed: %x\n&quot;, error_code);
+
+contacts_record_destroy(contact, true);</pre></li>
+<li>To set an existing person as favorite, update the <span style="font-family: Courier New,Courier,monospace">person</span> record:
+<pre class="prettyprint">int person_id = ... // Acquire person ID
+contacts_record_h person = NULL;
+
+error_code = contacts_db_get_record(_contacts_person._uri, person_id, &amp;person);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_bool(person, _contacts_person.is_favorite, true);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set bool failed: %x\n&quot;, error_code);
+
+error_code = contacts_db_update_record(person);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db update record failed: %x\n&quot;, error_code);
+
+contacts_record_destroy(person, true);</pre></li>
+<li>To unset a favorite:
+<pre class="prettyprint">int person_id = ... // Acquire person ID
+contacts_record_h person = NULL;
+
+error_code = contacts_db_get_record(_contacts_person._uri, person_id, &amp;person);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_bool(person, _contacts_person.is_favorite, false);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set bool failed: %x\n&quot;, error_code);
+
+error_code = contacts_db_update_record(person);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db update record failed: %x\n&quot;, error_code);
+
+contacts_record_destroy(person, true);</pre></li></ul>
+
+<h2 id="monitor_contact" name="monitor_contact">Monitoring Person Changes</h2>
+
+<p>You can register a callback function to listen for person changes.</p> 
+<ol><li>Register the callback function.
+<pre class="prettyprint">error_code = contacts_db_add_changed_cb(_contacts_person._uri, _person_changed_callback, NULL);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db add changed callback failed: %x\n&quot;, error_code);</pre></li>
+<li>Define the callback function.
+<p>The callback function is called when the person data changes. The code below shows how to update person details in the callback function.</p>
+<pre class="prettyprint">static contacts_gl_person_data_t *_gl_person_data = ... 
+void _person_changed_callback(const char *view_uri, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;if (0 != strcmp(view_uri, _contacts_person._uri))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;if (_gl_person_data == NULL)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;int person_id = _gl_person_data-&gt;id;
+&nbsp;&nbsp;&nbsp;_free_gl_person_data(_gl_person_data);
+&nbsp;&nbsp;&nbsp;_gl_person_data = NULL;
+
+&nbsp;&nbsp;&nbsp;contacts_record_h record = NULL;
+&nbsp;&nbsp;&nbsp;error_code = contacts_db_get_record(_contacts_person._uri, person_id, &amp;record);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;_gl_person_data = _create_gl_person_data(record);
+&nbsp;&nbsp;&nbsp;// Use _gl_person_data
+
+&nbsp;&nbsp;&nbsp;contacts_record_destroy(record, true);
+}</pre></li></ol>
+
+
+
+
+<h2 id="create" name="create">Creating a Group</h2>
+<p>To create a new group record:</p>
+<pre class="prettyprint">contacts_record_h group = NULL;
+
+error_code = contacts_record_create(_contacts_group._uri, &amp;group);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record create failed: %x\n&quot;, error_code);</pre>
+
+<h2 id="set" name="set">Setting Group Properties</h2>   
+<p>To set group properties:</p>
+
+<ol><li>Set the group name.
+<p>The <span style="font-family: Courier New,Courier,monospace">contacts_record_set_str()</span> function sets the name of the group when the second argument is <span style="font-family: Courier New,Courier,monospace">_contacts_group.name</span>. This function takes the group record handle as the first argument, and the name, which is a string value, as the third argument. The name argument is taken from the UI part of the application. The function returns the status code. If the function returns an error, take appropriate action, such as freeing memory, removing handles, and disconnecting from the service if needed.</p>
+<pre class="prettyprint">error_code = contacts_record_set_str(group, _contacts_group.name, &quot;Neighbors&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+<li>Set an image and ringtone path.
+<p>You can set the other properties similarly. To set the image and ringtone path, call the <span style="font-family: Courier New,Courier,monospace">contacts_record_set_str()</span> function and check the error codes.</p>
+<pre class="prettyprint">error_code = contacts_record_set_str(group, _contacts_group.image_path, &quot;/opt/usr/media/group_image.jpg&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_str(group, _contacts_group.ringtone_path, &quot;/opt/usr/media/ringtone.mp3&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li></ol>
+
+<h2 id="insert" name="insert">Inserting a Group to the Database</h2>   
+<p>To insert a group record:</p>
+<ol><li>Use the <span style="font-family: Courier New,Courier,monospace">contacts_db_insert_record()</span> function to insert a newly created group into the Contacts database.
+<p> The first argument is the group record handle, the second is the record ID. A unique ID is assigned to the record your are adding, and is returned as the third argument of the called function. If the group is inserted successfully, the function returns <span style="font-family: Courier New,Courier,monospace">CONTACTS_ERROR_NONE</span>.</p>
+<pre class="prettyprint">int added_group_id = -1;
+
+error_code = contacts_db_insert_record(group, &amp;added_group_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+<li>After inserting, the used structures have to be destroyed:
+<pre class="prettyprint">contacts_record_destroy(group, true);</pre></li></ol>
+
+<h2 id="get" name="get">Getting Groups</h2>
+
+<p>You can get all of the group records one by one, or filter them by one of the properties.</p>
+
+<ul><li>To get a single group record:
+<p>If you want to get a single record and you know its ID, you can get it in that way:</p>
+<pre class="prettyprint">contacts_record_h group;
+int group_id = ... // Acquire group ID
+error_code = contacts_db_get_record(_contacts_group._uri, group_id, &amp;group);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);</pre></li>
+   
+<li>To get the group record list:
+<p>To get groups without filtering, you need a record list:</p>
+<pre class="prettyprint">contacts_list_h list = NULL;	
+error_code = contacts_db_get_all_records(_contacts_group._uri, 0, 0, &amp;list);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get all records failed: %x\n&quot;, error_code);</pre></li>
+
+<li>To filter a list:
+<ol><li>To get groups with filtering, you need a record list and a query:
+<pre class="prettyprint">contacts_list_h list = NULL;
+contacts_query_h query = NULL;
+
+error_code = contacts_query_create(_contacts_group._uri, &amp;query);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts query create failed: %x\n&quot;, error_code);</pre></li>
+<li>Before getting the groups, filter the list. There is a possibility to filter based on various parameters. To create a filter, the following code is used:
+<pre class="prettyprint">contacts_filter_h filter = NULL;
+
+error_code = contacts_filter_create(_contacts_group._uri, &amp;filter);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter create failed: %x\n&quot;, error_code);</pre></li>
+<li>Add a condition, such as group name:
+<pre class="prettyprint">error_code = contacts_filter_add_str(filter, _contacts_group.name, CONTACTS_MATCH_CONTAINS, &quot;neighbors&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add string failed: %x\n&quot;, error_code);</pre>
+<p>That way only groups which contain the name &quot;neighbors&quot; are retrieved. To use multiple conditions, add an operator between them:</p>
+<pre class="prettyprint">error_code = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_OR);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add operator failed: %x\n&quot;, error_code);
+
+error_code = contacts_filter_add_str(filter, _contacts_group.name, CONTACTS_MATCH_CONTAINS, &quot;friend&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts filter add string failed: %x\n&quot;, error_code);</pre></li>
+<li>Connect the query with the list:
+<pre class="prettyprint">error_code = contacts_query_set_filter(query, filter);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts query set filter failed: %x\n&quot;, error_code);
+
+error_code = contacts_db_get_records_with_query(query, 0, 0, &amp;list);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get records with query failed: %x\n&quot;, error_code);</pre>
+<p>The third parameter refers to the limit of the results. If 0 is passed, there are no limits. Remember that after all operations, the list must be released.</p></li></ol></li>
+<li>To iterate the list and read the records:
+<p>It is possible to get records from the list using <span style="font-family: Courier New,Courier,monospace">contacts_list_get_current_record_p()</span>, and <span style="font-family: Courier New,Courier,monospace">contacts_list_next()</span> or <span style="font-family: Courier New,Courier,monospace">contacts_list_prev()</span>. Inside the loop, get details of each record.</p>
+<p>Note on returned values&#39; ownership: some functions have the <span style="font-family: Courier New,Courier,monospace">_p</span> postfix. It means that the returned value must not be freed by the application, as it is a pointer to the data in an existing record.</p>
+<pre class="prettyprint">contacts_record_h record;
+while (contacts_list_get_current_record_p(list, &amp;record) == CONTACTS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;char* name;
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str_p(record, _contacts_group.name, &amp;name);
+&nbsp;&nbsp;&nbsp;printf(&quot;group name: %s\n&quot;, name);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+}</pre>
+<p>If you want to get more details of each record, use the <span style="font-family: Courier New,Courier,monospace">contacts_gl_group_data_t</span> structure like below: </p>
+<pre class="prettyprint">contacts_gl_group_data_t *gl_group_data = NULL;
+contacts_record_h record;
+while (contacts_list_get_current_record_p(list, &amp;record) == CONTACTS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;gl_group_data = _create_gl_group_data(record);
+&nbsp;&nbsp;&nbsp;// You can get, for example, display name:
+&nbsp;&nbsp;&nbsp;// gl_group_data-&gt;name
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+}</pre>
+<p>The memory for the record data is allocated, and the data is copied from the record by the functions listed further on in this document.</p> 
+<pre class="prettyprint">typedef struct _contacts_gl_group_data 
+{
+&nbsp;&nbsp;&nbsp;int id;
+&nbsp;&nbsp;&nbsp;char *name;
+&nbsp;&nbsp;&nbsp;char *image_path;
+&nbsp;&nbsp;&nbsp;char *ringtone_path;
+} contacts_gl_group_data_t;
+
+static void _free_gl_group_data(contacts_gl_group_data_t *gl_group_data)
+{
+&nbsp;&nbsp;&nbsp;if (NULL == gl_group_data)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+&nbsp;&nbsp;&nbsp;free(gl_group_data-&gt;name);
+&nbsp;&nbsp;&nbsp;free(gl_group_data-&gt;image_path);
+&nbsp;&nbsp;&nbsp;free(gl_group_data-&gt;ringtone_path);
+&nbsp;&nbsp;&nbsp;free(gl_group_data);
+}
+
+static contacts_gl_group_data_t* _create_gl_group_data(contacts_record_h record)
+{
+&nbsp;&nbsp;&nbsp;contacts_gl_group_data_t *gl_group_data;
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;gl_group_data = malloc(sizeof(contacts_gl_group_data_t));
+&nbsp;&nbsp;&nbsp;memset(gl_group_data, 0x0, sizeof(contacts_gl_group_data_t));
+
+&nbsp;&nbsp;&nbsp;if (CONTACTS_ERROR_NONE != contacts_record_get_int(record, _contacts_group.id, &amp;gl_group_data-&gt;id)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get integer failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_group_data(gl_group_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (CONTACTS_ERROR_NONE != contacts_record_get_str(record, _contacts_group.name, &amp;gl_group_data-&gt;name)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get string failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_group_data(gl_group_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (CONTACTS_ERROR_NONE != contacts_record_get_str(record, _contacts_group.image_path, &amp;gl_group_data-&gt;image_path)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get string failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_group_data(gl_group_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (CONTACTS_ERROR_NONE != contacts_record_get_str(record, _contacts_group.ringtone_path, &amp;gl_group_data-&gt;ringtone_path)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record get string failed \n&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_free_gl_group_data(gl_group_data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return gl_group_data;
+}</pre></li></ul>
+
+<h2 id="update" name="update">Updating a Group</h2>
+
+<p>To change the name and image of an existing person:</p>
+<ol><li>Get the group.
+<p>To modify a record, you need to have a handle (<span style="font-family: Courier New,Courier,monospace">contacts_record_h type</span> variable) to a memory object representing the record in the database. One of the ways to acquire it is to use the group ID:</p>
+<pre class="prettyprint">int group_id = ... // Acquire group ID
+contacts_record_h group = NULL;
+
+error_code = contacts_db_get_record(_contacts_group._uri, group_id, &amp;group);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);</pre>
+<p>Such handles are also provided by search functions, such as <span style="font-family: Courier New,Courier,monospace">contacts_db_get_records_with_query()</span>.</p>
+</li>
+<li>Change the name and image.
+<p>Change the name and image property using the <span style="font-family: Courier New,Courier,monospace">contacts_record_set_str()</span> function.</p>
+<pre class="prettyprint">error_code = contacts_record_set_str(group, _contacts_group.name, &quot;Family&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);
+
+error_code = contacts_record_set_str(group, _contacts_group.image_path, &quot;/opt/usr/media/new_path.jpg&quot;);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts record set string failed: %x\n&quot;, error_code);</pre></li>
+ 
+<li>Update the group record.
+<p>Update the group. The above changes (name and image) are also inserted.</p>
+<pre class="prettyprint">error_code = contacts_db_update_record(group);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db update record failed: %x\n&quot;, error_code);</pre></li>
+<li>Clean up.
+<p>When the record handle is no longer needed, use the <span style="font-family: Courier New,Courier,monospace">contacts_record_destroy()</span> function to destroy the record handle and free the allocated memory.</p>
+<pre class="prettyprint">contacts_record_destroy(group, true);</pre></li></ol>
+
+<h2 id="delete" name="delete">Deleting a Group</h2>
+
+<p>To delete a group, call the <span style="font-family: Courier New,Courier,monospace">contacts_db_delete_record()</span> function with <span style="font-family: Courier New,Courier,monospace">_contacts_group._uri</span> as the first parameter and group ID as the second one;</p>
+<pre class="prettyprint">int group_id = ... // Acquire group ID
+
+error_code = contacts_db_delete_record(_contacts_group._uri, group_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db delete record failed: %x\n&quot;, error_code);</pre>
+   
+<h2 id="manage" name="manage">Managing Group Members</h2>   
+<p>To manage group members:</p>
+
+<ul><li>To add a group member, you need to know the contact ID and the group ID. Then you need to call <span style="font-family: Courier New,Courier,monospace">contacts_group_add_contact()</span>.
+<pre class="prettyprint">int contact_id = ... // Acquire contact ID
+int group_id = ... // Acquire group ID
+
+error_code = contacts_group_add_contact(group_id, contact_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts group add contact failed: %x\n&quot;, error_code);</pre></li>
+<li>To remove a contact from a group, call <span style="font-family: Courier New,Courier,monospace">contacts_group_remove_contact()</span>.
+<pre class="prettyprint">int contact_id = ... // Acquire contact ID 
+int group_id = ... // Acquire group ID
+
+error_code = contacts_group_remove_contact(group_id, contact_id);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts group add contact failed: %x\n&quot;, error_code);</pre></li>
+
+<li>To get a list of persons assigned to a specific group:
+<ol><li>Get the records of type <span style="font-family: Courier New,Courier,monospace">_contacts_person_group_assigned</span>:
+<pre class="prettyprint">int group_id = ... // Acquire group ID
+
+contacts_query_h query = NULL;
+contacts_filter_h filter = NULL;
+contacts_list_h list = NULL;
+
+contacts_query_create(_contacts_person_group_assigned._uri, &amp;query);
+contacts_filter_create(_contacts_person_group_assigned._uri, &amp;filter);
+contacts_filter_add_int(filter, _contacts_person_group_assigned.group_id, CONTACTS_MATCH_EQUAL, group_id);
+contacts_query_set_filter(query, filter);
+contacts_db_get_records_with_query(query, 0, 0, &amp;list);</pre></li>
+<li>Iterate over the list elements. 
+<pre class="prettyprint">contacts_record_h person = NULL;
+int error_code;
+
+while (contacts_list_get_current_record_p(list, &amp;person) == CONTACTS_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;int person_id;
+&nbsp;&nbsp;&nbsp;contacts_record_get_int(person, _contacts_person_group_assigned.person_id, &amp;person_id);
+&nbsp;&nbsp;&nbsp;printf(&quot;Person id: %d\n&quot;, person_id);
+
+&nbsp;&nbsp;&nbsp;char *display_name;
+&nbsp;&nbsp;&nbsp;contacts_record_get_str_p(person, _contacts_person_group_assigned.display_name, &amp;display_name);
+&nbsp;&nbsp;&nbsp;printf(&quot;Display name: %s\n&quot;, display_name);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+}</pre></li>
+<li>Destroy the filter, query, and list handles when no longer needed.
+<pre class="prettyprint">contacts_list_destroy(list, true);
+contacts_filter_destroy(filter);
+contacts_query_destroy(query);</pre></li></ol></li></ul>
+
+
+<h2 id="monitor" name="monitor">Monitoring Group Changes</h2>
+<p>To register a callback function to listen for group changes:</p> 
+<ol><li>Register the callback function.
+<p>The code below shows how to register a callback function to listen for group changes.</p>
+<pre class="prettyprint">error_code = contacts_db_add_changed_cb(_contacts_group._uri, _group_changed_callback, NULL);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db add changed callback failed: %x\n&quot;, error_code);</pre></li>
+<li>Define the callback function.
+<p>The callback function is called when the group data changes. The code below shows how to update the group details in the callback function.</p>
+<pre class="prettyprint">static contacts_gl_group_data_t *_gl_group_data = ... 
+static void _group_changed_callback(const char *view_uri, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;if (0 != strcmp(view_uri, _contacts_group._uri))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;if (_gl_group_data == NULL)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;int group_id = _gl_group_data-&gt;id;
+&nbsp;&nbsp;&nbsp;_free_gl_group_data(_gl_group_data);
+&nbsp;&nbsp;&nbsp;_gl_group_data = NULL;
+
+&nbsp;&nbsp;&nbsp;contacts_record_h record = NULL;
+&nbsp;&nbsp;&nbsp;error_code = contacts_db_get_record(_contacts_group._uri, group_id, &amp;record);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;
+
+&nbsp;&nbsp;&nbsp;_gl_group_data = _create_gl_group_data(record);
+&nbsp;&nbsp;&nbsp;// Use _gl_group_data
+
+&nbsp;&nbsp;&nbsp;contacts_record_destroy(record, true);
+}</pre></li></ol>
+
+
+
+ 
+ <h2 id="make" name="make">Making a vCard</h2>
+
+<p>To make a vCard stream from a person record:</p>
+<ol><li>Get the person record by the person ID.
+<pre class="prettyprint">int person_id = ... // Acquire person ID
+
+contacts_record_h record = NULL;
+error_code = contacts_db_get_record(_contacts_person._uri, person_id, &amp;record);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db get record failed: %x\n&quot;, error_code);</pre></li>
+<li>Make the vCard stream by the person record.
+<pre class="prettyprint">char *vcard_stream = NULL;
+error_code = contacts_vcard_make_from_person(record, &amp;vcard_stream);
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts vcard make from person failed: %x\n&quot;, error_code);</pre>
+
+    <table class="note"> 
+   <tbody> 
+    <tr> 
+     <th class="note">Note</th> 
+    </tr> 
+    <tr> 
+     <td class="note">The Contact Service API allows you to make a vCard stream from a person, contact, and my profile records:
+<pre class="prettyprint">int contacts_vcard_make_from_person(contacts_record_h person, char **vcard_stream);
+int contacts_vcard_make_from_contact(contacts_record_h contact, char **vcard_stream);
+int contacts_vcard_make_from_my_profile(contacts_record_h my_profile, char **vcard_stream);</pre>
+</td> 
+    </tr> 
+   </tbody> 
+  </table> </li>
+ 
+<li>Destroy the handle when it is no longer needed.
+<pre class="prettyprint">free(vcard_stream);
+contacts_record_destroy(record, true);</pre>
+ </li>   </ol>
+ 
+ <h2 id="parse" name="parse">Parsing a vCard</h2>
+
+<p>To parse a vCard from a file and insert to the database:</p>
+<pre class="prettyprint">const char *vcard_file_path = &quot;/opt/usr/media/test.vcf&quot;;
+
+error_code = contacts_vcard_parse_to_contact_foreach(vcard_file_path, // File path of vCard
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_vcard_parse_cb, // Callback function to invoke
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL); // User data to be passed to the callback function
+if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts vcard parse to contact foreach failed: %x\n&quot;, error_code);</pre>
+
+<p>The vCard stream contains multiple contact objects. The callback function is called after parsing each contact. If you return <span style="font-family: Courier New,Courier,monospace">false</span> on the callback function, parsing stops.</p>
+<pre class="prettyprint">static bool _vcard_parse_cb(contacts_record_h contact, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;if (NULL == contact)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;
+
+&nbsp;&nbsp;&nbsp;int contact_id = -1;
+&nbsp;&nbsp;&nbsp;error_code = contacts_db_insert_record(contact, &amp;contact_id);
+&nbsp;&nbsp;&nbsp;if (error_code != CONTACTS_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts db insert record failed: %x\n&quot;, error_code);
+&nbsp;&nbsp;&nbsp;// Use the contact record
+
+&nbsp;&nbsp;&nbsp;return true;
+}</pre>
+
+ 
+ 
+ 
+   <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="social_tutorial.htm">Social Tutorials</a></li>
+	<li><a href="../../guide/social/contact.htm">Contacts Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts API Reference</a></li>    
+  </ul> 
+
+
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

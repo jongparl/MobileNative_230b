@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Debugging Methods</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Application Debugging Methods</h1> 
+  <p>You can apply the normal or attached method for debugging a Tizen application.</p> 
+
+  <h2 id="basic" name="basic">Normal Debugging</h2> 
+  <p>The normal debugging method is used to debug from start to finish an executable Tizen application, which can be run as a standalone. To debug the application:</p> 
+  <ol> 
+   <li><p>In the <strong>Project Explorer</strong> view, right-click the project and select <strong>Debug As &gt; Tizen native Application</strong>.</p> <p>Debugging starts.</p> </li> 
+   <li><p>To stop the program execution, select <strong>Run &gt; Suspend</strong> in the IDE menu. The program can be stopped also by a break point you have set before debugging.</p> </li> 
+  </ol> 
+  <p>You can debug the source code by, for example, checking variables, registers, and memory. You can also use the <strong>Step Over</strong>, <strong>Step In</strong>, and <strong>Resume</strong> buttons in the <strong>Debug</strong> view for step-by-step debugging actions.</p> 
+  
+  <h2 id="attach" name="attach">Attached Debugging</h2> 
+  <p>The attached debugging method is effective for debugging Tizen applications that have no external interaction with the UI, such as middle-ware and libraries. This method attaches the &quot;gdb&quot; debugger to an application which is running in a target.</p> 
+  <p>If the IDE workspace has a project that contains the source code of the application currently running on the target, you can apply &quot;attach debugging&quot; at a source level.</p> 
+  <p>To debug the application:</p> 
+  <ol> 
+   <li><p>In the <strong>Project Explorer</strong> view, right-click the project and select <strong>Debug As &gt; Tizen native Application - Attach</strong>.</p> <p>The <strong>Select Process</strong> window shows the list of processes currently running on the target system.</p> </li> 
+   <li><p>Select the process to which you want to attach the debugger, and click <strong>OK</strong>.</p> <p>Debugging starts.</p> <p>Note that if you type the name of the application in the text field shown on the upper part on the window, all processes matching the application are listed in the lower part.</p> </li> 
+  </ol> 
+     
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="debugging_overview.htm">Debugging Overview</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

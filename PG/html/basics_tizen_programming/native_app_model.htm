@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+  <link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Native Application Model</title>
+</head>
+
+<body onload="prettyPrint()">
+
+
+<h1>Native Application Model</h1>
+<p>The Tizen native application model handles application life-cycle and system events. Tizen native application life-cycle is handled by the  <a href="../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application API</a>. It provides functions to manage the main event loop, the application state change events, and basic system events.</p>
+<p>Tizen supports both UI applications (which have a graphical user interface) and service applications (which have no graphical user interface). The UI and service applications can be packaged together, if necessary; however, a combined application package must contain only 1 UI application, while it can have several service applications. </p>
+<p>Applications in the same package follow the same installation life-cycle, which is handled by the application package manager. Each application in the package follows its own application life-cycle. Each application (UI application or service application) in an application package can be identified by its own ID.</p>
+
+<p>The following figure shows the UI and service application life-cycle.</p>
+
+  <p class="figure">Figure: UI and service application life-cycle</p> 
+  <p><img src="../images/multiple_apps.png" alt="UI and service application life-cycle" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+
+<p>A Tizen native application is similar to a conventional Linux application, with some additional features optimized for mobile devices. 
+These devices have constraints, such as relatively small screen sizes and lack of system resources compared to a larger system.</p> 
+<p>For example, for power management reasons, well-designed applications reduce usage when they detect that their display window is covered by another application window. State change events make the detection possible.</p>
+
+<p>For more information about application model details, see:</p>
+<ul><li><a href="package_app_id.htm">Package ID and Application ID</a></li>
+<li><a href="app_directory_policy.htm">Application Directory Policy</a></li>
+<li><a href="app_manifest.htm">Application Manifest</a></li>
+<li><a href="signature.htm">Signature</a></li>
+<li><a href="installer_smack.htm">Installer and SMACK</a></li>
+<li><a href="commands_package.htm">Package Commands</a></li>
+</ul>
+
+<h2>Native Application Life-cycle</h2>   
+
+<p>A Tizen native application can be in one of several different states. Typically, the application is launched by the user from the Launcher, or by another application. When the application is starting, the <span style="font-family: Courier New,Courier,monospace;">app_create_cb()</span> function is executed and the main event loop starts. The application normally at the top window, with focus.</p> 
+<p>When the application loses the focus status, the <span style="font-family: Courier New,Courier,monospace;">app_pause_cb()</span> callback is invoked. The application can go into the pause state, which means that your application is not terminated but continues to run on the background, when:</p>
+	
+  <ul>
+    <li><p>A new application is launched based on a request from your application.</p></li>
+    <li><p>The user requests to go to Home screen.</p></li>
+    <li><p>A system event (such as an incoming phone call) occurs and causes a resident application with a higher priority to become active and temporarily hide your application.</p></li>
+    <li><p>An alarm is triggered for another application, which becomes the top-most window and hides your application.</p> </li>
+  </ul>
+<p>When your application becomes visible again, the <span style="font-family: Courier New,Courier,monospace;">app_resume_cb()</span> callback is invoked. The visibility returns, when:</p>
+
+  <ul>
+    <li><p>Another application requests your application to run (for example, the Task Navigator, which shows all running applications and lets user select any application to run).</p></li> 
+    <li><p>All applications on top of your application in the window stack finish.</p></li>
+    <li><p>An alarm is triggered for your application, bringing it to the front and hiding other applications.</p></li>
+  </ul>
+
+<p>When your application starts exiting, the <span style="font-family: Courier New,Courier,monospace;">app_terminate_cb()</span> callback is invoked. Your application can start the termination process, when:</p>
+  <ul>
+    <li><p>Your application itself requests to exit by calling the <span style="font-family: Courier New,Courier,monospace;">app_efl_exit()</span> function to terminate the event loop.</p></li>
+    <li><p>The low memory killer is terminating your application in a low memory situation.</p></li>
+  </ul>
+<p>Application state changes are managed by the underlying framework. 
+	For more information about application state transitions, see <a href="../../../org.tizen.mobile.native.appprogramming/html/guide/app/state_transitions.htm">Application States and Transitions</a>.</p>
+ 
+
+<h2>Starting the Tizen Native Application</h2>
+
+<p>An application can be launched by the user from the Launcher or by another application. Either way, the Application Framework starts the application by creating a new process and calling the application entry point. Like in a conventional Linux application, the application main function is the entry point. For more information about launching native applications, see <a href="../../../org.tizen.mobile.native.appprogramming/html/guide/app/app_controls.htm">Launching Applications</a>.</p>
+
+<p>The native application must terminate by calling the <span style="font-family: Courier New,Courier,monospace">exit()</span> function:</p>
+
+<pre class="prettyprint">tizen.application.getCurrentApplicaton().exit();</pre>
+
+<p>The native application can hide itself by calling the <span style="font-family: Courier New,Courier,monospace">hide()</span> function:</p>
+<pre class="prettyprint">tizen.application.getCurrentApplicaton().hide();</pre>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li>  
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

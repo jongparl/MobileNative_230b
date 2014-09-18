@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Viewing Valgrind Result</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Viewing Valgrind Result</h1> 
+  <p>After the <a href="running_valgrind.htm">memory profiling</a> is terminated, you can view the profiling results.</p> 
+  <h2 id="memleak" name="memleak">Memory Error and Leak Results</h2> 
+  <p>The memory error table displays memory leaks that occurred during the profiling process.</p> 
+
+  <ul> 
+   <li><strong>Memory error</strong> or <strong>Memory leak</strong> is the error or leak type.</li> 
+   <li><strong>Function name</strong> is the location where the error occurred.</li> 
+   <li><strong>Sizes</strong> is the memory size of the error.</li> 
+   <li><strong>Address</strong> is the code memory address.</li> 
+   <li><strong>Location</strong> is the source or executable path, or library path, where the error occurred.</li> 
+   <li><strong>pid</strong> is the process ID, and <strong>tid</strong> is the thread ID.<p></p> </li> 
+  </ul> 
+  <p>If you expand an error entry, you can see the callstack of the method.</p> 
+  <h2 id="heap" name="heap">Heap Memory Profiling Results</h2> 
+  <p>The heap memory profiling table displays the heap memory consumed and allocated during the profiling process.</p> 
+  <p class="figure">Figure: Heap memory profiling results</p> 
+  <p style="text-align:center;"><img alt="Heap memory profiling results" src="../images/valgrind_heap.png" /></p> 
+  <ul> 
+   <li><strong>Snapshot</strong> is the index number of the snapshot.</li> 
+   <li><strong>Time (i)</strong> is the number of instructions being executed.</li> 
+   <li><strong>Total (B)</strong> is the total heap memory consumption byte size.</li> 
+   <li><strong>Useful Heap (B)</strong> is the size of the heap memory used by the program.</li> 
+   <li><strong>Extra Heap (B)</strong> is the size of the heap memory allocated in excess of what the program is using. The source of extra heap memory is: 
+    <ul> 
+     <li>Administrative bytes of the heap memory block</li> 
+     <li>Aligned bytes of the requested memory size</li> 
+    </ul> </li> 
+   <li><strong>Stack (B)</strong> is the size of the stacks. By default, stack profiling is disabled as it slows profiling. It is enabled using the <strong>profile stack</strong> option.</li> 
+  </ul> 
+  <p>A snapshot with a green icon in front has a heap tree with a callstack. Double-click the entry to see the callstack details.</p> 
+  <p>For information on executing Valgrind on the command line interface, see the <a href="http://valgrind.org/docs/manual/manual.html" target="_blank">Valgrind User Manual</a>.</p>
+
+  <h2 id="manage" name="manage">Managing Results</h2>
+  <p>To save a Valgrind profiling result, click <strong>Save file</strong> on the Valgrind result view toolbar.</p> 
+
+  <p>To load a saved Valgrind result file, select <strong>File &gt; Open File</strong> in the IDE menu.</p> 
+  
+ <h2>Where to Go Next</h2> 
+  <ul> 
+  <li><a href="valgrind_analysis_core.htm">Valgrind Analysis of Native Applications</a></li> 
+   <li><a href="../ide_sdk_tools/valgrind.htm">Valgrind</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

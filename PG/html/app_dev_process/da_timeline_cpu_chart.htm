@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Timeline CPU Chart</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Timeline CPU Chart</h1> 
+  <p>When analyzing application performance, the CPU load is one of the most significant factors. A CPU load peak can result in a performance bottleneck. High CPU load leads to increased memory consumption, which shortens the battery life of the device running the application. To avoid this, you need to optimize your code.</p> 
+  <p class="figure">Figure: Timeline CPU chart</p> 
+  <p style="text-align:center;"><img alt="Timeline CPU chart" src="../images/timeline_cpu_chart.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  <p>To detect and fix CPU load peaks with the CPU load feature of the dynamic analyzer:</p> 
+  <ol> 
+   <li>Select the <strong>Timeline</strong> tab and view the CPU chart.</li> 
+   <li>Hover the mouse on a CPU peak to view the CPU load value in a tooltip.</li> 
+   <li>Click the CPU peak to highlight the last user method called before the peak in the <strong>Call Trace</strong> view.</li> 
+   <li>Click the <strong>View Source</strong> button and place the mouse on the highlighted method. The source code is displayed as a tooltip. To investigate the method, double-click on it, and the source code is displayed in the IDE.</li> 
+   <li>Modify the code in the IDE, re-build, and re-analyze the application to see if the bottleneck has been eliminated.</li> 
+  </ol> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_performance.htm">Performance Analysis</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

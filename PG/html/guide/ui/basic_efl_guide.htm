@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>EFL Basics</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>EFL Basics</h1> 
+ 
+<p>Enlightenment Foundation Libraries (EFL) provide everything you need to create a powerful application. This guide gives you an overview of libraries that EFL provides and describes how you can use them to create applications.</p>
+
+<p>Enlightenment is a window manager, meaning that it handles windows&#39; borders, reduction, expansion, and moves on the screen. In addition it provides other functionalities, such as a multiple virtual desktop.</p>
+
+<p>EFL are a set of layered libraries, written in the C programming language. The following figure illustrates the different libraries:</p>
+
+<p class="figure">Figure: EFL libraries</p> 
+<p style="text-align:center;"><img alt="EFL libraries" src="../../images/efl_libs.png" /></p> 
+
+<p>When you create a basic EFL application, use these main libraries as a basis:</p>
+<ul>
+<li>Elementary
+<p>You create your EFL applications with Elementary, which contains functions for creating a window and simple or complex layout, managing views life-cycle, and adding widgets.</p></li>
+<li>Ecore
+<p>Ecore manages the main loop of your application, which is where all events are handled.</p></li>
+<li>Evas
+<p>Evas is a canvas engine responsible for managing the drawing of your content. All graphic objects you create are Evas objects.</p>
+<p>Evas handles all window states, filling the canvas with objects and manipulating their states. Evas is not a drawing library as, for example, Cairo, OpenGL, or XRender, but a scene graphic library. For more information, see the <a href="evas_guide.htm">Evas Rendering</a>.</p></li>
+<li>Eina
+<p>Eina is the basis of all the EFL libraries. It is a toolbox that implements an API for data types in an efficient way. It contains all functions for creating lists, hashes, managing shared string, opening shared libraries and managing errors or memory pools.</p></li>
+</ul>
+
+<p>The EFL contains other core libraries, such as Eet, Edje, Embryo, and Emotion. For more information, see the <a href="https://www.enlightenment.org/p.php?p=about/efl" target="_blank">EFL Web site</a>.</p>
+  
+<h2 id="elementary" name="elementary">Elementary Concepts</h2>
+<p>Every UI application has at least 1 window for presenting its content. Users can interact with the content through events. Different sources of events can modify the life-cycle of the application. The application may get data, for example, from a network connection, touch event, or key press. From a computer point of view, an application is a bunch of code, which reacts to events and displays the content on the screen. This is where Elementary makes the link between the user and the code.</p>
+
+<p>Elementary provides a variety of pre-built UI components such as layout objects and widgets that allow you to build a rich graphical user interface for your application. Every Elementary application has at least one window for presenting its content. The window provides the area in which to display the content and where the Evas canvas takes place.</p>
+
+<p>Elementary has the following types of objects:</p>
+<ul>
+<li>Widgets for composing your UI</li>
+<li>Containers for holding the widgets</li>
+<li>Infrastructure modules that deal with Elementary as a whole</li>
+</ul>
+
+<p>The <a href="../../tutorials/ui_tutorial/helloworld_tutorial.htm">EFL Hello World Tutorial</a> shows you how to develop your first application with Elementary and EFL.</p>
+  
+<h2 id="basic_structure" name="basic_structure">EFL Application Structure</h2>
+<p>Your application has to manage multiple views. In EFL, the easiest way to handle them is to create a naviframe container object, which is used to contain the application pages. Every Tizen application uses this top layer object to facilitate the navigation.</p>
+
+<p>All application also contain a conformant object as illustrated in the following figure.</p>
+
+
+<p class="figure">Figure: Elementary application structure</p> 
+<p style="text-align:center;"><img alt="Elementary app structure" src="../../images/elementary_app.png" /></p> 
+  
+<h2 id="appcore" name="appcore">Using the Application Framework</h2>
+<p>In Tizen, the application life-cycle is handled by the Application Framework. It is responsible for signaling you when, for example, the application is created, the battery gets low, the application is send to the background, or the screen is rotated.</p>
+
+<p>For more information, see the <a href="../app/application.htm">Application Framework Programming Guide</a>.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="ui.htm">UI Programming Guide</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

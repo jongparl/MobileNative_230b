@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Tone Player Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Tone Player Tutorial</h1> 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__TONE__PLAYER__MODULE.html">Tone Player API</a> to play audio tones.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;tone_player.h&gt;</span> and <span style="font-family: Courier New,Courier,monospace">&lt;sound_manager.h&gt;</span> header files, which have to be included in all applications that use the Tone Player API.</p>
+
+<p>To learn about the Audio I/O and Sound Manager API features, see the <a href="../../guide/media/tones.htm">Tone Player Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul><li><a href="#init">Initialization and Prerequisites</a></li>
+
+<li><a href="#play">Playing a Tone</a>
+<p>Start playing a tone and stop playing it.</p></li>
+
+<li><a href="#duration">Playing a Tone for a Specified Duration</a>
+<p>Play a tone for a specified duration.</p></li></ul>
+
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>To start using the tone player, declare a variable which identifies the tone player:</p>
+<pre class="prettyprint">int tone_player_id;</pre>
+
+<h2 id="play" name="play">Playing a Tone</h2>
+<p>To start and stop playing a tone:</p>
+
+<ol>
+<li>To start playback, use the <span style="font-family: Courier New,Courier,monospace">tone_player_start()</span> function. the player ID is assigned if the function succeeds. The function takes the following parameters:
+	<ul>
+		<li>Tone type, selected from the tone_type_e enum, defines which tone type should be used (such as DTMF0 or DTMF1).</li>
+		<li>Media sound type, from the sound_type_e enum, defines which sound type is used (such as <span style="font-family: Courier New,Courier,monospace">NOTIFICATION</span>, <span style="font-family: Courier New,Courier,monospace">ALARM</span>, or <span style="font-family: Courier New,Courier,monospace">RINGTONE</span>).</li>
+		<li>Tone duration in milliseconds. If the duration is set to -1, the playback continues infinitely.</li>
+		<li>Player ID is an output parameter, and its value is set by the function. The tone player started first has the ID 0, the second has the ID 1, and so on. If you determine the value to be NULL, the ID is not returned.</li>
+	</ul>
+
+<pre class="prettyprint">tone_player_start(TONE_TYPE_DEFAULT, SOUND_TYPE_MEDIA, -1, &amp;tone_player_id);</pre>
+</li>
+
+<li>To stop the playback, use the <span style="font-family: Courier New,Courier,monospace">tone_player_stop()</span>  function with the ID of the player which you want to stop:
+<pre class="prettyprint">tone_player_stop(tone_player_id);</pre>
+</li>
+</ol>
+
+<h2 id="duration" name="duration">Playing a Tone for a Specified Duration</h2>
+
+<p>To start playing a tone, use the <span style="font-family: Courier New,Courier,monospace">tone_player_start()</span> function with the tone type, sound type, and duration time as parameters. In this example, a congestion tone is played as a call sound for 1 s (1000 ms):</p>
+<pre class="prettyprint">tone_player_start(TONE_TYPE_SUP_CONGESTION, SOUND_TYPE_CALL, 1000, &amp;tone_player_id);</pre>
+<p>When the duration is set to a specified time, playing is stopped automatically. You can also use the <span style="font-family: Courier New,Courier,monospace">tone_player_stop()</span> function to stop the playback manually.</p>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/tones.htm">Tone Player Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference//group__CAPI__MEDIA__TONE__PLAYER__MODULE.html">Tone Player API Reference</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__MODULE.html">Sound Manager API Reference</a></li>
+</ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

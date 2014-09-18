@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label = "Tizen Mobile Native App Programming" topic = "html/cover_page.htm">
+
+<topic href = "html/basics_tizen_programming/basics_tizen_programming.htm" label = "Basics of Native App Programming">
+	<topic href="html/basics_tizen_programming/native_app_architecture.htm" label="Native Application Architecture"/>
+    <topic href="html/basics_tizen_programming/native_app_api.htm" label="Native Application API"/>
+	<topic href="html/basics_tizen_programming/nonbound_privileges.htm" label="Non-API Bound Privileges"/>
+    <topic href="html/basics_tizen_programming/native_app_model.htm" label="Native Application Model">
+		<topic href="html/basics_tizen_programming/package_app_id.htm" label="Package ID and Application ID"/>
+		<topic href="html/basics_tizen_programming/app_directory_policy.htm" label="Application Directory Policy"/>
+		<topic href="html/basics_tizen_programming/app_manifest.htm" label="Application Manifest"/>
+		<topic href="html/basics_tizen_programming/signature.htm" label="Signature"/>
+		<topic href="html/basics_tizen_programming/installer_smack.htm" label="Installer and SMACK"/>
+		<topic href="html/basics_tizen_programming/commands_package.htm" label="Package Commands"/>
+	</topic>
+    <topic href="html/basics_tizen_programming/efl.htm" label="Developing UI Applications with EFL">
+    	       <topic href="html/basics_tizen_programming/efl_overview.htm" label="EFL Overview"/>
+    	       <topic href="html/basics_tizen_programming/efl_libraries.htm" label="EFL Libraries"/>
+    	       <topic href="html/basics_tizen_programming/efl_native_app.htm" label="Using EFL in Tizen Native Applications"/>
+    	       <topic href="html/basics_tizen_programming/efl_app_layout.htm" label="Application Layout"/>
+    	       <topic href="html/basics_tizen_programming/efl_clock_simple.htm" label="Clock Sample: Simple View"/>
+    	       <topic href="html/basics_tizen_programming/efl_clock_complex.htm" label="Clock Sample: Complex View"/>    	   
+    </topic>       
+    <topic href="html/basics_tizen_programming/multi_language.htm" label="Creating Multilingual Applications"/>
+	<topic href="html/basics_tizen_programming/helloworld.htm" label="Creating a Hello World Application"/>
+</topic> 
+
+<topic href="html/ide_sdk_tools/ide_sdk_tools.htm" label="IDE and Tools">
+    	  
+    <topic href="html/ide_sdk_tools/native_ide.htm" label="Native IDE">	
+    	<topic href="html/ide_sdk_tools/api_privilege_checker.htm" label="API and Privilege Checker" />
+		<topic href="html/ide_sdk_tools/call_stack_view.htm" label="Call Stack View" />
+		<topic href="html/ide_sdk_tools/content_assist.htm" label="Content Assist" /> 
+		<topic href="html/ide_sdk_tools/manifest_text_editor.htm" label="Manifest Text Editor">
+			<topic href="html/ide_sdk_tools/manifest_element_hierarchy.htm" label="Manifest Element Hierarchy" />
+			<topic href="html/ide_sdk_tools/manifest_element.htm" label="&#60;manifest&#62; Element">
+				<topic href="html/ide_sdk_tools/author_element.htm" label="&#60;author&#62; Element" />
+				<topic href="html/ide_sdk_tools/description_element.htm" label="&#60;description&#62; Element" />
+				<topic href="html/ide_sdk_tools/serviceapp_element.htm" label="&#60;service-application&#62; Element" />
+				<topic href="html/ide_sdk_tools/uiapp_element.htm" label="&#60;ui-application&#62; Element" />
+				<topic href="html/ide_sdk_tools/privileges_element.htm" label="&#60;privileges&#62; Element" />
+				<topic href="html/ide_sdk_tools/feature_element.htm" label="&#60;feature&#62; Element" />
+</topic>
+</topic>     	
+    	<topic href="html/ide_sdk_tools/app_wizard.htm" label="Project Wizard">
+    	      	    	  
+    	     <topic href="html/ide_sdk_tools/project_components.htm" label="Project Components"/>
+    	    <topic href="html/ide_sdk_tools/project_settings.htm" label="Project Settings"/>    	      	    	  
+    	</topic>
+		<topic href="html/ide_sdk_tools/snippets.htm" label="Snippets" />
+		 <topic href="html/ide_sdk_tools/valgrind.htm" label="Valgrind"/>		
+    	      	
+    </topic>	      
+    	      <!--Dynamic Analyzer -->
+    <topic href="html/ide_sdk_tools/da_overview.htm" label="Dynamic Analyzer"> 
+             
+		 <topic href="html/ide_sdk_tools/da_timeline.htm" label="Timeline"> 
+                
+             <topic href="html/ide_sdk_tools/da_timeline_chart.htm" label="Timeline Chart"/> 
+            <topic href="html/ide_sdk_tools/da_timeline_editchart.htm" label="Chart Configuration"/> 
+             <topic href="html/ide_sdk_tools/da_timeline_calltrace.htm" label="Call Trace"/>     
+        </topic>      
+	    <topic href="html/ide_sdk_tools/da_summary.htm" label="Summary">    
+             <topic href="html/ide_sdk_tools/da_summary_leak.htm" label="Leaks"/> 
+            <topic href="html/ide_sdk_tools/da_summary_function_usage.htm" label="Function Usage Profiling"/> 
+        </topic>
+		<topic href="html/ide_sdk_tools/da_thread.htm" label="Thread Analysis">    
+             <topic href="html/ide_sdk_tools/da_thread_chart.htm" label="Thread Chart"/> 
+            <topic href="html/ide_sdk_tools/da_thread_api.htm" label="Thread API List"/> 
+			<topic href="html/ide_sdk_tools/da_thread_details.htm" label="Thread Details"/>
+        </topic>
+		<topic href="html/ide_sdk_tools/da_file.htm" label="File Analysis">    
+             <topic href="html/ide_sdk_tools/da_file_chart.htm" label="File Chart"/> 
+            <topic href="html/ide_sdk_tools/da_file_api_list.htm" label="File API List"/> 
+			<topic href="html/ide_sdk_tools/da_file_detail.htm" label="File Details"/>
+        </topic>
+	    <topic href="html/ide_sdk_tools/da_network.htm" label="Network Analysis">    
+             <topic href="html/ide_sdk_tools/da_network_chart.htm" label="Network Chart"/> 
+            <topic href="html/ide_sdk_tools/da_network_api_list.htm" label="Network API List"/> 
+			<topic href="html/ide_sdk_tools/da_network_details.htm" label="Network Details"/>
+        </topic>
+	    <topic href="html/ide_sdk_tools/da_opengl.htm" label="OpenGL Analysis"> 
+                
+             <topic href="html/ide_sdk_tools/da_opengl_chart.htm" label="OpenGL Chart"/> 
+            <topic href="html/ide_sdk_tools/da_opengl_statistics.htm" label="Statistics View"/>
+				<topic href="html/ide_sdk_tools/da_opengl_api_list.htm" label="API List"/>
+				<topic href="html/ide_sdk_tools/da_opengl_redundant.htm" label="Redundant View"/>
+				<topic href="html/ide_sdk_tools/da_opengl_context.htm" label="Context View"/>
+				<topic href="html/ide_sdk_tools/da_opengl_program.htm" label="Program View"/>
+				<topic href="html/ide_sdk_tools/da_opengl_texture.htm" label="Texture View"/>
+        </topic>		
+	    <topic href="html/ide_sdk_tools/da_range_info.htm" label="Range"/> 
+	     <topic href="html/ide_sdk_tools/da_info_snapshot.htm" label="Snapshot View"/> 
+         <topic href="html/ide_sdk_tools/da_info_callstack.htm" label="Callstack View"/> 
+	     <topic href="html/ide_sdk_tools/da_info_configuration.htm" label="Settings"/> 
+	 </topic>    	   
+    	  
+</topic>
+		  
+   <topic href = "html/app_dev_process/overview_of_app_dev.htm" label = "Application Development Process">
+      <topic href = "html/app_dev_process/planning_and_designing_your_app.htm" label = "Planning and Designing Applications"/>
+      <topic href = "html/app_dev_process/creating_app_project.htm" label = "Creating the Application Project">
+         <topic href = "html/app_dev_process/project_components.htm" label = "Project Components"/>
+         <topic href = "html/app_dev_process/project_settings.htm" label = "Project Settings"/>
+	<topic href="html/app_dev_process/setting_app_properties.htm" label="Setting Project Properties">
+  </topic>
+  <topic href="html/app_dev_process/setting_app_manifest.htm" label="Setting Application Manifest">
+  <topic href="html/app_dev_process/manifest_overview.htm" label="Overview" />
+  <topic href="html/app_dev_process/manifest_advanced.htm" label="Advanced" />
+  <topic href="html/app_dev_process/manifest_features.htm" label="Application Features" />
+  </topic>		 
+      </topic>
+      <topic href = "html/app_dev_process/implementing_app.htm" label = "Designing the Application UI and Implementing Code"></topic>
+      <topic href = "html/app_dev_process/building_app.htm" label = "Building Applications">
+         <topic href = "html/app_dev_process/building_properties.htm" label = "Build Properties"/>
+      </topic>
+      <topic href = "html/app_dev_process/debugging_app.htm" label = "Running and Debugging Applications">
+         <topic href = "html/app_dev_process/running_app_emulator.htm" label = "Running Applications on the Emulator"/>
+         <topic href = "html/app_dev_process/debugging_overview.htm" label = "Debugging Overview">
+            <topic href = "html/app_dev_process/debugging_app_methods.htm" label = "Application Debugging Methods"/>
+            <topic href = "html/app_dev_process/debugging_remote.htm" label = "Remote Debugging"/>
+			<topic href = "html/app_dev_process/debugging_logs.htm" label = "Debugging with Logs"/>
+            <topic href = "html/app_dev_process/debugging_break_points.htm" label = "Break Points"/>
+            <topic href = "html/app_dev_process/debugging_watch_points.htm" label = "Watch Points">
+               <topic href = "html/app_dev_process/expression_view.htm" label = "Expressions View"/>
+            </topic>
+         </topic>
+         <topic href = "html/app_dev_process/debugging_app_emulator.htm" label = "Debugging Applications on the Emulator"/>
+         <topic href = "html/app_dev_process/improving_application_performance.htm" label = "Improving Application Performance">
+            <topic href = "html/app_dev_process/da_analysis_core.htm" label = "Dynamic Analysis of Native Applications">
+               <topic href = "html/app_dev_process/da_running.htm" label = "Running Dynamic Analyzer"></topic>
+               <topic href="html/app_dev_process/da_analysis_result.htm" label="Using the Analysis Result">
+			          
+			         <topic href="html/app_dev_process/da_performance.htm" label="Performance Analysis">          
+				        
+				         <topic href="html/app_dev_process/da_user_function_profiling.htm" label="User Function Profiling"></topic> 
+				         <topic href="html/app_dev_process/da_timeline_cpu_chart.htm" label="Timeline CPU Chart"></topic> 
+				         <topic href="html/app_dev_process/da_thread_load.htm" label="Thread Load"></topic> 
+				       </topic>			        
+			        			
+			         <topic href="html/app_dev_process/da_detecting.htm" label="Detecting Leaks"></topic>
+					<topic href = "html/app_dev_process/da_multithread_sync.htm" label = "Multi-threaded Application and Synchronization Analysis"></topic>
+            </topic></topic>
+		<topic href = "html/app_dev_process/valgrind_analysis_core.htm" label = "Valgrind Analysis of Native Applications">
+            <topic href = "html/app_dev_process/running_valgrind.htm" label = "Running Valgrind"></topic>
+            <topic href = "html/app_dev_process/valgrind_result.htm" label = "Viewing Valgrind Result"></topic>
+         </topic>
+         <topic href = "html/app_dev_process/rapid_dev_support.htm" label = "Rapid Development Support"/>
+      </topic>
+         </topic>
+         
+      <topic href = "html/app_dev_process/packaging_app.htm" label = "Packaging Applications"></topic>
+      <topic href = "html/app_dev_process/multiple_project_dev_package.htm" label = "Developing Multiple Projects as a Package"/>
+   </topic> 
+   <!--Programming Guide -->
+   <topic href = "html/guide/prog_guide.htm" label = "Programming Guide">
+      <topic href = "html/guide/app/application.htm" label = "Application Framework: Controlling Your Application">
+         <topic href = "html/guide/app/fundamentals.htm" label = "Application Fundamentals">
+			<topic href = "html/guide/app/state_transitions.htm" label = "Application States and Transitions"/>
+			<topic href = "html/guide/app/app_controls.htm" label = "Launching Applications">
+				<topic href = "html/guide/app/exporting_application_service_functionality.htm" label = "Exporting Application Service Functionality"/>
+			</topic>
+		 </topic>
+		 <topic href = "html/guide/app/badge.htm" label = "Badges"/>
+		 <topic href = "html/guide/app/bundle.htm" label = "Bundles"/>
+		 <topic href="html/guide/app/data_controls.htm" label="Data Controls">
+			<topic href="html/guide/app/exporting_datacontrol_functionality.htm" label="Exporting Data Control Functionality" />
+		</topic>
+		 <topic href = "html/guide/app/message_port.htm" label = "Message Port Communication"/>
+		 <topic href = "html/guide/app/notification.htm" label = "Notifications"/>
+         <topic href = "html/guide/app/package.htm" label = "Package Management"/>
+		 <topic href = "html/guide/app/service_applications.htm" label = "Service Applications"/>
+         <topic href = "html/guide/app/shortcut.htm" label = "Shortcuts"/>
+      </topic>
+      <topic href = "html/guide/base/base.htm" label = "Base: Providing Fundamental Classes">
+         <topic href = "html/guide/base/i18n.htm" label = "i18n"/>
+      </topic>
+      <topic href = "html/guide/content/content.htm" label = "Content: Managing Content">
+		<topic href = "html/guide/content/download.htm" label = "Download Management"/>
+	  </topic>
+	   <topic href = "html/guide/context/context.htm" label = "Context: Managing Contextual Data"></topic>
+      <topic href = "html/guide/location/location.htm" label = "Location: Using Location Information and Services"/>
+	 <topic href = "html/guide/messaging/messaging.htm" label = "Messaging: SMS, MMS, Email, and Push">
+         <topic href = "html/guide/messaging/email.htm" label = "Email Messaging"/>
+         <topic href = "html/guide/messaging/push_messaging.htm" label = "Push Messaging"/>
+      </topic>
+      <topic href = "html/guide/media/media.htm" label = "Multimedia: Handling Audio, Video, Camera, and Images">
+         <topic href = "html/guide/media/player.htm" label = "Audio and Video Player"/>
+         <topic href = "html/guide/media/play_pcm.htm" label = "PCM Audio Output"/>
+		 <topic href = "html/guide/media/tones.htm" label = "Tone Player"/>
+         <topic href = "html/guide/media/wav.htm" label = "WAV Player"/>
+         <topic href = "html/guide/media/camera.htm" label = "Camera"/>
+         <topic href = "html/guide/media/recorder.htm" label = "Audio and Video Recorder"/>
+         <topic href = "html/guide/media/record_pcm.htm" label = "PCM Audio Input"/>
+         <topic href = "html/guide/media/image_util.htm" label = "Image Util"/>
+         <topic href = "html/guide/media/video_util.htm" label = "Video Util"/>
+         <topic href = "html/guide/media/metadata_extractor.htm" label = "Metadata Extractor"/>
+      </topic>
+
+      <topic href = "html/guide/net/network.htm" label = "Network: Managing Network Connections and Communication">
+         <topic href = "html/guide/net/bluetooth.htm" label = "Bluetooth"/>
+		<topic href = "html/guide/net/connection.htm" label = "Connection"/>
+         <topic href = "html/guide/net/wi-fi.htm" label = "Wi-Fi"/>
+      </topic>
+	  <topic href = "html/guide/security/security.htm" label = "Security: Handling Keys and Cryptographic Operations">
+			<topic href = "html/guide/security/key_manager.htm" label = "Key Manager"/>
+		</topic>
+      <topic href = "html/guide/social/social.htm" label = "Social: Managing Personal Data">
+		<topic href = "html/guide/social/account.htm" label = "Account Management"/>
+		<topic href = "html/guide/social/calendar.htm" label = "Calendar"/>
+         <topic href = "html/guide/social/contact.htm" label = "Contacts"/>
+      </topic>
+
+      <topic href = "html/guide/system/system.htm" label = "System: Getting System Information and Managing Devices">
+		<topic href = "html/guide/system/device.htm" label = "Device"/>
+         <topic href = "html/guide/system/dlog.htm" label = "Dlog"/>
+         <topic href = "html/guide/system/runtime_info.htm" label = "Runtime Information"/>
+         <topic href = "html/guide/system/sensor.htm" label = "Sensors"/>
+	     <topic href = "html/guide/system/storage.htm" label = "Storage"/>		 
+         <topic href = "html/guide/system/sysinfo.htm" label = "System Information"/>
+      </topic>
+      <topic href = "html/guide/telephony/telephony.htm" label = "Telephony: Handling Phone Call, SIM Card, and Network Information"/>
+	  <topic href = "html/guide/ui/ui.htm" label = "UI: Creating the Application UI">
+		<topic href = "html/guide/ui/basic_efl_guide.htm" label = "EFL Basics"/>		
+		<topic href = "html/guide/ui/data_types_guide.htm" label = "Eina Data Types">
+			<topic href = "html/guide/ui/data_type_structures.htm" label = "Using Data Types"/>
+			<topic href = "html/guide/ui/data_type_tools.htm" label = "Eina Tools"/>
+		</topic>		
+		<topic href = "html/guide/ui/evas_guide.htm" label = "Evas Rendering">
+			<topic href = "html/guide/ui/evas_cairo_guide.htm" label = "Using Cairo"/>
+			<topic href = "html/guide/ui/evas_guide_clipping.htm" label = "Clipping Objects"/>
+			<topic href = "html/guide/ui/evas_guide_image.htm" label = "Image Objects"/>
+			<topic href = "html/guide/ui/evas_guide_textblock.htm" label = "TextBlock Objects"/>
+			<topic href = "html/guide/ui/ui_rendering.htm" label = "UI Rendering Mode"/>
+		</topic>
+		<topic href = "html/guide/ui/widgets_guide.htm" label = "Elementary Toolkit">
+			<topic href = "html/guide/ui/ui_widgets.htm" label = "UI Widgets"/>
+			<topic href = "html/guide/ui/containers.htm" label = "Container Widgets"/>
+		</topic>		
+		<topic href = "html/guide/ui/events_guide.htm" label = "Event Handling">
+			<topic href = "html/guide/ui/events_guide_ecore.htm" label = "Ecore Events"/>
+			<topic href = "html/guide/ui/events_guide_evas.htm" label = "Evas Events"/>
+			<topic href = "html/guide/ui/events_guide_evas_objects.htm" label = "Evas Object Events"/>
+			<topic href = "html/guide/ui/events_guide_evas_smart_objects.htm" label = "Evas Smart Object Events"/>
+		</topic>		
+		<topic href = "html/guide/ui/efl_util.htm" label = "EFL UTIL"/>
+		<topic href = "html/guide/ui/tbm.htm" label = "TBM Surface"/>
+		</topic>
+      <topic href = "html/guide/web/web.htm" label = "Web: Managing Web Pages and Web Content">
+	  <topic href = "html/guide/web/webview.htm" label = "WebView"/></topic>
+   </topic>
+   
+  <topic href = "html/porting/porting.htm" label = "Porting Guide">
+	<topic href = "html/porting/app_life_cycle.htm" label = "Application Life-cycle"></topic> 
+	<topic href = "html/porting/app_package.htm" label = "Package Management"></topic> 
+	<topic href = "html/porting/app_model.htm" label = "Application Model Details"></topic>
+	<topic href = "html/porting/logs.htm" label = "Logs and Exceptions"></topic> 
+	<topic href = "html/porting/api_comparison.htm" label = "API Comparison"></topic> 	</topic> 
+   
+   <topic href = "html/tutorials/tutorials_cover.htm" label = "Tutorials">
+      <topic href = "html/tutorials/app_tutorial/app_tutorial.htm" label = "Application Framework Tutorials">
+			<topic href = "html/tutorials/app_tutorial/alarm_tutorial.htm" label = "Alarm Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/app_start_tutorial.htm" label = "App Control Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/setting_preference_tutorial.htm" label = "Preference Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/badge_tutorial.htm" label = "Badge Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/bundle_tutorial.htm" label = "Bundle Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/data_control_tutorial.htm" label = "Data Control Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/message_port_tutorial.htm" label = "Message Port Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/ui_notification_tutorial.htm" label = "Notification Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/package_manager_tutorial.htm" label = "Package Manager Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/service_app_tutorial.htm" label = "Service Application Tutorial"/>
+			<topic href = "html/tutorials/app_tutorial/shortcut_tutorial.htm" label = "Shortcut Tutorial"/>
+		</topic>	
+      <topic href = "html/tutorials/base_tutorial/base_tutorial.htm" label = "Base Tutorials">
+			<topic href = "html/tutorials/base_tutorial/i18n_tutorial.htm" label = "i18n Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/content_tutorial/content_tutorial.htm" label = "Content Tutorials">
+			<topic href = "html/tutorials/content_tutorial/web_download_tutorial.htm" label = "Download Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/media_content_tutorial.htm" label = "Media Content Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/album_tutorial.htm" label = "Album Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/bookmark_tutorial.htm" label = "Bookmark Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/filter_tutorial.htm" label = "Filter Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/folder_tutorial.htm" label = "Folder Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/media_info_tutorial.htm" label = "Media Information Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/playlist_tutorial.htm" label = "Playlist Tutorial"/>
+			<topic href = "html/tutorials/content_tutorial/tag_tutorial.htm" label = "Tag Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/context_tutorial/context_tutorial.htm" label = "Context Tutorials">
+			<topic href = "html/tutorials/context_tutorial/activity_recognition_tutorial.htm" label = "Activity Recognition Tutorial"/>
+			<topic href = "html/tutorials/context_tutorial/gesture_recognition_tutorial.htm" label = "Gesture Recognition Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/location_tutorial/location_tutorial.htm" label = "Location Tutorials">
+			<topic href = "html/tutorials/location_tutorial/location_manager_tutorial.htm" label = "Location Manager Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/messaging_tutorial/messaging_tutorial.htm" label = "Messaging Tutorials">
+			<topic href = "html/tutorials/messaging_tutorial/email_tutorial.htm" label = "Email Tutorial"/>
+			<topic href = "html/tutorials/messaging_tutorial/push_tutorial.htm" label = "Push Tutorial"/>
+			<topic href = "html/tutorials/messaging_tutorial/sms_mms_tutorial.htm" label = "Message Box Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/media_tutorial/media_tutorial.htm" label = "Multimedia Tutorials">
+			<topic href = "html/tutorials/media_tutorial/pcmaudio_tutorial.htm" label = "Audio I/O Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/camera_tutorial.htm" label = "Camera Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/camcorder_tutorial.htm" label = "Camcorder Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/image_util_tutorial.htm" label = "Image Util Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/player_tutorial.htm" label = "Player Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/play_files_simultaneous_tutorial.htm" label = "Multi-player Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/audiorecorder_tutorial.htm" label = "Audio Recorder Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/video_recorder_tutorial.htm" label = "Video Recorder Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/soundmanager_tutorial.htm" label = "Sound Manager Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/tone_tutorial.htm" label = "Tone Player Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/video_util_tutorial.htm" label = "Video Util Tutorial"/>
+			<topic href = "html/tutorials/media_tutorial/wav_tutorial.htm" label = "Wav Player Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/net_tutorial/net_tutorial.htm" label = "Network Tutorials">
+			<topic href = "html/tutorials/net_tutorial/bluetooth_tutorial.htm" label = "Bluetooth Tutorial"/>
+			<topic href = "html/tutorials/net_tutorial/connection_tutorial.htm" label = "Connection Tutorial"/>
+			<topic href = "html/tutorials/net_tutorial/nfc_tutorial.htm" label = "NFC Tutorial"/>
+			<topic href = "html/tutorials/net_tutorial/nfc_p2p_bump_tutorial.htm" label = "NFC P2P Bump Tutorial"/>
+			<topic href = "html/tutorials/net_tutorial/wifi_tutorial.htm" label = "Wi-Fi Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/security_tutorial/security_tutorial.htm" label = "Security Tutorials">
+			<topic href = "html/tutorials/security_tutorial/security_key_manager_tutorial.htm" label = "Key Manager Tutorial"/>
+			<topic href = "html/tutorials/security_tutorial/privilege_tutorial.htm" label = "Privilege Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/social_tutorial/social_tutorial.htm" label = "Social Tutorials">
+			<topic href = "html/tutorials/social_tutorial/account_tutorial.htm" label = "Account Tutorial"/>
+			<topic href = "html/tutorials/social_tutorial/calendar_tutorial.htm" label = "Calendar Tutorial"/>
+			<topic href = "html/tutorials/social_tutorial/contact_tutorial.htm" label = "Contacts Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/system_tutorial/system_tutorial.htm" label = "System Tutorials">
+			<topic href = "html/tutorials/system_tutorial/device_tutorial.htm" label = "Device Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/dlog_tutorial.htm" label = "Dlog Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/runtime_info_tutorial.htm" label = "Runtime Information Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/sensor_tutorial.htm" label = "Sensor Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/storage_tutorial.htm" label = "Storage Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/system_info_tutorial.htm" label = "System Information Tutorial"/>
+			<topic href = "html/tutorials/system_tutorial/system_setting_tutorial.htm" label = "System Setting Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/telephony_tutorial/telephony_tutorial.htm" label = "Telephony Tutorials">
+			<topic href = "html/tutorials/telephony_tutorial/telephony_info_tutorial.htm" label = "Telephony Information Tutorial"/>
+		</topic>
+      <topic href = "html/tutorials/ui_tutorial/ui_tutorial.htm" label = "UI Tutorials">
+			<topic href = "html/tutorials/ui_tutorial/app_tutorial.htm" label = "Application Framework Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/helloworld_tutorial.htm" label = "EFL Hello World Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/form_tutorial.htm" label = "Form Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/panes_tutorial.htm" label = "Panes Widget Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/efl_optimization_tutorial.htm" label = "EFL Optimization Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/efl_util_tutorial.htm" label = "EFL UTIL Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/tbm_tutorial.htm" label = "TBM Surface Tutorial"/>			
+			<topic href = "html/tutorials/ui_tutorial/gesture_detector_tutorial.htm" label = "Gesture Detector Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/graphics_tutorial.htm" label = "Creating Graphics Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/multipoint_touch_tutorial.htm" label = "Multipoint Touch Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/transit_effect_tutorial.htm" label = "Transit Effect Tutorial"/>
+			<topic href = "html/tutorials/ui_tutorial/uilayout_tutorial.htm" label = "UI Layout Tutorial"/>
+		</topic>	
+      <topic href = "html/tutorials/web_tutorial/web_tutorial.htm" label = "Web Tutorials">
+			<topic href = "html/tutorials/web_tutorial/webview_tutorial.htm" label = "WebView Tutorial"/>
+		</topic>
+		<topic href = "html/tutorials/opensource_tutorial/opensource_tutorial.htm" label = "Open Source Tutorials">
+			<topic href = "html/tutorials/opensource_tutorial/opensource_encrypted_db_tutorial.htm" label = "Encrypted Database Tutorial"/>
+		</topic>
+	  <topic href = "html/tutorials/advanced_tutorial/advanced_tutorial.htm" label = "Advanced Tutorials">
+	  
+<topic href = "html/tutorials/advanced_tutorial/account_manager_features_tutorial.htm" label = "Account Manager Features Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/app_mgr_tutorial.htm" label = "Application Manager Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/manage_contact_records_tutorial.htm" label = "Contact Record Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/contact_settings_tutorial.htm" label = "Contact Setting and SIM Tutorial"/>   
+<topic href = "html/tutorials/advanced_tutorial/content_groups_tutorial.htm" label = "Content Group Tutorial"/>  
+<topic href = "html/tutorials/advanced_tutorial/mime_type_tutorial.htm" label = "Content MIME Type Tutorial"/> 
+<topic href = "html/tutorials/advanced_tutorial/player_set_display_parameters_tutorial.htm" label = "Display Parameter Tutorial"/>   
+<topic href = "html/tutorials/advanced_tutorial/tracking_tutorial.htm" label = "Location Tracking Tutorial"/> 
+<topic href = "html/tutorials/advanced_tutorial/metadata_extractor_tutorial.htm" label = "Metadata Extractor Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/notification_tutorial.htm" label = "Notification Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/shortcut_tutorial.htm" label = "Shortcut Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/sound_manager_sessions_tutorial.htm" label = "Sound Manager Session Tutorial"/>  
+<topic href = "html/tutorials/advanced_tutorial/player_get_stream_info_tutorial.htm" label = "Stream Information Tutorial"/>
+<topic href = "html/tutorials/advanced_tutorial/player_insert_subtitles_tutorial.htm" label = "Subtitle Tutorial"/> 
+<topic href = "html/tutorials/advanced_tutorial/contact_import_export_tutorial.htm" label = "vCard Tutorial"/>  
+<topic href = "html/tutorials/advanced_tutorial/video_util_setting_parameters_tutorial.htm" label = "Video Util Tutorial"/>	 </topic>  
+	  
+   </topic>
+   
+   <topic label="API Reference" href="../org.tizen.mobile.native.apireference/index.html">
+					<link toc="../org.tizen.mobile.native.apireference/toc.xml" /></topic>
+					
+   <topic href = "html/sample_descriptions/sample_descriptions.htm" label = "Sample Applications"/>
+</toc>

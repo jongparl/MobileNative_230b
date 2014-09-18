@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>UI Rendering Mode</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>UI Rendering Mode</h1> 
+
+<p>Evas removes the need to know about the characteristics of your display system or what graphics calls are used to draw them and how. It deals on an object level where all you do is create and manipulate objects in a canvas, set their properties, and the rest is done for you. This rendering method is called the retained mode, whereas the immediate mode is an alternative rendering method.</p>
+
+<h2>Immediate Mode</h2>
+
+<p>The immediate mode is the most commonly used in graphics toolkit libraries, such as GTK+, GDI, and GDI+. The application is responsible for repainting the portion of the client area that is invalidated.</p>
+
+<p class="figure">Figure: Immediate mode</p> 
+<p style="text-align:center;"><img alt="Immediate mode" src="../../images/immediate_mode.png" /></p> 
+
+<p>The application commands any drawing issues as it needs, and the display system draws some GUIs. After the drawing is done, it appears in the destination. This mode allows you to have a exact control over the render cycles. However, if the draw commands are misused, unnecessary drawing can be performed or drawing never happen at all.</p> 
+<p>The following example explains the common usage of the immediate mode:</p> 
+
+<pre class="prettyprint">
+void update()
+{
+&nbsp;&nbsp;&nbsp;Image *img = load_image(NEW_IMG);
+
+&nbsp;&nbsp;&nbsp;// Switch button image to new one
+&nbsp;&nbsp;&nbsp;update_button_image(img);
+
+&nbsp;&nbsp;&nbsp;// Issue the invalidate area (button area) to be redrawn on the screen
+&nbsp;&nbsp;&nbsp;invalidate_area(button_x, button_y, button_w, button_h);
+
+&nbsp;&nbsp;&nbsp;// Move rectangle from (200, 200) to (300, 300)
+&nbsp;&nbsp;&nbsp;int rect_prev_x = rect_x;
+&nbsp;&nbsp;&nbsp;int rect_prev_y = rect_y;
+&nbsp;&nbsp;&nbsp;rectangle_x = 300;
+&nbsp;&nbsp;&nbsp;rectangle_y = 300;
+&nbsp;&nbsp;&nbsp;set_rect_position(rect_x, rect_y);
+   
+&nbsp;&nbsp;&nbsp;// Issue the invalidate area (changed area) to be redrawn on the screen
+&nbsp;&nbsp;&nbsp;int diff_x = rect_x – rect_prev_x;
+&nbsp;&nbsp;&nbsp;int diff_y = rect_y – rect_prev_y;
+&nbsp;&nbsp;&nbsp;invalidate_area(rect_prev_x, rect_prev_y, (rect_w + diff_x), (rect_h + diff_y));
+
+
+&nbsp;&nbsp;&nbsp;// After setting the invalidate area, request rendering to update the screen
+&nbsp;&nbsp;&nbsp;render();
+
+&nbsp;&nbsp;&nbsp;// Now you can see how the button image and rectangle position are changed
+}
+</pre>
+
+<h2>Retained Mode</h2>
+
+<p>A graphics system adopting the retained mode is basically responsible for responding to all repaint requests for rendering the application objects. Clients do not directly cause actual rendering, but objects are redrawn when parts of them are updated.</p>
+
+<p class="figure">Figure: Retained mode</p> 
+<p style="text-align:center;"><img alt="Retained mode" src="../../images/retained_mode.png" /></p> 
+
+<p>Since Evas works with the retained mode, there is no need to command any drawings. The following example shows how to write a GUI code with Evas for your application:</p>
+
+<pre class="prettyprint">
+void create_image()
+{
+&nbsp;&nbsp;&nbsp;// Initialize an image object to be displayed on the screen
+&nbsp;&nbsp;&nbsp;Evas_Object *img = evas_object_image_add(e);
+
+&nbsp;&nbsp;&nbsp;// Set image resource
+&nbsp;&nbsp;&nbsp;evas_object_image_file_set(img, IMG, NULL);
+
+&nbsp;&nbsp;&nbsp;// Set image position 
+&nbsp;&nbsp;&nbsp;evas_object_move(img, 100, 100);
+
+&nbsp;&nbsp;&nbsp;// Set image size
+&nbsp;&nbsp;&nbsp;evas_object_resize(img, 200, 200);
+
+&nbsp;&nbsp;&nbsp;// Set image visibility (show or hide)
+&nbsp;&nbsp;&nbsp;evas_object_show(img);
+}
+
+void create_rectangle()
+{
+&nbsp;&nbsp;&nbsp;// Initialize an rectangle object to be displayed on the screen
+&nbsp;&nbsp;&nbsp;Evas_Object *rect = evas_object_rectangle_add(e);
+
+&nbsp;&nbsp;&nbsp;// Set rectangle color
+&nbsp;&nbsp;&nbsp;evas_object_color_set(rect, 255, 0, 0, 255);
+
+&nbsp;&nbsp;&nbsp;// Set rectangle position
+&nbsp;&nbsp;&nbsp;evas_object_move(rect, 200, 200);
+
+&nbsp;&nbsp;&nbsp;// Set rectangle size
+&nbsp;&nbsp;&nbsp;evas_object_resize(rect, 200, 200);
+
+&nbsp;&nbsp;&nbsp;// Set rectangle visibility (show or hide)
+&nbsp;&nbsp;&nbsp;evas_object_show(rect);
+}
+</pre>
+
+<p>A few main loops later you can replace the image with another one and move the rectangle. You only need to set a new image file to the image object and move the rectangle object. Evas computes the invalidate area and redraws the image and rectangle behind the application when it&#39;s on rendering time.</p>
+
+<pre class="prettyprint">
+void update()
+{
+&nbsp;&nbsp;&nbsp;// Set new image resource
+&nbsp;&nbsp;&nbsp;elm_image_file_set(img, NEW_IMG, NULL);
+
+&nbsp;&nbsp;&nbsp;// Set new rectangle position
+&nbsp;&nbsp;&nbsp;evas_object_move(rect, 300, 300);
+}
+</pre>
+
+<h2>Evas Rendering</h2>
+
+<p>Tizen Native applications work on the ecore main loop, and the loop goes on a few steps for every frame. Evas redraws some changes in the objects when the main loop goes to the idle enterer step. If there are no changes, Evas rendering is skipped. Otherwise, Evas calculates any changed portions of all display objects and redraws them.</p>
+
+<p class="figure">Figure: Evas rendering in the main loop</p> 
+<p style="text-align:center;"><img alt="Evas rendering in the main loop" src="../../images/rendering1.png" /></p> 
+
+<p>To minimize the rendering, Evas tracks the states of all display objects, such as position, size, visibility, and color. Even if some of these states are changed but the object is hidden by other obscured objects, it is not redrawn. In other words, Evas draws only the necessary changes in the screen.</p>
+
+<p>The following figures illustrate how Evas redraws the changed area:</p>
+
+<ul><li><p>In the first example, there is a blue-color background object (a sky-blue color rectangle) and a partially hidden cloud image object. Above them, there are a red and green rectangle, and the &quot;Hello out there&quot; text is printed on the green rectangle.</p>
+
+<p class="figure">Figure: Evas redrawing example 1</p> 
+<p style="text-align:center;"><img alt="Evas redrawing example 1" src="../../images/redrawing01.png" /></p> </li>
+
+<li><p>In the second example, some of the objects have moved (the cloud image is moved to right and the green rectangle is moved downwards).</p>
+
+<p class="figure">Figure: Evas redrawing example 2</p> 
+<p style="text-align:center;"><img alt="Evas redrawing example 2" src="../../images/redrawing02.png" /></p> </li>
+
+<li><p>As a result, the third example illustrates some regions that require updates.</p>
+
+<p class="figure">Figure: Evas redrawing example 3</p> 
+<p style="text-align:center;"><img alt="Evas redrawing example 3" src="../../images/redrawing03.png" /></p> </li>
+
+<li><p>Evas decides which portions are invalid and to be redrawn. The fourth example shows the cleaned portion of the screen, which is the redrawn area.</p>
+<p>Evas redraws the content only in the redrawn portions.</p> 
+<p class="figure">Figure: Evas redrawing example 4</p> 
+<p style="text-align:center;"><img alt="Evas redrawing example 4" src="../../images/redrawing04.png" /></p></li> 
+
+<li><p>Finally, the fifth example shows how the screen is updated and the result is visible.</p> 
+
+<p class="figure">Figure: Evas redrawing example 5</p> 
+<p style="text-align:center;"><img alt="Evas redrawing example 5" src="../../images/redrawing05.png" /></p>
+
+<p>If Evas worked in an immediate mode style, the application would need to calculate the changed areas themselves, adding extra work. With Evas, you can let Evas figure out the updates and you can yourself concentrate on the application and UI core and logic.</p></li></ul>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="evas_guide.htm">Evas Rendering</a></li>
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

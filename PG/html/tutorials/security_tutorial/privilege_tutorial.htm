@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Privilege Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Privilege Tutorial</h1> 
+  
+<p>This tutorial demonstrates how to use the Privilege Info API. Functions contained by this module allow you to display privilege information, such as the name and description of a given privilege.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;privilege_information.h&gt;</span> header file, which must be included in all applications that use the Privilege Info API.</p>
+
+<p>To learn about the Privilege Info API features, see the <a href="../../guide/security/security.htm">Security Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#get">Getting Privilege Information</a>
+<p>Get privilege information, such as the display name and description of a privilege.</p></li></ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Include the following header file:</p>
+
+<pre class="prettyprint">#include &lt;privilege_information.h&gt;</pre>
+
+<h2 id="get" name="get">Getting Privilege Information</h2>
+
+<p>To get privilege display information:</p>
+<ol>
+		<li>Get the privilege display name using the <span style="font-family: Courier New,Courier,monospace;">privilege_info_get_display_name()</span> function:
+		
+		<pre class="prettyprint">
+char* displayName = NULL;
+int retVal = privilege_info_get_display_name(&quot;2.2&quot;, &quot;http://tizen.org/privilege/application.launch&quot;, &amp;displayName);</pre>
+
+		<p>The function takes 3 parameters:</p>
+			<ul>
+			 <li>API version</li>
+			 <li>Privilege name</li>
+			 <li>Privilege display name</li>
+			</ul>
+			
+</li>
+
+<li>Get the privilege description using the <span style="font-family: Courier New,Courier,monospace;">privilege_info_get_description()</span> function:
+
+<pre class="prettyprint">
+char* description = NULL;
+int retVal = privilege_info_get_description(&quot;2.2&quot;, &quot;http://tizen.org/privilege/application.launch&quot;, &amp;description);</pre>
+
+<p>The function takes 3 parameters:
+ <ul>
+ <li>API version</li>
+ <li>Privilege name</li>
+ <li>Description of the privilege</li></ul>
+
+</li>
+<p>Both functions return the defined <span style="font-family: Courier New,Courier,monospace;">privilege_info_error_e</span> enum value that indicates the result of executing the function and provides the privilege description by assigning the matching value to the third parameter.</p>
+
+</ol>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="security_tutorial.htm">Security Tutorials</a></li> 
+	<li><a href="../../guide/security/security.htm">Security Programming Guide</a></li>
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SECURITY__FRAMEWORK.html">Security API Reference</a></li>    
+  </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

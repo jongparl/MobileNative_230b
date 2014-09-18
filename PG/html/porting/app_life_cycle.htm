@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Life-cycle</title> 
+  </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Application Life-cycle</h1>
+
+<p>The following figure shows the old 2.2.1 application life-cycle model.</p>
+  <p class="figure">Figure: 2.2.1 life-cycle model</p> 
+  <p><img src="../images/life_cycle_model_old.png" alt="2.2.1 life-cycle model" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+ 
+ 
+<p>The following figure shows the current application life-cycle model.</p>
+  <p class="figure">Figure: 2.3 life-cycle model</p> 
+  <p><img src="../images/life_cycle_model_new.png" alt="2.3 life-cycle model" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+ 
+<p>The following figures show the 2.2.1 and 2.3 state models.</p>
+
+  <p class="figure">Figure: 2.2.1 state model</p> 
+  <p><img src="../images/state_model_old.png" alt="2.2.1 state model" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p>  
+
+
+  <p class="figure">Figure: 2.3 state model</p> 
+  <p><img src="../images/state_model_new.png" alt="2.3 state model" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p>  
+  
+<p>The models have some differences, but basically they work very similarly. In both models, there are specific callbacks called during specific application states.</p>
+<p>The main difference is that the old model has 2 life-cycles, one for the backend of the application and another one for the UI. The current model is more unified, so the backend code and the UI of the application are executed in the same callback functions.</p>
+<p>First, the <span style="font-family: Courier New,Courier,monospace">app_create_cb()</span> function is called instead of <span style="font-family: Courier New,Courier,monospace">OnAppInitializing()</span>. Place the initialization code, such as loading and creating UI objects, there. After the initialization process (or the <span style="font-family: Courier New,Courier,monospace">OnAppInitialized()</span> callback in the 2.2.1 version), the application state becomes CREATED. Now the <span style="font-family: Courier New,Courier,monospace">app_control_cb()</span> callback is called and it launches the application and starts the main event loop. The application state becomes RUNNING. This state is similar to the application state of the 2.2.1 version after <span style="font-family: Courier New,Courier,monospace">OnAppInitialized()</span> is executed.</p>
+<p>When the application is running, the state can change to PAUSED or TERMINATED. Each state is preceded by a specific callback. Place your code in those callbacks to be executed before the application state changes. Those states are similar to the states from the 2.2.1 native API, where the frame can be activated, deactivated, and minimized. If the state is PAUSED, it is possible to change it back to RUNNING. These situations are all described in the native API <a href="../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Application documentation</a>.</p>
+
+
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="porting.htm">Porting Guide</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

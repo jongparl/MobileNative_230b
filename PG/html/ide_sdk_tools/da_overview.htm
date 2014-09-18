@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Dynamic Analyzer</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Dynamic Analyzer</h1> 
+  <p>You can monitor the performance and reliability of your Native application on a target device or the Emulator 
+  	by <a href="../../../org.tizen.mobile.native.appprogramming/html/app_dev_process/da_running.htm">running the dynamic analyzer tool</a> included within the Tizen SDK.</p> 
+  <p>Dynamic Analyzer provides various functions for profiling applications. To better understand the profiling result, you need to know about each component that tool screen contains, providing you with the tracing information of your application.</p> 
+  <p class="figure">Figure: Dynamic Analyzer screen</p> 
+  <p style="text-align: center;"> <img alt="Dynamic Analyzer screen" src="../images/dynamic_analyzer.png" /> </p> 
+  <ol> 
+   <li><a href="da_timeline.htm">Timeline</a> 
+   <p>The <strong>Timeline</strong> tab shows the application data values over time as a graph.</p> </li>
+   <li><a href="da_summary.htm">Summary</a>
+   <p>The <strong>Summary</strong> tab consists of views showing failed APIs, leaks, profiling information, and warnings.</p> </li> 
+   <li><a href="da_range_info.htm">Range</a>
+   <p>The <strong>Range</strong> tab provides application performance data of a selected range.</p></li> 
+	<li><a href="da_info_snapshot.htm">Snapshot</a>
+	<p>The <strong>Snapshot</strong> view shows the current screen capture and CPU usage, process usage, and available memory.</p></li>
+	<li><a href="da_info_callstack.htm">Callstack</a>
+	<p>The <strong>Callstack</strong> view shows the callstack of the selected function in the Call Trace.</p></li>
+	<li><a href="da_info_configuration.htm">Settings</a>
+	<p>The <strong>Settings</strong> button shows the setting dialog box that you can set the analysis features and other options.</p></li>
+  </ol>
+  
+<p>The dynamic analyzer can also contain the following tabs and pages:</p>  
+   <ul> 
+   <li><a href="da_file.htm">File</a> 
+   <p>The <strong>File</strong> tab shows an analysis of file usage.</p> </li>
+   <li><a href="da_thread.htm">Thread</a> 
+   <p>The <strong>Thread</strong> tab shows information about thread and synchronization.</p> </li>
+   <li><a href="da_network.htm">Network</a></li> 
+   <p>The <strong>Network</strong> tab displays information about the network.</p></li> 
+<li><a href="da_opengl.htm">OpenGL</a></li> 
+   <p>The <strong>OpenGL</strong> page displays information about OpenGL&reg; 2.0 and EvasGL.</p></li>    
+  </ul>
+  
+  <p>The tabs on the main display can be reordered by dragging and dropping.</p>
+
+  <p class="figure">Figure: Tab pages</p> 
+  <p style="text-align: center;"> <img alt="Tab pages" src="../images/tab_pages.png" /> </p>   
+  
+<p>The analysis result helps you to recognize and fix bottlenecks, bugs, and memory and resource leaks. 
+	For instructions on running the dynamic analyzer and ways to analyze the result and utilize the result 
+	for improving your application performance, see <a href="../../../org.tizen.mobile.native.appprogramming/html/app_dev_process/da_analysis_core.htm">Dynamic Analysis of Native Applications</a>.</p>
+  <h2>Where to Go Next</h2>
+  <ul> 
+   <li><a href="ide_sdk_tools.htm">Native IDE and Tools</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

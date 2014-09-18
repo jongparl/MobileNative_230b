@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Using EFL in Tizen Native Applications</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+
+<h1>Using EFL in Tizen Native Applications</h1>
+
+<p>To start the Ecore main loop and move your application into the running state, call the <span style="font-family: Courier New,Courier,monospace">app_efl_main()</span> function. The Ecore main loop handles all general events, such as touch, mouse, key, and network events.<p>
+
+<pre class="prettyprint">
+int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;..
+
+&nbsp;&nbsp;&nbsp;ret = app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, &amp;ad);
+
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre>
+
+After your application is running:
+
+<ol>
+ <li>Create a window, and organize your widgets inside the window.</li>
+ <li>Create the application logic code to be called when callbacks or timed events occurs (for example, animators for animations, timers for timeouts).</li>
+</ol>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

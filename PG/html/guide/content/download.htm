@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Download Management</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Download Management</h1> 
+  
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__WEB__DOWNLOAD__MODULE.html">Download</a> API provides functions to create and manage one or more download requests. This API allows creating a new download process, configuring the download URL or destination, and launching the process.</p>
+ 
+ <h2>Download States</h2>
+ 
+ <p>The following figure illustrates the download states (such as READY and DOWNLOADING), and API functions (such as <span style="font-family: Courier New,Courier,monospace">download_start()</span>) which cause transitions between those states. Functions can be called only from specific states. Every possible scenario must be handled in the code to avoid undefined behavior in the application.</p>
+ 
+
+  <p class="figure">Figure: Download states</p> 
+  <p style="text-align:center;"><img alt="Download states" src="../../images/download_state.png" /></p> 
+
+  <p>The following table defines the download state enumerator values.</p>
+<table> 
+   <caption>
+     Table: Download state enumerator values
+   </caption> 
+   <colgroup> 
+    <col /> 
+    <col /> 
+    <col /> 
+    <col /> 
+   </colgroup> 
+   <tbody> 
+    <tr> 
+     <th>Enumerator value</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_NONE</span></td> 
+     <td>Default value.</td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_READY</span></td> 
+     <td>Ready to download.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_QUEUED</span></td> 
+     <td>Queued to start downloading.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_DOWNLOADING</span></td> 
+     <td>Download is currently running.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_PAUSED</span></td> 
+     <td>Download is waiting to resume.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_COMPLETED</span></td> 
+     <td>Download is complete.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_FAILED</span></td> 
+     <td>Download failed.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DOWNLOAD_STATE_CANCELED</span></td> 
+     <td>Download was cancelled by the user.</td> 
+    </tr> 
+   
+   </tbody> 
+  </table> 
+
+<p>The following figure illustrates the user scenario for the download.</p>
+ 
+
+  <p class="figure">Figure: User scenario</p> 
+  <p style="text-align:center;"><img alt="User scenario" src="../../images/user_scenario.png" /></p> 
+
+   <h2>Stopping and Destroying a Download</h2>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">download_cancel()</span> function can be used to stop downloading a file. The function changes the download state to DOWNLOAD_STATE_CANCELED. From this state, the <span style="font-family: Courier New,Courier,monospace">download_start()</span> function can be called to restart the download. </p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">download_destroy()</span> function can be called to unload all data concerning a <span style="font-family: Courier New,Courier,monospace">download_id</span> handle from the memory. The <span style="font-family: Courier New,Courier,monospace">download_id</span> handle is stored for 48 hours (even if the device is powered off), unless the <span style="font-family: Courier New,Courier,monospace">download_destroy()</span> is called.</p>
+  
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="content.htm">Content Programming Guide</a></li>
+<li><a href="../../tutorials/content_tutorial/web_download_tutorial.htm">Download Tutorial</a></li>
+</ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

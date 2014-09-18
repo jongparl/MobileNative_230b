@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Detecting Leaks</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Detecting Leaks</h1> 
+  <p>To improve the performance of your application, you can use the dynamic analyzer to detect memory leaks.</p> 
+<!--  <h2 id="memory" name="memory">Memory Leaks</h2>  -->
+  <p>Memory leaks occur when memory capacity that is dynamically allocated during application execution is not returned after the execution stops. Severe or accumulating memory leaks can affect the performance of other applications and programs.</p> 
+  <p>To detect and fix memory leaks using the dynamic analyzer:</p> 
+  <ol> 
+   <li>To view the memory leaks occurring during application analysis, select the <!--<a href="../ide_sdk_tools/da_summary.htm">-->Summary</a> tab.
+   <p style="text-align:center;"><img align="center" alt="Memory leaks" src="../images/memory_leaks.png" /></p> 
+   <p>All the listed items are not memory leaks. To identify actual memory leaks, look for applications that are already terminated but have not returned the allocated memory. When these leaks are fixed, they disappear from the list.</p></li> 
+   <li>Click the <strong>View Source</strong> icon in the toolbar. <p style="text-align:center;"><img align="center" alt="View source" src="../images/view_source.png" /></p></li> 
+   <li>Move the mouse pointer to the list item you want to check. The source code is displayed as a tooltip. The part causing the memory leak is displayed in red. 
+   	<p style="text-align:center;"><img align="center" alt="Source View" src="../images/source_view.png" /></p>
+   	</li> 
+   <li>To view the entire source code in the IDE and fix the leak, double-click the list item. If the IDE is not running the dynamic analyzer launches it automatically.</li> 
+  </ol> 
+  
+  <!--
+  <h2 id="resource" name="resource">Resource Leaks</h2> 
+  <p>Resources are objects that are opened or closed according to application requirements. A resource leak occurs when a resource is not closed after use. </p> 
+  <p>To detect resource leaks using the dynamic analyzer, you can:</p> 
+  <ul> 
+   <li>Select the <strong>Summary</strong> tab. Resource leaks are listed in the <strong>Leaks</strong> list.</li> 
+   <li>Select the <strong>File</strong> tab. Resource leaks displayed in yellow.<p></p> <p class="figure">Figure: Resource leaks</p> <p style="text-align:center;"><img align="center" alt="Resource leaks" src="../images/reasource_leaks.png" /></p></li> 
+  </ul> 
+  -->
+  
+  <h2>Where to Go Next</h2> 
+  <ul> 
+  <li><a href="da_analysis_result.htm">Using the Analysis Result</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

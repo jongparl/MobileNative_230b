@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Creating a Hello World Application</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+  
+  <h1>Creating a Hello World Application</h1>
+<p>This example demonstrates how you can create a simple EFL application for Tizen. The example application contains all the fundamental components of a native application and displays a simple view, as illustrated in the figure below.
+</p>	
+
+<p class="figure">Figure: Hello World screen</p> 
+<p style="text-align:center;"> <img alt="Hello World screen" src="../images/helloworld_screen.png"/></p>	
+
+<p>You need at least the following files to create a native application:
+</p>	
+  <ul>
+    <li><p><span style="font-family: Courier New,Courier,monospace;">main.c</span>: EFL application code</p></li> 
+  <li><p><span style="font-family: Courier New,Courier,monospace;">test.edc</span>: EDC (Edje Data Collection) file for creating a layout object
+      </p><p>For more information, see <a href="http://docs.enlightenment.org/stable/efl/edcref.html" target="blank">Edje Data Collection reference</a>.</p></li>    
+  </ul></p>
+  
+<h2> <span style="font-family: Courier New,Courier,monospace;">main.c</span> File</h2>
+<p>The file contains 3 types of functions, as listed in the table below.</p>
+
+<!--table-->
+<table border="1" style="width: 100%"> 
+	  <caption>Table: Function types</caption>
+			<tbody> 
+				<tr> 
+					<th>Main function</th> 
+					<th>Application Framework functions</th> 
+					<th>EFL functions</th> 
+				</tr>
+				<tr> 
+					<td><span style="font-family: Courier New,Courier,monospace;">main()</span></td> 
+					<td><p><span style="font-family: Courier New,Courier,monospace;">app_create()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">app_terminate()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">app_pause()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">app_resume()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">app_service()</span></p>
+              </td> 
+          <td><p><span style="font-family: Courier New,Courier,monospace;">create_win()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">_quit_cb()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">init_efl_demo()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">_create_bg()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">_create_conform()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">_create_naviframe()</span></p>
+              <p><span style="font-family: Courier New,Courier,monospace;">_create_view_layout()</span></p>
+          </td>
+		    </tbody> 
+		  </table> 
+
+  <ul>
+    <li><p>Main function</p>
+      <p>The following example shows how to use the <span style="font-family: Courier New,Courier,monospace;">main()</span> function:</p>
+      <pre class="prettyprint">// Application data structure
+struct appdata     
+{
+&nbsp;&nbsp;&nbsp;Evas *evas;  
+&nbsp;&nbsp;&nbsp;Evas_Object *win_main, *bg, *conform, *nf;
+};
+
+int main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;// Create application data
+&nbsp;&nbsp;&nbsp;struct appdata ad;            
+&nbsp;&nbsp;&nbsp;app_event_callback_s event_callback;
+
+&nbsp;&nbsp;&nbsp;// Register a callback 
+&nbsp;&nbsp;&nbsp;event_callback.create = app_create; functions
+&nbsp;&nbsp;&nbsp;event_callback.terminate = app_terminate;
+&nbsp;&nbsp;&nbsp;event_callback.pause = app_pause;
+&nbsp;&nbsp;&nbsp;event_callback.resume = app_resume;
+&nbsp;&nbsp;&nbsp;event_callback.service = app_service;
+
+&nbsp;&nbsp;&nbsp;event_callback.low_memory = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.low_battery = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.device_orientation = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.language_changed = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.region_format_changed = NULL;
+   
+&nbsp;&nbsp;&nbsp;memset(&amp;ad, 0x0, sizeof(struct appdata));
+
+&nbsp;&nbsp;&nbsp;return app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, &amp;ad); 
+&nbsp;&nbsp;&nbsp;// Initialize EFL
+}      </pre>
+<p>In the <span style="font-family: Courier New,Courier,monospace;">main()</span> function, the Application Framework supports certain functionalities for easy implementation. For example, the Application Framework gives a notification to a specific application when the application is created, terminated, paused, resumed, or reset. If the application registers callback functions for these notifications, the callback functions are called when the relevant event takes place.</p> 
+    </li> 
+    
+<li><p>Application Framework functions</p>
+    	<p>The following example shows how to use each function in the Application Framework:</p>
+<pre class="prettyprint">
+// Create a view using EFL
+int app_create(void *data) 
+{
+&nbsp;&nbsp;&nbsp;struct appdata *ad = (struct appdata *) data;
+
+&nbsp;&nbsp;&nbsp;// Create the elementary window object 
+&nbsp;&nbsp;&nbsp;ad-&gt;win_main = create_win(&quot;efl_demo_application&quot;); 
+&nbsp;&nbsp;&nbsp;if (ad-&gt;win_main == NULL) return -1;
+   
+&nbsp;&nbsp;&nbsp;evas_object_show(ad-&gt;win_main);
+&nbsp;&nbsp;&nbsp;ad-&gt;evas = evas_object_evas_get(ad-&gt;win_main);
+
+&nbsp;&nbsp;&nbsp;// Create objects within the elm_win object
+&nbsp;&nbsp;&nbsp;init_efl_demo(ad); 
+   
+&nbsp;&nbsp;&nbsp;return 0;
+}
+
+// Application is terminated  
+int app_terminate(void *data) 
+{
+
+&nbsp;&nbsp;&nbsp;return 0;
+}
+
+// Application is paused  
+int app_pause(void *data) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 0;
+&nbsp;&nbsp;&nbsp;}
+
+// Application is resumed   
+int app_resume(void *data) 
+{
+
+&nbsp;&nbsp;&nbsp;return 0;
+}</pre>
+    	</li> 
+  <!-- end of Application F/W -->  	
+    	
+        <li><p>EFL functions</p>
+    	<p>The following example shows how to use the EFL UI toolkit:</p>
+    	   <pre class="prettyprint">
+static void _quit_cb(void *data, Evas_Object *obj, void *ei)
+{
+&nbsp;&nbsp;&nbsp;elm_exit();
+}
+
+static Evas_Object *create_win(const char *name)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *eo;
+
+&nbsp;&nbsp;&nbsp;// Create the elementary window object
+&nbsp;&nbsp;&nbsp;eo = elm_win_add(NULL, name, ELM_WIN_BASIC);
+ 
+&nbsp;&nbsp;&nbsp;if (!eo) return NULL;
+	 
+&nbsp;&nbsp;&nbsp;// Set the title for the window object
+&nbsp;&nbsp;&nbsp;elm_win_title_set(eo, name); 
+   
+&nbsp;&nbsp;&nbsp;// When closing the window, the elementary window object is deleted automatically
+&nbsp;&nbsp;&nbsp;elm_win_autodel_set(eo, EINA_TRUE); 
+	 
+&nbsp;&nbsp;&nbsp;// Add an event handler that is called when the window is deleted 
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(eo, &quot;delete,request&quot;, _quit_cb, NULL); 
+	
+&nbsp;&nbsp;&nbsp;return eo;
+}</pre>
+</li>
+</ul>
+
+<p>To create a Hello World application:</p>
+<ol>
+   <li>Initialize the application:
+<pre class="prettyprint">
+int init_efl_demo(struct appdata *ad)
+{
+&nbsp;&nbsp;&nbsp;if (ad == NULL) return -1;  
+
+&nbsp;&nbsp;&nbsp;// Create the elementary bg object
+&nbsp;&nbsp;&nbsp;ad-&gt;bg = _create_bg(ad-&gt;win_main); 
+   
+&nbsp;&nbsp;&nbsp;// Create the elementary conformant object 
+&nbsp;&nbsp;&nbsp;ad-&gt;conform = _create_conform(ad-&gt;win_main); 
+   
+&nbsp;&nbsp;&nbsp;if (ad-&gt;conform == NULL) return -1;
+   
+&nbsp;&nbsp;&nbsp;// Register the conformant to its parent window object
+   elm_win_conformant_set(ad-&gt;win_main, EINA_TRUE); 
+   
+&nbsp;&nbsp;&nbsp;// Create the elementary naviframe object 
+   ad-&gt;nf = _create_naviframe(ad-&gt;conform); 
+   
+&nbsp;&nbsp;&nbsp;// Insert the naviframe to the conformant 
+&nbsp;&nbsp;&nbsp;elm_object_content_set(ad-&gt;conform, ad-&gt;nf);
+   
+&nbsp;&nbsp;&nbsp;// Create a layout object and push it to the naviframe
+&nbsp;&nbsp;&nbsp;_create_view_layout(ad);
+
+&nbsp;&nbsp;&nbsp;return 0;
+}    </pre>
+	</li>
+   <li>Create the background:
+    	   <pre class="prettyprint">
+static Evas_Object *_create_bg(Evas_Object *parent)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *bg;
+&nbsp;&nbsp;&nbsp;if (parent == NULL) return NULL;
+   
+&nbsp;&nbsp;&nbsp;// Create the elementary background object
+&nbsp;&nbsp;&nbsp;bg = elm_bg_add(parent); 
+   
+&nbsp;&nbsp;&nbsp;// Set hints for the background object weight 
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   
+&nbsp;&nbsp;&nbsp;// Background object size and position are directly controlled by the  window 
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(parent, bg);
+	 
+&nbsp;&nbsp;&nbsp;// Make the background object visible
+&nbsp;&nbsp;&nbsp;evas_object_show(bg); 
+
+&nbsp;&nbsp;&nbsp;return bg;
+}</pre>
+</li>
+ <li>Create the conformant object:
+<pre class="prettyprint">
+static Evas_Object *_create_conform(Evas_Object *parent)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *conform;
+	 
+&nbsp;&nbsp;&nbsp;// Create the elementary conformant object
+&nbsp;&nbsp;&nbsp;conform = elm_conformant_add(parent); 
+   
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(parent, conform);
+&nbsp;&nbsp;&nbsp;evas_object_show(conform);
+
+&nbsp;&nbsp;&nbsp;return conform;
+}</pre>
+ 
+<p>The conformant is a container. It helps elementary apps to account for space taken up by the indicator, a virtual keypad.</p>
+</li>
+  <li>Create the naviframe:
+<pre class="prettyprint">
+static Evas_Object* _create_naviframe(Evas_Object* parent)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *nf;
+   
+&nbsp;&nbsp;&nbsp;// Create the elementary naviframe object
+&nbsp;&nbsp;&nbsp;nf = elm_naviframe_add(parent);
+   
+&nbsp;&nbsp;&nbsp;elm_object_part_content_set(parent, &quot;elm.swallow.content&quot;, nf);
+   
+&nbsp;&nbsp;&nbsp;// Insert the naviframe to the conformant content area
+&nbsp;&nbsp;&nbsp;evas_object_show(nf);
+
+&nbsp;&nbsp;&nbsp;return nf;
+}    </pre>
+<p>The naviframe is a view manager, which holds views as a stack and manages their position.</p>
+</li>
+  <li>Create the application layout:
+    	   <pre class="prettyprint">
+static void _create_view_layout(struct appdata *ad)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *layout;
+&nbsp;&nbsp;&nbsp;Elm_Object_Item *nf_it;
+   
+&nbsp;&nbsp;&nbsp;if (ad == NULL) return;
+&nbsp;&nbsp;&nbsp;if (ad-&gt;nf == NULL) return;
+   
+&nbsp;&nbsp;&nbsp;// Create the elementary layout object
+&nbsp;&nbsp;&nbsp;layout = elm_layout_add(ad-&gt;nf); 
+   
+&nbsp;&nbsp;&nbsp;elm_layout_file_set(layout, &quot;/xxx/xxx/xxx/test.edj&quot;, &quot;demo_layout/default&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   
+&nbsp;&nbsp;&nbsp;// Layout area is filled in its parent container
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   
+&nbsp;&nbsp;&nbsp;// Set the text to the text part named &quot;main_text&quot;
+&nbsp;&nbsp;&nbsp;elm_object_part_text_set(layout, &quot;main_text&quot;, &quot;Hello, World&quot;);
+   
+&nbsp;&nbsp;&nbsp;// Push the layout to the naviframe stack
+&nbsp;&nbsp;&nbsp;nf_it = elm_naviframe_item_push(ad-&gt;nf, _(&quot;EFL Demo&quot;), NULL, NULL, layout, NULL);
+}</pre>
+<p>Layout is a container that uses a standard Edje design file. Layout takes a <span style="font-family: Courier New,Courier,monospace;">demo_layout/default</span> group from the <span style="font-family: Courier New,Courier,monospace;">test.edj</span> file, which is created by compiling the <span style="font-family: Courier New,Courier,monospace;">test.edc</span> file.</p>
+    	</li> 	
+  <!-- end of EFL-->
+  </ol>
+  
+<h2><span style="font-family: Courier New,Courier,monospace;">test.edc</span> File</h2>
+   
+<p>The following example shows the application layout:</p>
+<pre class="prettyprint">
+collections
+{
+&nbsp;&nbsp;&nbsp;group
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Set the group name which the C code refers
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;demo_layout/default&quot;; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parts
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;part 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Set the part name for display &quot;Hello, World&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name: &quot;main_text&quot;;
+            
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Set the part object type as TEXT
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: TEXT;
+            
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// The part is scalable so it resized itself by multiplying the scale value
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scale: 1; 
+           
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state: &quot;default&quot; 0.0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Define the font and its style
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font: &quot;SamsungSans:style=Regular&quot;; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Define the font size 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size: 44; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Align the text at the center of the part space
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;align: 0.5 0.5; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Set the text color as Red (RGBA)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: 255 0 0 255; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+}</pre>
+    	    	
+  
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li> 
+  </ul>  
+  
+  
+ 
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

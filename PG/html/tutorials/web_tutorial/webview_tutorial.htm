@@ -1,0 +1,641 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>WebView Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>WebView Tutorial</h1>
+  
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__WEBVIEW.html">WebView API</a> to create a simple Web browser. EFL APIs, such as <span style="font-family: Courier New,Courier,monospace;">evas_*</span>, <span style="font-family: Courier New,Courier,monospace;">elm_*</span>, and <span style="font-family: Courier New,Courier,monospace;">eina_*</span> are be used to build up a complete application supporting Web browsing.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;Ecore.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Ecore_Evas.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Ecore_Getopt.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Eet.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Eina.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Elementary.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace;">&lt;Evas.h&gt;</span>, and <span style="font-family: Courier New,Courier,monospace;">&lt;EWebKit.h&gt;</span> headers.</p>
+
+<p>To learn about the WebView API features, see the <a href="../../guide/web/web.htm">Web Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#init">Initialization and Prerequisites</a></li>
+		<li><a href="#window">Creating and Deleting a Window Object</a>
+		<p>Create and delete a window object.</p></li>
+		<li><a href="#ewkview">Creating an EWK View and Setting Window Geometry Callbacks</a>
+		<p>Create an EWK view and set window geometry callbacks.</p></li>
+		<li><a href="#handlecreate">Handling the Window Create Event</a>
+		<p>Handle the window create event.</p></li>
+		<li><a href="#handleclose">Handling the Window Close Event</a>
+		<p>Handle the window close event.</p></li>
+		<li><a href="#smart">Setting the Window Smart View and Settings</a>
+		<p>Set the window smart view and settings.</p></li>
+		<li><a href="#keymouse">Handling Key and Mouse Events</a>
+		<p>Handle the key and mouse event.</p></li>
+		<li><a href="#show">Showing a Window and Setting the Focus</a>
+		<p>Show a window and set the focus.</p></li>
+		<li><a href="#pageurl">Setting the Page URL</a>
+		<p>Set the page URL.</p></li>
+		<li><a href="#helper">Finding a Window</a>
+		<p>Use the helper functions to find a window.</p></li>
+		<li><a href="#finalize">Finalizing the Application</a>
+		<p>Finalize the application.</p></li>
+	</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>The sample browser uses several Evas objects to build the browser UI. To easily manage the UI elements, use the <span style="font-family: Courier New,Courier,monospace">Browser_window</span> data structure. The browser window data is stored in a <span style="font-family: Courier New,Courier,monospace">Browser_window</span> structure that contains 2 <span style="font-family: Courier New,Courier,monospace">Evas_Object</span> instances.</p>
+
+<pre class="prettyprint">
+typedef struct _Browser_Window
+{ 
+&nbsp;&nbsp;&nbsp;Evas_Object *elm_window; 
+&nbsp;&nbsp;&nbsp;Evas_Object *ewk_view; 
+}
+Browser_Window;
+ 
+EAPI_MAIN int 
+elm_main(int argc, char *argv[]) 
+{ 
+&nbsp;&nbsp;&nbsp;int args = 1; 
+&nbsp;&nbsp;&nbsp;Browser_Window *window; 
+
+&nbsp;&nbsp;&nbsp;if (!ewk_init()) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return EXIT_FAILURE;
+
+&nbsp;&nbsp;&nbsp;elm_run();
+
+&nbsp;&nbsp;&nbsp;ewk_shutdown();
+&nbsp;&nbsp;&nbsp;return EXIT_SUCCESS;
+}
+ELM_MAIN()
+</pre>
+
+<p>Set the name and version of the <span style="font-family: Courier New,Courier,monospace">Ewk_View_Smart_Class</span> using the <span style="font-family: Courier New,Courier,monospace">EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION()</span> function.</p>
+
+<pre class="prettyprint">
+static Ewk_View_Smart_Class *miniBrowserViewSmartClass() 
+{ 
+&nbsp;&nbsp;&nbsp;static Ewk_View_Smart_Class ewkViewClass = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(&quot;MiniBrowser_View&quot;); 
+&nbsp;&nbsp;&nbsp;return &amp;ewkViewClass; 
+} 
+
+ewk_view_smart_class_set(miniBrowserViewSmartClass());
+</pre>
+
+<p>To create a window, call the <span style="font-family: Courier New,Courier,monospace">window_create()</span> function.</p>
+
+<pre class="prettyprint">
+window = window_create(NULL, 0, 0, EINA_FALSE);
+</pre>
+
+<h2 id="window" name="window">Creating and Deleting a Window Object</h2>
+<p>To create and delete a window object:</p>
+<ol>
+<li>To create a window object, use the <span style="font-family: Courier New,Courier,monospace">elm_win_add(Evas_Object* parent, const char* name, Elm_Win_Type</span> type.</li>
+ 
+<li>You can add a Smart Callback to your window using the <span style="font-family: Courier New,Courier,monospace">evas_object_smart_callback_add(Evas_Object* obj, const char* event, void* event_info)</span> function.</li> 
+
+<li>The <span style="font-family: Courier New,Courier,monospace">void evas_object_smart_callback_add(Evas_Object * obj, const char * event, Evas_Smart_Cb func, const void * data)</span> function adds a callback function to the event specified by the event on the smart object (smart event).
+ 
+<pre class="prettyprint">
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
+{
+&nbsp;&nbsp;&nbsp;// Allocate memory
+&nbsp;&nbsp;&nbsp;Browser_Window *window = calloc(1, sizeof(Browser_Window));
+&nbsp;&nbsp;&nbsp;if (!window) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;info(&quot;ERROR: could not create browser window.&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;// Create window
+&nbsp;&nbsp;&nbsp;window-&gt;elm_window = elm_win_add(NULL, &quot;minibrowser-window&quot;, ELM_WIN_BASIC);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(window-&gt;elm_window, &quot;delete,request&quot;, on_window_deletion, &amp;window);
+}
+</pre></li>
+
+<li>An application also needs a callback fired for the Deletion Window Event. In the callback&#39;s body of implementation, call the <span style="font-family: Courier New,Courier,monospace">window_close()</span> function for a returned object of the <span style="font-family: Courier New,Courier,monospace">window_find_with_elm_window()</span> function.
+ 
+<pre class="prettyprint">
+static void on_window_deletion(void *user_data, Evas_Object *elm_window, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;window_close(window_find_with_elm_window(elm_window));
+}
+</pre></li></ol>
+
+<h2 id="ewkview" name="ewkview">Creating an EWK View and Setting Window Geometry Callbacks</h2>
+<p>You need to create a view which implements the required functions, such as resizing and moving. For this purpose, call the <span style="font-family: Courier New,Courier,monospace">miniBrowserViewSmartClass()</span> function that you created earlier.</p> 
+
+<pre class="prettyprint">
+Ewk_View_Smart_Class *ewkViewClass = miniBrowserViewSmartClass();
+ewkViewClass-&gt;window_geometry_get = on_window_geometry_get;
+ewkViewClass-&gt;window_geometry_set = on_window_geometry_set;
+</pre>
+
+<table> 
+   <caption>
+     Table: Window geometry callbacks 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Event</th> 
+     <th>Callback</th>
+	 <th>Callback type</th>	 
+    </tr> 
+    <tr> 
+	<td>Get window geometry</td>
+     <td><span style="font-family: Courier New,Courier,monospace">window_geometry_get</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static Eina_Bool on_window_geometry_get(Ewk_View_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *width, Evas_Coord *height);</span></td>	     
+    </tr> 
+     <tr> 
+	<td>Set window geometry</td>
+     <td><span style="font-family: Courier New,Courier,monospace">window_geometry_set</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static Eina_Bool on_window_geometry_set(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);</span></td>	     
+    </tr> 
+   </tbody> 
+  </table> 
+	
+<p>Example code with the <span style="font-family: Courier New,Courier,monospace">window_geometry_get()</span> and <span style="font-family: Courier New,Courier,monospace">window_geometry_set()</span> functions:</p>
+
+<pre class="prettyprint">
+static Eina_Bool on_window_geometry_get(Ewk_View_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *width, Evas_Coord *height) 
+{ 
+&nbsp;&nbsp;&nbsp;// Create a Browser_Window object for a given Ewk_View_Smart_Data object 
+&nbsp;&nbsp;&nbsp;Browser_Window *window = window_find_with_ewk_view(sd-&gt;self); 
+
+&nbsp;&nbsp;&nbsp;// Get geometry information 
+&nbsp;&nbsp;&nbsp;evas_object_geometry_get(window-&gt;elm_window, x, y, width, height);
+
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+</pre>
+
+<pre class="prettyprint">
+static Eina_Bool on_window_geometry_set(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
+{
+&nbsp;&nbsp;&nbsp;// Create a Browser_Window object for a given Ewk_View_Smart_Data object
+&nbsp;&nbsp;&nbsp;Browser_Window *window = window_find_with_ewk_view(sd-&gt;self);
+
+&nbsp;&nbsp;&nbsp;// Set position 
+&nbsp;&nbsp;&nbsp;evas_object_move(window-&gt;elm_window, x, y);
+&nbsp;&nbsp;&nbsp;// Set size
+&nbsp;&nbsp;&nbsp;evas_object_resize(window-&gt;elm_window, width, height);
+
+&nbsp;&nbsp;&nbsp;return EINA_TRUE;
+}
+</pre>
+
+<h2 id="handlecreate" name="handlecreate">Handling the Window Create Event</h2>
+<p>To handle the window create event, you need to set an <span style="font-family: Courier New,Courier,monospace">on_window_create</span> callback, which is attributed to <span style="font-family: Courier New,Courier,monospace">Ewk_View_Class-&gt;window_create</span>.</p>
+
+<table> 
+   <caption>
+     Table: Window create callbacks 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Event</th> 
+     <th>Callback</th>
+	 <th>Callback type</th>	 
+    </tr> 
+    <tr> 
+	<td>Create a window</td>
+     <td><span style="font-family: Courier New,Courier,monospace">window_create</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static Evas_Object *on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features);</span></td>	     
+    </tr> 
+   </tbody> 
+  </table> 
+
+<pre class="prettyprint">
+static Evas_Object *on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features)
+{
+&nbsp;&nbsp;&nbsp;int x = 0;
+&nbsp;&nbsp;&nbsp;int y = 0;
+&nbsp;&nbsp;&nbsp;int width = 0;
+&nbsp;&nbsp;&nbsp;int height = 0;
+
+&nbsp;&nbsp;&nbsp;ewk_window_features_geometry_get(window_features, &amp;x, &amp;y, &amp;width, &amp;height);
+
+&nbsp;&nbsp;&nbsp;Browser_Window *window = window_create(smartData-&gt;self, width, height, EINA_FALSE);
+&nbsp;&nbsp;&nbsp;Evas_Object *new_view = window-&gt;ewk_view;
+
+&nbsp;&nbsp;&nbsp;windows = eina_list_append(windows, window);
+
+&nbsp;&nbsp;&nbsp;info("minibrowser: location(%d,%d) size=(%d,%d)", x, y, width, height);
+
+&nbsp;&nbsp;&nbsp;return new_view;
+}
+</pre>
+
+<p>To use this code, declare a global value <span style="font-family: Courier New,Courier,monospace">static Eina_List *windows = NULL;</span>, which stores all windows as a list, and add this line to the <span style="font-family: Courier New,Courier,monospace">window_create()</span> function.</p>
+
+<pre class="prettyprint">static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
+{ 
+&nbsp;&nbsp;&nbsp;// ...
+
+&nbsp;&nbsp;&nbsp;ewkViewClass-&gt;window_create = on_window_create; 
+}
+</pre>
+
+<h2 id="handleclose" name="handleclose">Handling the Window Close Event</h2>
+<p>To handle the window close event, you need to set <span style="font-family: Courier New,Courier,monospace">ewkViewClass-&gt;window_close</span> to point to the function you want to be fired for the window close event.</p>
+
+<table> 
+   <caption>
+     Table: Window close callbacks 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Event</th> 
+     <th>Callback</th>
+	 <th>Callback type</th>	 
+    </tr> 
+    <tr> 
+	<td>Close a window</td>
+     <td><span style="font-family: Courier New,Courier,monospace">window_close</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static void on_window_close(Ewk_View_Smart_Data *smartData);</span></td>	     
+    </tr> 
+   </tbody> 
+  </table> 
+
+<pre class="prettyprint">
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
+{
+&nbsp;&nbsp;&nbsp;// ... 
+
+&nbsp;&nbsp;&nbsp;ewkViewClass-&gt;window_close = on_window_close; 
+
+&nbsp;&nbsp;&nbsp;// ...
+}
+</pre>
+
+<p>In this tutorial, to close the window, we identify the <span style="font-family: Courier New,Courier,monospace">Browser_Window</span> that is about to close and call the <span style="font-family: Courier New,Courier,monospace">window_close(window)</span> function, which removes the closing window from the windows list and calls the <span style="font-family: Courier New,Courier,monospace">window_free(window)</span> function to free the memory pointed by the closing window. If the windows list becomes empty, the <span style="font-family: Courier New,Courier,monospace">elm_exit()</span> function is called to close the application.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">window_find_with_ewk_view()</span> function is discussed later.</p>
+
+<pre class="prettyprint">
+static void 
+on_window_close(Ewk_View_Smart_Data *smartData) 
+{
+&nbsp;&nbsp;&nbsp;Browser_Window *window = window_find_with_ewk_view(smartData-&gt;self); 
+&nbsp;&nbsp;&nbsp;window_close(window); 
+} 
+
+static void window_close(Browser_Window *window) 
+{ 
+&nbsp;&nbsp;&nbsp;windows = eina_list_remove(windows, window); 
+&nbsp;&nbsp;&nbsp;window_free(window); 
+
+&nbsp;&nbsp;&nbsp;if (!windows) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_exit(); 
+} 
+
+static void window_free(Browser_Window *window) 
+{ 
+&nbsp;&nbsp;&nbsp;evas_object_del(window-&gt;ewk_view); 
+&nbsp;&nbsp;&nbsp;// The elm_win takes care of freeing its children
+&nbsp;&nbsp;&nbsp;evas_object_del(window-&gt;elm_window); 
+
+&nbsp;&nbsp;&nbsp;free(window); 
+}
+</pre>
+
+<h2 id="smart" name="smart">Setting the Window Smart View and Settings</h2>
+<p>To add a window view, context, page group, and other settings describing the view, you need to use functions as seen in the following code. A smart object provides custom functions for handling functionality such as the clipping, moving, hiding, and color setting of child elements automatically. See the code for comments.</p> 
+
+<ul>
+	<li><span style="font-family: Courier New,Courier,monospace">Evas* evas_object_evas_get(const Evas_Object * obj)</span>: Retrieve the Evas canvas that the given object lives on</li>
+	<li><span style="font-family: Courier New,Courier,monospace">Evas_Smart* evas_smart_class_new(const Evas_Smart_Class * sc)</span>: Create a new <span style="font-family: Courier New,Courier,monospace">Evas_Smart</span> from a given <span style="font-family: Courier New,Courier,monospace">Evas_Smart_Class</span> struct</li>
+	<li><span style="font-family: Courier New,Courier,monospace">Ewk_Context *ewk_view_context_get(const Evas_Object *o)</span>: Get the <span style="font-family: Courier New,Courier,monospace">Ewk_Context</span> of this view</li>
+	<li><span style="font-family: Courier New,Courier,monospace">Ewk_Page_Group *ewk_view_page_group_get(const Evas_Object *o)</span>: Get the <span style="font-family: Courier New,Courier,monospace">Ewk_Page_Group</span> of this view</li>
+</ul>
+
+<pre class="prettyprint">
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
+{ 
+&nbsp;&nbsp;&nbsp;// ...
+
+&nbsp;&nbsp;&nbsp;Evas *evas = evas_object_evas_get(window-&gt;elm_window); 
+&nbsp;&nbsp;&nbsp;// Create smart class object
+&nbsp;&nbsp;&nbsp;Evas_Smart *smart = evas_smart_class_new(&amp;ewkViewClass-&gt;sc);     
+&nbsp;&nbsp;&nbsp;// Create context object
+&nbsp;&nbsp;&nbsp;Ewk_Context *context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
+&nbsp;&nbsp;&nbsp;// Create page group object
+&nbsp;&nbsp;&nbsp;Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create(&quot;&quot;);
+&nbsp;&nbsp;&nbsp;// Add objects to ewk_view
+&nbsp;&nbsp;&nbsp;window-&gt;ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup); 
+
+&nbsp;&nbsp;&nbsp;ewk_view_source_mode_set(window-&gt;ewk_view, view_mode);
+}
+</pre>
+
+<p>Create a settings object using the <span style="font-family: Courier New,Courier,monospace">ewk_view_settings_get()</span> function and set it up using the following:</p>
+
+<ul>
+	<li><span style="font-family: Courier New,Courier,monospace">Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings *settings, Eina_Bool enable)</span>: Allow or disallow file access from <span style="font-family: Courier New,Courier,monospace">file://</span> URLs</li>
+	<li><span style="font-family: Courier New,Courier,monospace">Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings *settings, Eina_Bool enable)</span>: Enable or disable developer extensions</li>
+	<li><span style="font-family: Courier New,Courier,monospace">Eina_Bool ewk_settings_preferred_minimum_contents_width_set(Ewk_Settings *settings, unsigned width)</span>: Set preferred minimum content width, which is used as the default minimum content width</li>
+</ul>
+
+<pre class="prettyprint">
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
+{ 
+&nbsp;&nbsp;&nbsp;//...
+
+&nbsp;&nbsp;&nbsp;// Create settings
+&nbsp;&nbsp;&nbsp;Ewk_Settings *settings = ewk_view_settings_get(window-&gt;ewk_view); 
+&nbsp;&nbsp;&nbsp;// Set file access from url to true
+&nbsp;&nbsp;&nbsp;ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE); 
+&nbsp;&nbsp;&nbsp;// Set context
+&nbsp;&nbsp;&nbsp;ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE); 
+&nbsp;&nbsp;&nbsp;// Set page group
+&nbsp;&nbsp;&nbsp;ewk_settings_preferred_minimum_contents_width_set(settings, 0); 
+}
+</pre>
+
+<h2 id="keymouse" name="keymouse">Handling Key and Mouse Events</h2>
+<p>To handle mouse or key events, corresponding callbacks need to be set by calling the <span style="font-family: Courier New,Courier,monospace">evas_object_event_callback_add()</span> function.</p>
+
+<pre class="prettyprint">
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode) 
+{ 
+&nbsp;&nbsp;&nbsp;// ... 
+
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(window-&gt;ewk_view, EVAS_CALLBACK_KEY_DOWN, on_key_down, window); 
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(window-&gt;ewk_view, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, window); 
+
+&nbsp;&nbsp;&nbsp;// ...
+}
+</pre>
+
+<table> 
+   <caption>
+     Table: Key and mouse callbacks 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Event</th> 
+     <th>Callback</th>
+	 <th>Callback type</th>	 
+    </tr> 
+    <tr> 
+	<td>Key down</td>
+     <td><span style="font-family: Courier New,Courier,monospace">EVAS_CALLBACK_KEY_DOWN</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static void on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info);</span></td>	     
+    </tr> 	
+    <tr> 
+	<td>Mouse down</td>
+     <td><span style="font-family: Courier New,Courier,monospace">EVAS_CALLBACK_MOUSE_DOWN</span></td>
+	<td><span style="font-family: Courier New,Courier,monospace">static void on_mouse_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info);</span></td>	     
+    </tr> 
+   </tbody> 
+</table> 
+
+<p>To handle pressed key modifiers, such as Control or Alt, the <span style="font-family: Courier New,Courier,monospace">evas_key_modifier_is_set()</span> function must be called. To get the <span style="font-family: Courier New,Courier,monospace">Evas_Modifier</span> object that contains information about which key modifiers are registered, call the <span style="font-family: Courier New,Courier,monospace">evas_key_modifier_get()</span> function, passing the <span style="font-family: Courier New,Courier,monospace">Evas</span> canvas object as an argument. Example code:</p>
+
+<pre class="prettyprint">
+static void on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info) 
+{ 
+&nbsp;&nbsp;&nbsp;Browser_Window *window = (Browser_Window *)user_data; 
+&nbsp;&nbsp;&nbsp;Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info; 
+
+&nbsp;&nbsp;&nbsp;const Evas_Modifier *mod = evas_key_modifier_get(e); 
+&nbsp;&nbsp;&nbsp;Eina_Bool ctrlPressed = evas_key_modifier_is_set(mod, &quot;Control&quot;); 
+&nbsp;&nbsp;&nbsp;Eina_Bool altPressed = evas_key_modifier_is_set(mod, &quot;Alt&quot;);
+}
+</pre>
+
+<p>Now <span style="font-family: Courier New,Courier,monospace">ev-&gt;key</span> contains the name of the key that caused the event trigger. For example, to check whether the combination Alt + Left Arrow was pressed, <span style="font-family: Courier New,Courier,monospace">(!strcmp(ev-&gt;key, &quot;Left&quot;) &amp;&amp; altPressed)</span> must evaluate to <span style="font-family: Courier New,Courier,monospace">TRUE</span>.</p>
+
+<table> 
+   <caption>
+     Table: Key behavior
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Key</th> 
+     <th>Behavior</th>
+	 <th>API</th>	 
+    </tr> 
+    <tr> 
+	<td>Alt+Left</td>
+     <td>Back view</td>
+	<td><span style="font-family: Courier New,Courier,monospace">ewk_view_back</span></td>	     
+    </tr> 	
+    <tr> 
+	<td>Alt+Right</td>
+     <td>Forward view</td>
+	<td><span style="font-family: Courier New,Courier,monospace">ewk_view_forward</span></td>	     
+    </tr> 
+	    <tr> 
+	<td>F5</td>
+     <td>Reload view</td>
+	<td><span style="font-family: Courier New,Courier,monospace">ewk_view_reload</span></td>	     
+    </tr> 
+	    <tr> 
+	<td>Alt+F5</td>
+     <td>Reload view bypassing cache</td>
+	<td><span style="font-family: Courier New,Courier,monospace">ewk_view_bypass_cache</span></td>	     
+    </tr> 
+	    <tr> 
+	<td>F6</td>
+     <td>Stop</td>
+	<td><span style="font-family: Courier New,Courier,monospace">ewk_view_stop</span></td>	     
+    </tr> 
+   </tbody> 
+</table> 
+
+<p>The mouse down event information is stored in <span style="font-family: Courier New,Courier,monospace">Evas_Event_Mouse_Down</span>. Similarly as in key events, <span style="font-family: Courier New,Courier,monospace">ev-&gt;button</span> contains information on which button was pressed. In this example, pressing the first button calls the <span style="font-family: Courier New,Courier,monospace">view_focus_set()</span> function to update the focus. Example code:</p>
+
+<pre class="prettyprint">
+static void on_mouse_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info) 
+{ 
+&nbsp;&nbsp;&nbsp;Browser_Window *window = (Browser_Window *)user_data; 
+&nbsp;&nbsp;&nbsp;Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info; 
+
+&nbsp;&nbsp;&nbsp;if (ev-&gt;button == 1) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;view_focus_set(window, EINA_TRUE); 
+}
+</pre>
+
+<h2 id="show" name="show">Showing a Window and Setting the Focus</h2>
+<p>In EFL, the UI focus control is implemented in an Elementary object, not an <span style="font-family: Courier New,Courier,monospace">Evas_object</span>. Therefore, the application using EWK derived from Evas object must control the focus.</p>
+<p>To set the focus to a window, use the <span style="font-family: Courier New,Courier,monospace">void elm_object_focus_set (Evas_Object *obj, Eina_Bool focus)</span> and <span style="font-family: Courier New,Courier,monospace">void evas_object_focus_set (Evas_Object *obj,Eina_Bool focus)</span> functions. Example code:</p>
+
+<pre class="prettyprint">
+static void view_focus_set(Browser_Window *window, Eina_Bool focus) 
+{ 
+&nbsp;&nbsp;&nbsp;// We steal focus away from elm focus model and start to do things 
+&nbsp;&nbsp;&nbsp;// manually here, so elm now has no clue what is up. Tell elm that its 
+&nbsp;&nbsp;&nbsp;// top level widget is to be unfocused so elm gives up the focus 
+&nbsp;&nbsp;&nbsp;elm_object_focus_set(elm_object_top_widget_get(window-&gt;elm_window), EINA_FALSE); 
+&nbsp;&nbsp;&nbsp;evas_object_focus_set(window-&gt;ewk_view, focus); 
+};
+</pre>
+
+<p>Call this function in the <span style="font-family: Courier New,Courier,monospace">window_create()</span> function.</p>
+
+<pre class="prettyprint">
+window_create()
+{
+&nbsp;&nbsp;&nbsp;// ...
+
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(window-&gt;elm_window, window-&gt;ewk_view);
+&nbsp;&nbsp;&nbsp;evas_object_show(window-&gt;ewk_view);
+
+&nbsp;&nbsp;&nbsp;evas_object_show(window-&gt;elm_window);
+
+&nbsp;&nbsp;&nbsp;view_focus_set(window, EINA_TRUE);
+
+&nbsp;&nbsp;&nbsp;return window;
+}
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">void evas_object_show (Evas_Object *obj)</span> function makes the given <span style="font-family: Courier New,Courier,monospace">Evas</span> object visible.</p>
+
+<h2 id="pageurl" name="pageurl">Setting the Page URL</h2>
+<p>This example uses 2 helper functions for finding window structures. The first one, the <span style="font-family: Courier New,Courier,monospace">window_find_with_elm_window()</span> function, takes <span style="font-family: Courier New,Courier,monospace">elm_window</span> as an argument and returns a pointer to the <span style="font-family: Courier New,Courier,monospace">Browser_Window</span> object that the window is part of. The second one, the <span style="font-family: Courier New,Courier,monospace">window_find_with_ewk_view()</span> function, does the same with <span style="font-family: Courier New,Courier,monospace">ewk_view</span> passed as an argument. Both of them use the <span style="font-family: Courier New,Courier,monospace">EINA_LIST_FOREACH</span> macro to iterate over the windows list.</p>
+
+<pre class="prettyprint">
+char *url_from_user_input(const char *arg)
+{
+&nbsp;&nbsp;&nbsp;// If it is already a URL, return the argument as is
+&nbsp;&nbsp;&nbsp;if (has_scheme(arg) || !strcasecmp(arg, &quot;about:blank&quot;))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return strdup(arg);
+
+&nbsp;&nbsp;&nbsp;Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
+
+&nbsp;&nbsp;&nbsp;// Check whether the path exists
+&nbsp;&nbsp;&nbsp;if (ecore_file_exists(eina_strbuf_string_get(buf)))
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// File exists, convert local path to a URL
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_strbuf_prepend(buf, &quot;file://&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// The path does not exist, convert it to a URL by
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// prepending http:// scheme:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// www.google.com -&gt; http://www.google.com
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_strbuf_string_free(buf);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eina_strbuf_append_printf(buf, &quot;http://%s&quot;, arg);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;char *url = eina_strbuf_string_steal(buf);
+&nbsp;&nbsp;&nbsp;eina_strbuf_free(buf);
+
+&nbsp;&nbsp;&nbsp;return url;
+}
+</pre>
+
+<p>The body of the <span style="font-family: Courier New,Courier,monospace">has_scheme()</span> function used in the previous code can be found here:</p>
+
+<pre class="prettyprint">
+Eina_Bool has_scheme(const char *url)
+{
+&nbsp;&nbsp;&nbsp;return !!strstr(url, &quot;://&quot;);
+}
+</pre>
+
+<h2 id="helper" name="helper">Finding a Window</h2>
+<p>This example uses 2 helper functions for finding window structures. The first one, the <span style="font-family: Courier New,Courier,monospace">window_find_with_elm_window()</span> function, takes <span style="font-family: Courier New,Courier,monospace">elm_window</span> as an argument and returns a pointer to the <span style="font-family: Courier New,Courier,monospace">Browser_Window</span> object that the window is part of. The second one, the <span style="font-family: Courier New,Courier,monospace">window_find_with_ewk_view()</span> function, does the same for <span style="font-family: Courier New,Courier,monospace">ewk_view</span>. Both of them use the <span style="font-family: Courier New,Courier,monospace">EINA_LIST_FOREACH</span> macro to iterate over the windows list.</p>
+
+<pre class="prettyprint">
+static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window) 
+{ 
+&nbsp;&nbsp;&nbsp;Eina_List *l; 
+&nbsp;&nbsp;&nbsp;void *data; 
+
+&nbsp;&nbsp;&nbsp;if (!elm_window) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; 
+
+&nbsp;&nbsp;&nbsp;EINA_LIST_FOREACH(windows, l, data)
+&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Browser_Window *window = (Browser_Window *)data; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (window-&gt;elm_window == elm_window) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return window; 
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;return NULL; 
+}</pre>
+
+<pre class="prettyprint">
+static Browser_Window *window_find_with_ewk_view(Evas_Object *ewk_view) 
+{ 
+&nbsp;&nbsp;&nbsp;Eina_List *l; 
+&nbsp;&nbsp;&nbsp;void *data; 
+
+&nbsp;&nbsp;&nbsp;if (!ewk_view) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; 
+
+&nbsp;&nbsp;&nbsp;EINA_LIST_FOREACH(windows, l, data)
+&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Browser_Window *window = (Browser_Window *)data; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (window-&gt;ewk_view == ewk_view) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return window; 
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;return NULL; 
+}</pre>
+
+<h2 id="finalize" name="finalize">Finalizing the Application</h2>
+<p>To close the application correctly, use the <span style="font-family: Courier New,Courier,monospace">ewk_shutdown()</span> and <span style="font-family: Courier New,Courier,monospace">elm_shutdown()</span> functions in order. These functions clean up any resources your application may have allocated. Return a value corresponding with the <span style="font-family: Courier New,Courier,monospace">result (EXIT_FAILURE or EXIT_SUCCESS)</span> function to inform the user.</p>
+
+<pre class="prettyprint">
+static int quit(Eina_Bool success, const char *msg)
+{
+&nbsp;&nbsp;&nbsp;ewk_shutdown();
+&nbsp;&nbsp;&nbsp;elm_shutdown();
+
+&nbsp;&nbsp;&nbsp;if (msg)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fputs(msg, (success) ? stdout : stderr);
+
+&nbsp;&nbsp;&nbsp;if (!success)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return EXIT_FAILURE;
+
+&nbsp;&nbsp;&nbsp;return EXIT_SUCCESS;
+}</pre>
+
+<p>In the main function, call the <span style="font-family: Courier New,Courier,monospace">quit()</span> function:</p>
+
+<pre class="prettyprint">
+elm_main()
+{
+&nbsp;&nbsp;&nbsp;// ...
+
+&nbsp;&nbsp;&nbsp;window = window_create(NULL, 0, 0, EINA_FALSE); 
+&nbsp;&nbsp;&nbsp;// ...
+
+&nbsp;&nbsp;&nbsp;if (!window)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return quit(EINA_FALSE, &quot;ERROR: could not create browser window.\n&quot;);
+
+&nbsp;&nbsp;&nbsp;windows = eina_list_append(windows, window); // Add a new window to the list
+
+&nbsp;&nbsp;&nbsp;elm_run(); // Run the elementary main loop 
+
+&nbsp;&nbsp;&nbsp;return quit(EINA_TRUE, NULL);
+}
+ELM_MAIN()</pre>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="web_tutorial.htm">Web Tutorials</a></li>
+	<li><a href="../../guide/web/web.htm">Web Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__WEBVIEW.html">WebView API Reference</a></li>    
+  </ul> 
+  
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

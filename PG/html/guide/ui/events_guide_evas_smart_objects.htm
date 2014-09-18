@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Evas Smart Object Events</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Evas Smart Object Events</h1> 
+  
+<p>Evas smart object events are the most widely-used events in graphical applications since they are used for signals, such as <span style="font-family: Courier New,Courier,monospace;">clicked</span>, <span style="font-family: Courier New,Courier,monospace;">clicked,double</span> (double-click), and <span style="font-family: Courier New,Courier,monospace;">pressed</span>. They are identified by strings, and each smart object is able to define its own events even though the event names follow set conventions.</p>
+  
+<h2 id="addcallback" name="addcallback">Managing Event Handlers</h2>
+
+<p>To register a callback for a given event, use the <span style="font-family: Courier New,Courier,monospace;">evas_object_smart_callback_add()</span> function. Use its third parameter to define the callback function.</p>
+ 
+<p>The following example shows how to track the click events for the <span style="font-family: Courier New,Courier,monospace;">Evas_Object</span> button using the <span style="font-family: Courier New,Courier,monospace;">_button_clicked()</span> callback:</p>
+
+<pre class="prettyprint">
+static void
+_button_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;// Insert function body here
+}
+static void
+some_function(void)
+{
+&nbsp;&nbsp;&nbsp;// Code to build the window object
+&nbsp;&nbsp;&nbsp;Evas_Object *button = elm_button_add(window);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(button, &quot;clicked&quot;,_button_clicked, NULL);
+}
+</pre>
+
+<p>If the callback function does not use all the arguments, the compiler can raise the &quot;unused parameter&quot; warning. To avoid this, annotate the argument with the <span style="font-family: Courier New,Courier,monospace;">EINA_UNUSED</span> macro. It is a compiler-independent way to let the compiler know that the parameter is intentionally not used:</p>
+
+<pre class="prettyprint">
+void cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+</pre>
+
+<p>For a given object and event, callbacks are called in the order they have been added and as many times as they have been added. The <span style="font-family: Courier New,Courier,monospace;">evas_object_smart_callback_add()</span> function does not do any special processing if it is called several times with the same callback function and data.</p>
+
+<p>To remove an event handler, call the <span style="font-family: Courier New,Courier,monospace;">evas_object_smart_callback_del()</span> function. It removes the first match for the given event and callback and returns the data pointer that was used in the corresponding call to the <span style="font-family: Courier New,Courier,monospace;">evas_object_smart_callback_add()</span> function.</p>
+
+<h2 id="examples" name="examples">Examples</h2>
+
+<p>The following examples show how you can use Evas smart object events.</p>
+
+<p>The following code snippet shows a button with a callback on the <span style="font-family: Courier New,Courier,monospace;">clicked</span> signal:</p>
+
+<pre class="prettyprint">
+static void
+_button_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Button clicked.\n&quot;);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+&nbsp;&nbsp;&nbsp;elm_exit();
+}
+static void
+_add_button(Evas_Object *window)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *button;
+&nbsp;&nbsp;&nbsp;button = elm_button_add(window);
+&nbsp;&nbsp;&nbsp;elm_object_text_set(button, &quot;Click Me To Exit!&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(button, &quot;clicked&quot;, _button_clicked, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_show(button);
+}
+</pre>
+
+<p>If you use the <span style="font-family: Courier New,Courier,monospace;">evas_object_smart_callback_del()</span> function in the callback, clicking the button removes the callback:</p>
+
+<pre class="prettyprint">
+static void
+_button_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Button clicked.\n&quot;);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_del(obj, &quot;clicked&quot;, _button_clicked);
+}
+static void
+_add_button(Evas_Object *window)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *button;
+&nbsp;&nbsp;&nbsp;button = elm_button_add(window);
+&nbsp;&nbsp;&nbsp;elm_object_text_set(button, &quot;Click Me!&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(button, &quot;clicked&quot;, _button_clicked, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_show(button);
+}
+</pre>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="events_guide.htm">Event Handling</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Media Content Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Media Content Tutorial</h1> 
+  
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CONTENT__MODULE.html">Media Content</a> API. Functions in this module use an SQLite database to save the metadata of the media files on your device, along with the tags and bookmarks that the user sets. You can manage the saved data and use it in applications on the device.</p>
+
+To learn about the Media Content API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#initialize">Initialization and Prerequisites</a></li>
+
+<li><a href="#folder_list">Getting the Folder List</a>
+<p>This tutorial describes how to get a folder list.</p></li>
+
+<li><a href="#item_list">Getting the Item List</a>
+<p>This tutorial describes how to get an item list.</p></li>
+
+<li><a href="#destroy">Destroying the Handle</a>
+<p>This tutorial describes how to destroy a handle.</p></li>
+
+<li><a href="#update">Receiving Update Notifications</a>
+<p>This tutorial describes how to set an update notification callback.</p></li>
+</ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>Include the <span style="font-family: Courier New,Courier,monospace">&lt;glib.h&gt;</span> and <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> file in your application for this example.</p>
+<p>To use the media database:</p>
+
+<ol>
+<li>Connect to the database:
+<pre class="prettyprint">
+int ret = MEDIA_CONTENT_ERROR_NONE;
+
+media_content_debug(&quot;\n============DB Connection Test============\n\n&quot;);
+
+ret = media_content_connect();
+if (ret == MEDIA_CONTENT_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;connection is success&quot;);
+else
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;connection is failed&quot;);
+
+return ret;
+</pre></li>
+<li>
+<p>When you do not use the database anymore, disconnect from it:</p>
+<pre class="prettyprint">
+media_content_disconnect ();
+</pre>
+</li>
+</ol>
+<h2 id="folder_list" name="folder_list">Getting the Folder List</h2>
+<p>You can retrieve a list of folders where the media files are stored. Register a callback function for each API to manage an individual item in the callback function:</p>
+
+<ol>
+<li>Register a callback function to get the folder list:
+<pre class="prettyprint">
+bool gallery_folder_list_cb(media_folder_h folder, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_folder_h new_folder = NULL;
+&nbsp;&nbsp;&nbsp;media_folder_clone(&amp;new_folder, folder);
+
+&nbsp;&nbsp;&nbsp;GList **list = (GList**)user_data; // Include glib.h for this value
+
+&nbsp;&nbsp;&nbsp;*list = g_list_append(*list, new_folder);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+<li>Get the folder list:
+<pre class="prettyprint">
+int i;
+int count;
+filter_h filter = NULL;
+GList *folder_list = NULL; // Include glib.h for this value
+media_folder_h folder_handle = NULL;
+
+ret = media_folder_foreach_folder_from_db(filter, gallery_folder_list_cb, &amp;folder_list);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;media_folder_foreach_folder_from_db failed: %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;return ret;
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;_dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_folder_foreach_folder_from_db success!!&quot;);
+
+&nbsp;&nbsp;&nbsp;char *folder_id = NULL;
+&nbsp;&nbsp;&nbsp;char *folder_name = NULL;
+&nbsp;&nbsp;&nbsp;char *folder_path = NULL;
+
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(folder_list); i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folder_handle = (media_folder_h)g_list_nth_data(folder_list, i);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_folder_get_folder_id(folder_handle, &amp;folder_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_folder_get_name(folder_handle, &amp;folder_name);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_folder_get_path(folder_handle, &amp;folder_path);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_folder_get_media_count_from_db(folder_id, filter, &amp;count);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Free these strings
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (folder_id) free (folder_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (folder_name) free (folder_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (folder_path)free (folder_path);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;media_folder_get_media_count_from_db failed: %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ret;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media count [%d] : %d&quot;, i, count);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;}
+}
+</pre></li>
+</ol>
+
+<h2 id="item_list" name="item_list">Getting the Item List</h2>
+<p>To retrieve the item list, register a callback function. You must use a foreach function:</p>
+
+<ol>
+<li>Create a callback function to retrieve a media item:
+<pre class="prettyprint">
+bool gallery_media_item_cb(media_info_h media, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_info_h new_media = NULL;
+&nbsp;&nbsp;&nbsp;media_info_clone(&amp;new_media, media);
+
+&nbsp;&nbsp;&nbsp;GList **list = (GList**)user_data; // Include glib.h for this value
+&nbsp;&nbsp;&nbsp;*list = g_list_append(*list, new_media);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+
+<li>To get information on a media file, set a filter using the <span style="font-family: Courier New,Courier,monospace;">set_condition()</span> function. For a detailed item list, see the <span style="font-family: Courier New,Courier,monospace;">media_content_type.h</span> header file. Make sure to return after the filter creation:</p>
+<pre class="prettyprint">
+// Get the item list
+media_info_h media_handle = NULL;
+GList *all_item_list = NULL;
+
+media_content_collation_e collate_type = MEDIA_CONTENT_COLLATE_NOCASE;
+media_content_order_e order_type = MEDIA_CONTENT_ORDER_DESC;
+ret = media_filter_create(&amp;filter);
+
+ret = media_filter_set_condition(filter, &quot;MEDIA_TYPE = 0 OR MEDIA_TYPE = 1&quot;, collate_type);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;media_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;Failed to set condition&quot;);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+ret = media_filter_set_order(filter, order_type, MEDIA_DISPLAY_NAME, collate_type);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;media_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;Failed to set order&quot;);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+
+ret = media_info_foreach_media_from_db(filter, gallery_media_item_cb, &amp;all_item_list);
+</pre></li>
+</ol>
+
+<h2 id="destroy" name="destroy">Destroying the Handle</h2>
+<p>The handle received from each function must be destroyed to release resources:</p>
+
+<pre class="prettyprint">
+// Remove the folder list
+if (folder_list) 
+{
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(folder_list); i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folder_handle = (media_folder_h)g_list_nth_data(folder_list, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_folder_destroy(folder_handle);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;g_list_free(folder_list);
+}
+
+// Remove the tag list
+if (tag_list)
+{
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(tag_list); i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tag_handle = (media_tag_h)g_list_nth_data(tag_list, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_tag_destroy(tag_handle);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;error media_tag_destroy : [%d]&quot;, ret);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;g_list_free(tag_list);
+}
+
+// Remove all items list
+if (all_item_list)
+{
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(all_item_list); i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_handle = (media_info_h)g_list_nth_data(all_item_list, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_destroy(media_handle);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_handle = (media_info_h)g_list_nth_data(item_list, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_destroy(media_handle);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_handle = (media_info_h)g_list_nth_data(media_list_in_tag, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_destroy(media_handle);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;g_list_free(all_item_list);
+&nbsp;&nbsp;&nbsp;g_list_free(item_list);
+&nbsp;&nbsp;&nbsp;g_list_free(media_list_in_tag);
+}
+</pre>
+
+<h2 id="update" name="update">Receiving Update Notifications</h2>
+<p>To get notifications of database changes, register a callback. You can only set 1 notification callback at this stage of the process:</p>
+
+<ol>
+<li>Define the database update callback function:
+<pre class="prettyprint">
+void _noti_cb(media_content_error_e error, int pid,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_content_db_update_item_type_e update_item,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_content_db_update_type_e update_type,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_content_type_e media_type,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *uuid, char *path, char *mime_type, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;if (error == 0) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;noti success! : %d\n&quot;, error);
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;error occurred! : %d\n&quot;, error);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;print_message(&quot;Noti from PID(%d)\n&quot;, pid);
+
+&nbsp;&nbsp;&nbsp;if (update_item == MEDIA_ITEM_FILE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Noti item : MEDIA_ITEM_FILE\n&quot;);
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else if (update_item == MEDIA_ITEM_DIRECTORY) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Noti item : MEDIA_ITEM_DIRECTORY\n&quot;);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;if (update_type == MEDIA_CONTENT_INSERT) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Noti type : MEDIA_CONTENT_INSERT\n&quot;);
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else if (update_type == MEDIA_CONTENT_DELETE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Noti type : MEDIA_CONTENT_DELETE\n&quot;);
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else if (update_type == MEDIA_CONTENT_UPDATE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Noti type : MEDIA_CONTENT_UPDATE\n&quot;);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;content type : %d\n&quot;, media_type);
+
+&nbsp;&nbsp;&nbsp;if (path) dlog_print(DLOG_DEBUG, LOG_TAG, &quot;path : %s\n&quot;, path);
+&nbsp;&nbsp;&nbsp;if (uuid) dlog_print(DLOG_DEBUG, LOG_TAG, &quot;uuid : %s\n&quot;, uuid);
+&nbsp;&nbsp;&nbsp;if (mime_type) dlog_print(DLOG_DEBUG, LOG_TAG, &quot;mime_type : %s\n&quot;, mime_type);
+&nbsp;&nbsp;&nbsp;if (user_data) dlog_print(DLOG_DEBUG, LOG_TAG, &quot;String : %s\n&quot;, (char *)user_data);
+
+&nbsp;&nbsp;&nbsp;return;
+}
+</pre></li>
+
+<li>Register the callback function:
+<pre class="prettyprint">
+int ret = MEDIA_CONTENT_ERROR_NONE;
+
+// Subscribe notifications
+char *user_str = strdup(&quot;hi&quot;);
+media_content_set_db_updated_cb(_noti_cb, (void*)user_str);
+</pre></li>
+
+<li>When you no longer want to receive notifications, unregister the database update callback function:
+<pre class="prettyprint">
+media_content_unset_db_updated_cb();
+</pre></li>
+</ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CONTENT__MODULE.html">Media Content API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

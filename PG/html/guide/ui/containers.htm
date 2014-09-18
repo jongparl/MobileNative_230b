@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Container Widgets</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Container Widgets</h1> 
+
+<p>Elementary provides various container widgets that can be directly used in the user interface of the application and contain <a href="ui_widgets.htm">other widgets</a>. This guide describes the following container widgets:</p>
+
+<ul>
+<li><a href="#layout">Layout</a></li>
+<li><a href="#box">Box</a></li>
+<li><a href="#conf">Conformant </a></li>
+<li><a href="#navi">Naviframe</a></li>
+<li><a href="#scroll">Scroller</a></li>
+<li><a href="#pane">Panes</a></li>
+<li><a href="#table">Table</a></li>
+</ul>
+
+<h2 id="layout" name="layout">Layout</h2>
+
+<p>Layout is a container widget, which takes a standard Edje design file and wraps it very thinly in a widget.</p>
+
+<p>An Edje design theme file defines how the UI elements are positioned and how they behave upon actions. For more information, see <a href="../../../../org.tizen.mobile.native.apireference/edje_main.html">Edje API Reference</a>.</p>
+
+<p>The layout widget can contain as many parts and children as described in its theme file. The children can have special types:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">SWALLOW</span> (content holder)
+<p>Only one object can be added to a <span style="font-family: Courier New,Courier,monospace;">SWALLOW</span> type. The <span style="font-family: Courier New,Courier,monospace;">elm_layout_content_set/get/unset()</span> functions can be used to manage objects in a <span style="font-family: Courier New,Courier,monospace;">SWALLOW</span> part. After being set to this part, the object size, position, visibility, clipping, and other description properties are controlled by the description of the given part (within the Edje theme file).</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">BOX</span>
+<p>The <span style="font-family: Courier New,Courier,monospace;">BOX</span> layout can be used through the <span style="font-family: Courier New,Courier,monospace;">elm_layout_box_*()</span> set of functions. It is very similar to the <span style="font-family: Courier New,Courier,monospace;">elm_box</span> widget but the <span style="font-family: Courier New,Courier,monospace;">BOX</span> layout behavior is controlled by the Edje theme.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">TABLE</span>
+<p>The <span style="font-family: Courier New,Courier,monospace;">TABLE</span> layout is similar to the <span style="font-family: Courier New,Courier,monospace;">BOX</span> layout, but it is used through the <span style="font-family: Courier New,Courier,monospace;">elm_layout_table_*()</span> set of functions.</p></li>
+</ul>
+
+<p>The layout widget provides the following predefined themes:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">toolbar-content</span>: Application with a toolbar and main content area</li>
+<li><span style="font-family: Courier New,Courier,monospace;">toolbar-content-back</span>: Application with a toolbar and main content (with a back button) and title areas</li>
+<li><span style="font-family: Courier New,Courier,monospace;">toolbar-content-back-next</span>: Application with a toolbar and main content (with back and next buttons) and title areas</li>
+<li><span style="font-family: Courier New,Courier,monospace;">content-back</span>: Application with main content (with a back button) and title areas</li>
+<li><span style="font-family: Courier New,Courier,monospace;">content-back-next</span>: Application with main content (with back and next buttons) and title areas</li>
+<li><span style="font-family: Courier New,Courier,monospace;">toolbar-vbox</span>: Application with a toolbar and main content area as a vertical box</li>
+<li><span style="font-family: Courier New,Courier,monospace;">toolbar-table</span>: Application with a toolbar and main content area as a table</li>
+</ul>
+
+<p>You can set the themes to a layout using the <span style="font-family: Courier New,Courier,monospace;">elm_layout_theme_set()</span> function.</p>
+
+<h2 id="box" name="box">Box</h2>
+
+<p>The box widget arranges objects in a linear fashion vertically or horizontally. You can configure the padding and alignment using the <span style="font-family: Courier New,Courier,monospace;">elm_box_align_set()</span> and <span style="font-family: Courier New,Courier,monospace;">elm_box_padding_set()</span> functions.</p>
+
+<p class="figure">Figure: Box container</p> 
+<p style="text-align:center;"><img alt="Box container" src="../../images/box.png" /></p>
+
+<p>Create the box container using the <span style="font-family: Courier New,Courier,monospace;">elm_box_add()</span> function, and add objects using the <span style="font-family: Courier New,Courier,monospace;">elm_box_pack_end()</span>, <span style="font-family: Courier New,Courier,monospace;">elm_box_pack_start()</span>, <span style="font-family: Courier New,Courier,monospace;">elm_box_pack_after()</span>, and <span style="font-family: Courier New,Courier,monospace;">elm_box_pack_before()</span> functions.</p>
+
+<p>Box objects can be organized in different ways by customizing or creating new layout functions. The <span style="font-family: Courier New,Courier,monospace;">elm_box_layout_set()</span> function can be called to set a new layout function.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">elm_box_layout_transition()</span> function provides the ability to animate the motion of the children in a box when switching from one layout to another.</p>
+
+<h2 id="conf" name="conf">Conformant</h2>
+
+<p>Conformant is a container widget that accounts for space taken by the indicator, virtual keyboard, and softkey windows. The conformant content is resized and positioned based on the available space</p>
+
+<p class="figure">Figure: Conformant container</p> 
+<p style="text-align:center;"><img alt="Conformant container" src="../../images/conformant.png" /></p>
+
+<p>Create a conformant using the <span style="font-family: Courier New,Courier,monospace;">elm_conformant_add()</span> function and set its content using the <span style="font-family: Courier New,Courier,monospace;">elm_object_content_set()</span> function.</p>
+
+<p>You can detect the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">virtualkeypad,state,on</span>: Virtual keypad state changed to <span style="font-family: Courier New,Courier,monospace;">on</span>.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">virtualkeypad,state,off</span>: Virtual keypad state changed to <span style="font-family: Courier New,Courier,monospace;">off</span>.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">virtualkeypad,size,changed</span>: Virtual keypad size changed.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">clipboard,state,on</span>: Clipboard state changed to <span style="font-family: Courier New,Courier,monospace;">on</span>.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">clipboard,state,off</span>: Clipboard state changed to <span style="font-family: Courier New,Courier,monospace;">off</span>.</li>
+</ul>
+
+<h2 id="navi" name="navi">Naviframe</h2>
+
+<p>The naviframe widget consists of a stack of views. New items are pushed on top of the previous one, and only the topmost view is displayed. When a new item is pushed, the previous items are not deleted. They are shown when the upper view is popped. Transitions can be animated on a push or a pop, depending on the theme applied to the widget.</p>
+
+<p class="figure">Figure: Naviframe container</p> 
+<p style="text-align:center;"><img alt="Naviframe container" src="../../images/naviframe.png" /></p>
+
+<p>Naviframe views contain various elements:</p>
+
+<ul>
+<li>Back button, used to navigate to previous views</li>
+<li>Next button, used to navigate to next views in the stack</li>
+<li>Title label</li>
+<li>Subtitle label</li>
+<li>Title icon</li>
+<li>Content area</li>
+</ul>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_content_set()</span> function to set the content in the naviframe with the following part names:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">default</span>: Main content of the current page</li>
+<li><span style="font-family: Courier New,Courier,monospace;">icon</span>: Icon in the title area of the current page</li>
+<li><span style="font-family: Courier New,Courier,monospace;">prev_btn</span>: Button of the current page to go to the previous page</li>
+<li><span style="font-family: Courier New,Courier,monospace;">next_btn</span>: Button of the current page to go to the next page</li>
+</ul>
+
+<p>Text can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_text_set()</span> function:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">default</span>: Sets the title label in the title area of the current page.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">subtitle</span>: Sets the subtitle label in the title area of the current page.</li>
+</ul>
+
+<p>New views are pushed using the <span style="font-family: Courier New,Courier,monospace;">elm_naviframe_item_push()</span> function. Item style can be modified to change the transitions between the views using the <span style="font-family: Courier New,Courier,monospace;">elm_naviframe_item_style_set()</span> function.</p>
+
+<p>Naviframe emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">transition,finished</span>: Transition is finished in changing the item</li>
+<li><span style="font-family: Courier New,Courier,monospace;">title,transition,finished</span>: Title area transition is finished in changing the title state</li>
+<li><span style="font-family: Courier New,Courier,monospace;">title,clicked</span>: User clicked the title area</li>
+</ul>
+
+<h2 id="scroll" name="scroll">Scroller</h2>
+<p>The scroller widget provides a way to scroll an Elementary object. A scroller is used in a many widgets (such as list, genlist, and map), and allows the user to scroll the content with a scrollbar or to drag the object around with a finger.</p>
+
+<p>Several functions can be called on this object. Bouncing behavior is enabled using the <span style="font-family: Courier New,Courier,monospace;">elm_scroller_bounce_set()</span> function; a specific region of the scroller content can be brought in using the <span style="font-family: Courier New,Courier,monospace;">elm_scroller_region_bring_in()</span> function; and gravity can be configured using the <span style="font-family: Courier New,Courier,monospace;">elm_scroller_gravity_set()</span> function.</p>
+
+<h2 id="pane" name="pane">Panes</h2>
+<p>The panes widget adds a draggable bar between content areas. The contents are resized when the bar is dragged.</p>
+
+<p class="figure">Figure: Panes widget</p> 
+<p style="text-align:center;"><img alt="Panes widget" src="../../images/panes.png" /></p>
+
+<p>Add a pane using the <span style="font-family: Courier New,Courier,monospace;">elm_panes_add()</span> function, and add content to the <span style="font-family: Courier New,Courier,monospace;">left</span> part of the panes:</p>
+
+<pre class="prettyprint">
+elm_object_part_content_set(panes, &quot;left&quot;, obj);
+</pre>
+
+<p>Pane orientation can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_panes_horizontal_set()</span> function, and its size can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_panes_content_left_size_set()</span> and <span style="font-family: Courier New,Courier,monospace;">elm_panes_content_right_size_set()</span> functions.</p>
+
+<p>The widget emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">press</span>: Pane area has been pressed (button has not been released).</li>
+<li><span style="font-family: Courier New,Courier,monospace;">unpress</span>: Pane area was released after being pressed.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">clickedv</span>: Pane area has been clicked.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">clicked,double</span>: Pane area has been double-clicked.</li>
+</ul>
+
+<h2 id="table" name="table">Table</h2>
+
+<p>The table widget can contain several items that span on multiple rows or columns. The number of rows and columns is adjusted by the table when items are added to it.</p>
+
+<p class="figure">Figure: Table widget</p> 
+<p style="text-align:center;"><img alt="Table widget" src="../../images/table_widget.png" /></p>
+
+<p>Create the table using the <span style="font-family: Courier New,Courier,monospace;">elm_table_add()</span> Function, and add items to it using the <span style="font-family: Courier New,Courier,monospace;">elm_table_pack()</span> function. Padding between rows and columns can be configured using the <span style="font-family: Courier New,Courier,monospace;">elm_table_padding_set()</span> function.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="widgets_guide.htm">Elementary Toolkit</a></li>   
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

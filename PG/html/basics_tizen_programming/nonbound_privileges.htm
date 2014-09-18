@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+  <link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Non-API Bound Privileges</title>
+</head>
+<body onload="prettyPrint()">
+
+<h1>Non-API Bound Privileges</h1>
+
+<p>Tizen application privileges are loosely bound to APIs, so most of the privileges can be identified by the APIs that the application calls. However, there are some privileges that are not coupled with the Tizen APIs. To allow easy identification, those privileges are mapped to corresponding system resources - same as other privileges.</p>
+<h2>http://tizen.org/privilege/internet</h2>
+<p>Most of the mobile devices use a cellular network for IP communication. However, the cellular network can cause data costs and an application that sends data through the internet can be crucial for user privacy. Due to the importance of the functionality, a privilege for controlling application internet access has been added.</p>
+<p>The new privilege is coupled with IP addresses of the destination and source of the IP packets. If your socket is connecting to or listening for any IP address except 127.0.0.1, this privilege is required to communicate properly. If your application does not have this privilege, the connection is blocked in the kernel layer and returns an error in the <span style="font-family: Courier New,Courier,monospace;">connect()</span> function as the permission is denied. If you are listening to a socket, you never receive any packets from the outside without errors on the socket functions.</p>
+<p>If you are using the <span style="font-family: Courier New,Courier,monospace;">listen()</span> and <span style="font-family: Courier New,Courier,monospace;">connect()</span> functions between the local loopback interface (127.0.0.1), you cannot connect to a random application (due to sandboxing) no matter how you add this privilege. However, you can connect between multiple processes of the same application binary.</p>
+
+<h2>http://tizen.org/privilege/mediastorage</h2>
+<p>When you connect the device to a computer (Windows or Mac) through USB, you can access a dedicated media storage area shown as massive media storage. This region of the storage is called media storage and is usually used for multimedia files, such as photos, videos, and music files. Since this storage area is used for user private data, access to it must be protected with a privilege.</p>
+<p>If your application does not have this privilege, no file operations into the media storage area (<span style="font-family: Courier New,Courier,monospace;">/opt/usr/media/</span>) succeed and you receive a permission denied error. If you have this privilege, you can read and write directories and files, create new files, and delete files in the storage area.</p>
+
+<h2>http://tizen.org/privilege/externalstorage</h2>
+<p>Similar to the media storage, many devices support external storages, such as MicroSD card or USB memory. As with the media storage, the access to an external storage (usually <span style="font-family: Courier New,Courier,monospace;">/opt/storage/sdcard</span>) must be protected with a privilege.</p>
+<p>If your application does not have this privilege, all file operations fail with a permission denied error. If you have this privilege, you have full access to the external storage.</p>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="basics_tizen_programming.htm">Basics of Native App Programming</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

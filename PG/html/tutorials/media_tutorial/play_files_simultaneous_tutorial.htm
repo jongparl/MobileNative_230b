@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <script type="text/javascript" src="../../snippet.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+  <title>Multi-player Tutorial</title>
+ </head>
+ <body onload="prettyPrint()">
+  <!--<div id="banner">
+Tizen</div>-->
+<h1>Multi-player Tutorial</h1>
+
+<p>This tutorial demonstrates how you can play multiple audio files simultaneously.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;player.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player API</a>.</p>
+
+<p>To learn about the Player API features, see the <a href="../../guide/media/player.htm">Audio and Video Player Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#play">Playing Multiple Files Simultaneously</a>
+  <p>Create multiple players for playing multiple files simultaneously.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Include the necessary headers, and declare the variables for player handlers, player states, file paths, playback time, and return value:</p>
+
+<pre class="prettyprint">#include &lt;player.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+static player_h player_1, player_2, player_3;
+static player_state_e state_1, state_2, state_3;
+static int ret =0;
+static char *path_1 = &quot;tmp/sample.3gp&quot;;
+static char *path_2 = &quot;tmp/test.wav&quot;;
+static char *path_3 = &quot;tmp/test2.wav&quot;;
+static const int PLAYBACK_TIME=6;</pre>
+
+<p>To ensure that a function has been properly executed, always check its return value. If the return value differs from <span style="font-family: Courier New,Courier,monospace">PLAYER_ERROR_NONE</span>, an error has occurred.</p>
+
+<h2 id="play" name="play">Playing Multiple Files Simultaneously</h2>
+
+<ol>
+
+<li>
+
+<p>Create the players.</p>
+
+<p>To play multiple files at the same time, create a player handle for each file by using the <span style="font-family: Courier New,Courier,monospace">player_create()</span> function:</p>
+
+<pre class="prettyprint">ret = player_create(&amp;player_1);
+
+ret = player_create(&amp;player_2);
+
+ret = player_create(&amp;player_3);
+</pre>
+
+</li>
+
+<li>
+
+<p>Set the file paths.</p>
+
+<p>To specify the source files to play, use the <span style="font-family: Courier New,Courier,monospace">player_set_uri()</span> function:</p>
+
+<pre class="prettyprint">ret = player_set_uri(player_1, path_1);
+
+ret = player_set_uri(player_2, path_2);
+
+ret = player_set_uri(player_3, path_3);
+</pre>
+
+</li>
+
+<li>
+
+<p>Prepare the players for playback.</p>
+
+<p>Before you can start playback, the players have to change their states from <span style="font-family: Courier New,Courier,monospace">PLAYER_STATE_IDLE</span> to <span style="font-family: Courier New,Courier,monospace">PLAYER_STATE_READY</span>. To change the states, use the <span style="font-family: Courier New,Courier,monospace">player_prepare()</span> function:</p>
+
+
+<pre class="prettyprint">ret = player_prepare (player_1);
+
+ret = player_prepare (player_2);
+
+ret = player_prepare (player_3);
+</pre>
+
+</li>
+
+<li>
+
+<p>Play the files:</p>
+
+<ol>
+
+<li>
+
+<p>Ensure that the player states have changed to <span style="font-family: Courier New,Courier,monospace">PLAYER_STATE_READY</span>. To check the states, use the <span style="font-family: Courier New,Courier,monospace">player_get_state()</span> function. It is recommend that you implement a waiting loop for each player:</p>
+
+<pre class="prettyprint">// Wait to prepare player_1
+ret = player_get_state(player_1, &amp;state_1);
+
+while(state_1 != PLAYER_STATE_READY)
+{
+&nbsp;&nbsp;&nbsp;ret = player_get_state(player_1, &amp;state_1);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}
+
+// Wait to prepare player_2
+ret = player_get_state(player_2, &amp;state_2);
+
+while(state_2 != PLAYER_STATE_READY)
+{
+&nbsp;&nbsp;&nbsp;ret = player_get_state(player_2, &amp;state_2);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}
+
+// Wait to prepare player_3
+ret = player_get_state(player_3, &amp;state_3);
+
+while(state_3 != PLAYER_STATE_READY)
+{
+&nbsp;&nbsp;&nbsp;ret = player_get_state(player_3, &amp;state_3);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+</li>
+
+<li>
+
+<p>To start playback, use the <span style="font-family: Courier New,Courier,monospace">player_start()</span> function:</p>
+
+<pre class="prettyprint">ret = player_start(player_1);
+
+ret = player_start(player_2);
+
+ret = player_start(player_3);
+</pre>
+
+</li>
+
+</ol>
+
+</li>
+
+<li>
+
+<p>Clean up.</p>
+
+<p>To reset the players and destroy the player handles, use the <span style="font-family: Courier New,Courier,monospace">player_unprepare()</span> and <span style="font-family: Courier New,Courier,monospace">player_destroy()</span> functions, respectively:</p>
+
+<pre class="prettyprint">ret = player_unprepare(player_1);
+ret = player_destroy(player_1);
+
+ret = player_unprepare(player_2);
+ret = player_destroy(player_2);
+
+ret = player_unprepare(player_3);
+ret = player_destroy(player_3);
+</pre>
+
+</li>
+
+</ol>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/player.htm">Audio and Video Player Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player API Reference</a></li>
+</ul>
+
+  <div id="footer">
+   <hr size="1" />
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+  </div>
+  <!--start-->
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+  <!--end-->
+ </body>
+</html>

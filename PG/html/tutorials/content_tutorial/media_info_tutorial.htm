@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Media Information Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Media Information Tutorial</h1> 
+  
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__INFO__MODULE.html">Media Information</a> API. Functions in this module enable you to get basic information about media content.</p>
+
+To learn about the Media Information API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#initialize">Initialization and Prerequisites</a></li>
+
+<li><a href="#info">Using Media Information</a>
+<p>Use media information.</p></li>
+
+<li><a href="#insert">Inserting Media in the Database</a>
+<p>Add media information in the media database.</p></li>
+
+<li><a href="#scan">Inserting Media in a Folder</a>
+<p>Add media information in a folder.</p></li>
+</ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>Include the <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> file in your application.</p>
+
+<p>To use the media database:</p>
+<p>Before retrieving media information, open a connection to the Content Service by calling the <span style="font-family: Courier New,Courier,monospace">media_content_connect()</span> function:</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>Close the connection when the service is no longer needed:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+<h2 id="info" name="info">Using Media Information</h2>
+
+<p>Media information is based on the media info handler created above. The metadata varies depending on the media type, such as image, video, or audio. You can obtain common information from the media info.</p>
+<p>Based on the media info handler, use a get function from the meta after calling a clone function supported by each meta.</p>
+<p>To retrieve media information:</p>
+
+<ol>
+<li>Create a callback function to retrieve a media item:
+
+<pre class="prettyprint">
+bool gallery_media_item_cb(media_info_h media, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_info_h new_media = NULL;
+&nbsp;&nbsp;&nbsp;media_info_clone(&amp;new_media, media);
+
+&nbsp;&nbsp;&nbsp;GList **list = (GList**)user_data;
+&nbsp;&nbsp;&nbsp;*list = g_list_append(*list, new_media);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+
+<li>Create a handle by setting a query and filter:
+<pre class="prettyprint">
+#define BUFLEN 200 // This define is just for example
+GList *all_item_list = NULL; // Include glib.h
+media_content_type_e media_type;
+media_info_h media_handle = NULL;
+char *media_id = NULL;
+char *media_name = NULL;
+char *media_path = NULL;
+char buf[BUFLEN] = {&#39;\0&#39;};
+int ret = MEDIA_CONTENT_ERROR_NONE;
+filter_h filter = NULL;
+media_content_collation_e collate_type = MEDIA_CONTENT_COLLATE_NOCASE;
+media_content_order_e order_type = MEDIA_CONTENT_ORDER_DESC;
+
+ret = media_filter_create(&amp;filter);
+
+// Make a condition for filter
+snprintf(buf, BUFLEN, &quot;%s = %d OR %s = %d&quot;, MEDIA_TYPE, MEDIA_CONTENT_TYPE_IMAGE, MEDIA_TYPE, MEDIA_CONTENT_TYPE_VIDEO);
+
+ret = media_filter_set_condition(filter, buf, collate_type);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;media_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;Fail to set condition&quot;);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+ret = media_filter_set_order(filter, order_type, MEDIA_DISPLAY_NAME, collate_type);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;media_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;Fail to set order&quot;);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+
+ret = media_info_foreach_media_from_db(filter, gallery_media_item_cb, &amp;all_item_list);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;media_info_foreach_media_from_db failed: %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;media_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;return ret;
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;int i;
+
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(all_item_list); i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_handle = (media_info_h)g_list_nth_data(all_item_list, i);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_media_id(media_handle, &amp;media_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_media_type(media_handle, &amp;media_type);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_display_name(media_handle, &amp;media_name);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_file_path(media_handle, &amp;media_path);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (media_type == MEDIA_CONTENT_TYPE_IMAGE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;image_meta_h image_handle;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_content_orientation_e orientation = 0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int width = 0, height = 0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *datetaken = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *burst_id = NULL;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_image(media_handle, &amp;image_handle);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_get_width(image_handle, &amp;width);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_get_height(image_handle, &amp;height);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_get_orientation(image_handle, &amp;orientation);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_get_date_taken(image_handle, &amp;datetaken);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_get_burst_id(image_handle, &amp;burst_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;This is an image&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Width : %d, Height : %d, Orientation : %d, Date taken : %s&quot;, width, height, orientation, datetaken);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (datetaken) free(datetaken);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (burst_id) free(burst_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = image_meta_destroy(image_handle);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else if (media_type == MEDIA_CONTENT_TYPE_VIDEO) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;video_meta_h video_handle;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *title = NULL, *artist = NULL, *album = NULL, *album_artist = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int duration = 0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time_t time_played = 0;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_video(media_handle, &amp;video_handle);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_get_artist(video_handle, &amp;artist);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_get_album(video_handle, &amp;album);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_get_album_artist(video_handle, &amp;album_artist);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_get_duration(video_handle, &amp;duration);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_get_played_time(video_handle, &amp;time_played);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;This is a video&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Title: %s, Album: %s, Artist: %s, Album_artist: %s \n Duration: %d, Played time: %d&quot;, title, album, artist, album_artist, duration, time_played);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (title) free(title);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (artist) free(artist);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (album) free(album);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (album_artist) free(album_artist);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = video_meta_destroy(video_handle);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_id [%d] : %s&quot;, i, media_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_name [%d] : %s&quot;, i, media_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_path [%d] : %s&quot;, i, media_path);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (media_id) free(media_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (media_name) free(media_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (media_path) free(media_path);
+&nbsp;&nbsp;&nbsp;}
+}
+</pre></li>
+
+<li>When the filter is no longer used, destroy the list, filter, and query:
+
+<pre class="prettyprint">
+media_filter_destroy(filter);
+filter = NULL;
+</pre></li>
+</ol>
+
+<h2 id="insert" name="insert">Inserting Media in the Database</h2>
+<p>You must register to the media database to use newly created media files in other applications. You need the <span style="font-family: Courier New,Courier,monospace;">http://tizen.org/privilege/content.write</span> privilege to use these APIs.</p>
+ <p>To add information in the database:</p>
+ 
+<ul><li><p>You can use the <span style="font-family: Courier New,Courier,monospace;">media_info_insert_to_db()</span> function:
+<pre class="prettyprint">int ret = MEDIA_CONTENT_ERROR_NONE;
+char *path = &quot;/opt/usr/media/Images/Default.jpg&quot;;
+media_info_h media_item = NULL;
+
+ret = media_info_insert_to_db(path, &amp;media_item);
+
+if ((ret == MEDIA_CONTENT_ERROR_NONE) &amp;&amp; (media_item != NULL)) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;Insertion successful&quot;);
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;Insertion failed&quot;);
+&nbsp;&nbsp;&nbsp;if (media_item != NULL)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_info_destroy(media_item);
+
+&nbsp;&nbsp;&nbsp;return ret;
+}
+
+// After using the media handle, destroy it
+ret = media_info_destroy(media_item);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre></li>
+
+<li>You can use the <span style="font-family: Courier New,Courier,monospace;">media_content_scan_file()</span> function:
+<pre class="prettyprint">
+int ret = MEDIA_CONTENT_ERROR_NONE;
+const char *file_path = &quot;/opt/usr/media/test/image1.jpg&quot;;
+
+ret = media_content_scan_file(file_path);
+</pre></li></ul>
+
+<p>The difference between the 2 functions is that the <span style="font-family: Courier New,Courier,monospace;">media_info_insert_to_db()</span> function is used by getting <span style="font-family: Courier New,Courier,monospace;">media_info_h</span> of the media file after inserting it to the database, whereas the <span style="font-family: Courier New,Courier,monospace;">media_content_scan_file()</span> function supports only inserting a file to the media database, or removing it.</p>
+
+<p>After using the <span style="font-family: Courier New,Courier,monospace;">media_info_insert_to_db()</span> function, destroy the received <span style="font-family: Courier New,Courier,monospace;">media_info_h</span> with using the <span style="font-family: Courier New,Courier,monospace;">media_info_destroy()</span> function.</p>
+
+<h2 id="scan" name="scan">Inserting Media in a Folder</h2>
+
+<p>You can scan either a single folder, or include its subdirectories. You need the <span style="font-family: Courier New,Courier,monospace;">http://tizen.org/privilege/content.write</span> privilege to use these APIs.</p>
+<p>As scanning works asynchronously, you must register a callback function:</p>
+ 
+<ol>
+<li>Register a callback function:
+<pre class="prettyprint">
+void _scan_cb(media_content_error_e err, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG,(&quot;Folder scanned\n&quot;);
+&nbsp;&nbsp;&nbsp;return;
+}
+</pre></li>
+
+<li>Scan a folder and its subfolders:
+<pre class="prettyprint">
+int ret = MEDIA_CONTENT_ERROR_NONE;
+const char *dir_path = &quot;/opt/usr/media&quot;;
+
+ret = media_content_scan_folder(dir_path, TRUE, _scan_cb, NULL);
+if (ret != MEDIA_CONTENT_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre></li>
+</ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__INFO__MODULE.html">Media Information API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

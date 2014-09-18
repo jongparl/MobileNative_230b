@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Textblock Objects</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Textblock Objects</h1> 
+
+<p>Unlike basic text objects, a textblock handles complex text, multiple styles, and multiline text based on tags resembling HTML. These extra features are heavier on memory and processing.</p> 
+
+<p>A textblock object can display big chunks of text. The textblock supports many features, such as text formatting, automatic and manual text alignment, and embedding items, such as icons.</p> 
+
+<p>A textblock includes the following parts:</p>
+<ul>
+<li>Text paragraphs</li>
+<li>Format nodes</li>
+<li>Cursors</li> 
+</ul>
+
+<p>You can use the following markup to format text:</p>
+<pre class="prettyprint">&lt;font_size=50&gt;Big!&lt;/font_size&gt;</pre>
+
+<p>You can also put more than 1 style directive in a single tag:</p>
+<pre class="prettyprint">&lt;font_size=50 color=#F00&gt;Big and Red!&lt;/font_size&gt;</pre>
+
+<table class="note"> 
+     <tbody> 
+      <tr> 
+       <th class="note">Note</th> 
+      </tr> 
+      <tr> 
+       <td class="note">You can use the <span style="font-family: Courier New,Courier,monospace;">&lt;/font_size&gt;</span> closing tag even though the format also includes color. The first format tag determines the matching closing tag.</td> 
+      </tr> 
+     </tbody> 
+    </table>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="evas_guide.htm">Evas Rendering</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

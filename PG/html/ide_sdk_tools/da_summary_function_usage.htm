@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Function Usage Profiling</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Function Usage Profiling</h1> 
+  <p>The <strong> Function Usage Profiling</strong> view shows the method usage information of an application. The information is divided into 2 units:</p> 
+  <ul> 
+   <li>Application directory contains the methods that are created in the application code.</li> 
+   <li>Dependent library directory contains the methods that are used in the application code.</li> 
+  </ul> 
+
+  <p>The view has the following columns:</p> 
+  <ul> 
+   <li><strong>Library or function name</strong> (text) shows the library unit (application or dependent), the binary/library name, and the method name in a tree format.</li> 
+   <li><strong>Exclusive CPU time</strong> (float, second) defines the exclusive CPU time.</li> 
+   <li><strong>Exclusive CPU rate</strong> (rate, percent) defines the exclusive CPU rate.</li> 
+   <li><strong>Exclusive Elapsed time</strong> (time) defines the exclusive elapsed time. </li> 
+   <li><strong>Inclusive CPU time</strong> (float, second) defines the inclusive CPU time.</li> 
+   <li><strong>Inclusive CPU rate</strong> (rate, percent) defines the inclusive CPU rate.</li> 
+   <li><strong>Inclusive Elapsed time</strong> (time) defines the inclusive elapsed time. </li> 
+   <li><strong>Call count</strong> (integer) shows the number of times the method has been called.</li> 
+  </ul> 
+  <p>Exclusive time is the amount of execution time that passed within the method, excluding the time spent in methods called from the method in question. Inclusive time is the amount of execution time that passed within the method, including the time spent in method called from the method in question. </p> 
+  <p>CPU time is the actual CPU time consumed by the process. The value is obtained by sampling. Elapsed time is the wall-clock time, meaning time elapsed between the method entry and method exit.</p> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_summary.htm">Summary</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

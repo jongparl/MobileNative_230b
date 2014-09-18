@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Manager Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Application Manager Tutorial</h1> 
+  <p>This tutorial demonstrates how you can obtain the application context.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;app_manager.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MANAGER__MODULE.html">Application Manager API</a>.</p>
+
+<p>To learn about the Application Manager API features, see the <a href="../../guide/app/application.htm">Application Framework Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#manage">Managing the Application Context</a>
+		<p>Retrieve the application context and operate on it.</p></li>
+
+   </ul>  
+  
+
+  
+ <h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+  
+<p>The Application Manager API allows you to interact with the contexts of the applications currently running on the device. When an application is not running, it is impossible to get its context.</p>
+
+<p>When work with the application context is finished, call the <span style="font-family: Courier New,Courier,monospace">app_context_destroy()</span> function to remove the handle and release all resources:</p>
+
+<pre class="prettyprint">
+if (app_context) 
+{
+&nbsp;&nbsp;&nbsp;ret = app_context_destroy(app_context);
+&nbsp;&nbsp;&nbsp;if (APP_MANAGER_ERROR_NONE != ret) // Error occurred 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;app_context = NULL;
+}
+</pre>	
+	
+ <h2 id="manage" name="manage">Managing the Application Context</h2>
+	
+<p>To get the running application context and its details, and to operate on the context:</p>
+
+<ol><li>Get the context of the currently running application.
+
+<p>Call the <span style="font-family: Courier New,Courier,monospace">app_manager_get_app_context()</span> function with the ID of the application from which the context is being obtained, and the handle (<span style="font-family: Courier New,Courier,monospace">app_context_h*</span>) to the application context which is filled with received context:</p>
+
+
+<pre class="prettyprint">
+app_context_h app_context = NULL;
+
+int ret = app_manager_get_app_context(&quot;com.samsung.clock-lite&quot;, &amp;app_context);
+</pre>	
+
+<p>This example gets for the context of the Clock application. If the function returns <span style="font-family: Courier New,Courier,monospace">APP_MANAGER_ERROR_NONE</span>, it has executed correctly and the <span style="font-family: Courier New,Courier,monospace">app_context</span> variable now contains the handle to the clock context. To prevent memory leaks, release <span style="font-family: Courier New,Courier,monospace">app_context</span> with <span style="font-family: Courier New,Courier,monospace">app_context_destroy()</span> after work is finished.</p></li>
+
+<li>Operate on the context:
+<ul><li>Get application ID and application process ID from the context:
+
+<pre class="prettyprint">
+char *app_id;
+int pid = 0;
+
+ret = app_context_get_app_id(app_context, &amp;app_id);
+ret = app_context_get_pid(app_context, &amp;pid);
+</pre>
+
+<p>When <span style="font-family: Courier New,Courier,monospace">app_id</span> is no longer needed, release it with <span style="font-family: Courier New,Courier,monospace">free()</span>.</p></li>
+
+<li><p>Check whether the application with the given application context is terminated:</p>
+ <pre class="prettyprint">
+bool terminated = false;
+
+ret = app_context_is_terminated(app_context, &amp;terminated);
+
+if (false == terminated)
+{
+&nbsp;&nbsp;&nbsp;// Application is running
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;// Application is terminated
+}
+</pre>
+</li>
+<li><p>Clone the given context handle:</p>
+ <pre class="prettyprint">
+app_context_h app_context_cloned = NULL;
+
+ret = app_context_clone(&amp;app_context_cloned, app_context);
+</pre></li>
+<li><p>Check whether 2 contexts are equal:</p>
+ <pre class="prettyprint">
+bool equal = false;
+
+ret = app_context_is_equal(app_context, app_context_cloned, &amp;equal);
+
+if (equal)
+{
+&nbsp;&nbsp;&nbsp;// Contexts are equal
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;// Contexts are not equal
+}
+</pre></li>
+</ul></li></ol>
+
+
+   
+  <h2>Where to Go Next</h2> 
+  <ul>  
+	<li><a href="advanced_tutorial.htm">Advanced Tutorials</a></li>
+	<li><a href="../../guide/app/application.htm">Application Framework Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MANAGER__MODULE.html">Application Manager API Reference</a></li>  
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

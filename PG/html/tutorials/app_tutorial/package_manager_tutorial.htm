@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Package Manager Tutorial</title>
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Package Manager Tutorial</h1> 
+
+  <p>This tutorial demonstrates how you can retrieve package information for and manage packages.</p>
+  <p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;package_manager.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__PACKAGE__MANAGER__MODULE.html">Package Manager API</a>.</p>
+  <p>To learn about the Package Manager API features, see the <a href="../../guide/app/package.htm">Package Management Programming Guide</a>.</p>
+ 
+  <p>This tutorial consists of the following parts:</p>
+  <ul>
+   <li><a href="#get">Retrieving Package Information</a>
+    <p>Retrieve the package information for a package.</p>
+   </li>
+   <li><a href="#manage">Managing Packages</a>
+    <p>Install, uninstall, and move a package.</p>
+   </li>
+  </ul>
+  
+<h2 id="get" name="get">Retrieving Package Information</h2>
+
+<ol>
+
+<li>
+
+<p>Retrieve all package information for the installed packages. The <span style="font-family: Courier New,Courier,monospace">package_manager_foreach_package_info()</span> function invokes the <span style="font-family: Courier New,Courier,monospace">package_info_cb()</span> callback function repeatedly for each package information unit.</p>
+<pre class="prettyprint">int package_manager_foreach_package_info(package_manager_package_info_cb callback, void * user_data)
+
+ret = package_manager_foreach_package_info(package_info_cb, NULL);
+</pre>
+
+</li>
+
+<li>
+
+<p>Get the package information for a package:</p>
+
+<pre class="prettyprint">void package_info_cb(package_info_h package_info, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int ret;
+
+&nbsp;&nbsp;&nbsp;char *pkg = NULL;
+&nbsp;&nbsp;&nbsp;char *label = NULL;
+&nbsp;&nbsp;&nbsp;char *icon = NULL;
+&nbsp;&nbsp;&nbsp;char *version = NULL;
+&nbsp;&nbsp;&nbsp;char *type = NULL;
+&nbsp;&nbsp;&nbsp;package_info_installed_storage_type_e storage;
+&nbsp;&nbsp;&nbsp;bool system;
+&nbsp;&nbsp;&nbsp;bool removable;
+&nbsp;&nbsp;&nbsp;bool preload;
+
+&nbsp;&nbsp;&nbsp;package_info_get_package(package_info, &amp;pkg);
+&nbsp;&nbsp;&nbsp;package_info_get_label(package_info, &amp;label);
+&nbsp;&nbsp;&nbsp;package_info_get_icon(package_info, &amp;icon);
+&nbsp;&nbsp;&nbsp;package_info_get_version(package_info, &amp;version);
+&nbsp;&nbsp;&nbsp;package_info_get_type(package_info, &amp;type);
+&nbsp;&nbsp;&nbsp;package_info_get_installed_storage(package_info, &amp;storage);
+&nbsp;&nbsp;&nbsp;package_info_is_system_package(package_info, &amp;system);
+&nbsp;&nbsp;&nbsp;package_info_is_removable_package(package_info, &amp;removable);
+&nbsp;&nbsp;&nbsp;package_info_is_preload_package(package_info, &amp;preload);
+
+&nbsp;&nbsp;&nbsp;LOGE(&quot;pkg \t= [%s]\n&quot;, pkg);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;label \t= [%s]\n&quot;, label);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;icon \t= [%s]\n&quot;, icon);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;version \t= [%s]\n&quot;, version);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;type \t= [%s]\n&quot;, type);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;storage \t= [%d]\n&quot;, storage);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;system \t= [%d]\n&quot;, system);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;removable \t= [%d]\n&quot;, removable);
+&nbsp;&nbsp;&nbsp;LOGE(&quot;preload \t= [%d]\n&quot;, preload);
+}</pre>
+
+</li>
+
+<li>Get the information of a specific package using the package ID:
+<pre class="prettyprint">int package_manager_get_package_info(const char *package_id, package_info_h *package_info)</pre>
+</li>
+
+<li>
+
+<p>Destroy the handle:</p>
+
+<pre class="prettyprint">ret = package_info_destroy(package_info);
+</pre> 
+
+</li>
+
+</ol>
+
+<h2 id="manage" name="manage">Listening to Package Events</h2>
+<p>To detect package changes:</p>
+<ol>
+
+<li>
+
+<p>Create a package manager:</p>
+
+<pre class="prettyprint">int package_manager_create(package_manager_h * manager)</pre>
+</li>
+
+<li>
+<p>Set the event status of the package when the package is installed, uninstalled, or updated:</p>
+
+<pre class="prettyprint">int package_manager_set_event_status(package_manager_h manager, int status_type)</pre>
+
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[int] manager</span>: Package manager handle</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[int] callback</span>: The callback to be invoked</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[int] user_data</span>: User data passed to the callback</li>
+</ul>
+</li>
+
+<li>Implement the package manager callback and listen to status events:
+
+<pre class="prettyprint">void event_cb(const char *type, const char *package, package_manager_event_type_e event_type, package_manager_event_state_e event_state, int progress, package_manager_error_e error, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;if (event_state == PACKAGE_MANAGER_EVENT_STATE_STARTED)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Started&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else if (event_state == PACKAGE_MANAGER_EVENT_STATE_PROCESSING)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Progress : %d&quot;, progress);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else if (event_state == PACKAGE_MANAGER_EVENT_STATE_COMPLETED)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Completed&quot;);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;Failed&quot;);
+&nbsp;&nbsp;&nbsp;}
+}</pre>
+
+</li>
+
+</ol>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/package.htm">Package Management Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__PACKAGE__MANAGER__MODULE.html">Package Manager API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

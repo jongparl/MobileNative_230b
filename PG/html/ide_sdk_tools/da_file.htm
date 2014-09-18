@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>File Analysis</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>File Analysis</h1> 
+  
+  <p>The <strong>File</strong> tab of the dynamic analyzer shows information associated with file operations. The <strong>File</strong> tab can be enabled or disabled in runtime from the <strong>Configuration</strong> dialog. If the file analysis capabilities are disables, the file API information is not displayed.</p>
+  
+  <p class="figure">Figure: File analysis</p> 
+  <p style="text-align: center;"> <img alt="File analysis" src="../images/file_tab.png" /> </p> 
+  <p>The tab consists of the following views:</p> 
+  <ol> 
+   <li><a href="da_file_chart.htm">File chart</a> shows file operations (open/close, read/write, lock) as a time flow chart.</li> 
+   <li><a href="da_file_api_list.htm">File API List</a> view shows the file APIs that are associated with the file selected in the file chart.</li> 
+   <li><a href="da_file_detail.htm">File Details</a> view shows detail information of the file selected in the file chart.</li> 
+  </ol> 
+  <p>Together, the views shows the following information:</p>
+<ul><li>Name and location of the file</li>
+<li>Current state of the file (closed or open)</li>
+<li>Usage time and size of the data saved or read in the file</li>
+<li>Information of the API used in the file (API name, parameter value, return value, and the success or failure of the API)</li>
+<li>Also Non-target processes as well as target processes are shown on File Chart View. More information are not displayed on File API List and File Details View</li></ul>
+
+<p>Terminology</p>
+<ul>
+<li>A target process is on a given App or Lib that the user is interested in analyzing.</li>
+<li>A non-target process is the opposite of the target process, but they access the target files.</li>
+<li>A target file is the file that has the function calls which the user is interested in.</li>
+<li>A non-target file is the opposite of the target file. For example, if the user is only interested in internal calls, files that include direct call are non-target files.</li>
+</ul>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_overview.htm">Dynamic Analyzer</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>TBM Surface</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>TBM Surface</h1> 
+<p>The Tizen Buffer Manager (TBM) surface provides functions for the graphic buffer in Tizen. It provides the abstraction interface for the graphic buffer and the user interface for the TBM surface. The TBM surface supports the RGB and YUV graphic formats, as well as multiple plane graphic buffers.</p>
+
+<p>The TBM surface provides the following main features:</p>
+<ul>
+	<li>Creating a surface with defined width, height, and format</li>
+	<li>Getting a format list</li>
+	<li>Accessing the surface</li>
+	<li>Getting surface and plane information</li>
+</ul>
+
+<p>The TBM surface provides various format typedefs. However, check that the system supports the graphic format in question.</p>
+
+<p>Get surface and plane information using the <span style="font-family: Courier New,Courier,monospace">tbm_surface_map()</span> or the <span style="font-family: Courier New,Courier,monospace">tbm_surface_get_info()</span> function. The information of surface is assigned in the struct of <span style="font-family: Courier New,Courier,monospace">tbm_surface_info_s</span>.</p>
+
+<p>Get a plane pointer in the surface and store data in the low level graphic buffer using the pointer of each plane.</p>
+
+<table> 
+   <caption>
+     Table: Surface information 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Information</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">width</span></td> 
+     <td>Surface width</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">height</span></td> 
+     <td>Surface height</td> 
+    </tr> 
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">bpp</span></td> 
+     <td>Surface BPP</td> 
+    </tr> 
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">size</span></td> 
+     <td>Surface size</td> 
+    </tr> 
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">num_planes</span></td> 
+     <td>Number of planes</td> 
+    </tr> 
+	</tbody> 
+  </table>
+
+<table> 
+   <caption>
+     Table: Plane information 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Information</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">size</span></td> 
+     <td>Plane size</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">offset</span></td> 
+     <td>Plane offset</td> 
+    </tr> 
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">stride</span></td> 
+     <td>Plane stride</td> 
+    </tr> 
+	<tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">ptr</span></td> 
+     <td>Plane pointer</td> 
+    </tr> 
+	</tbody> 
+  </table>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="ui.htm">UI Programming Guide</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

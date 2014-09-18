@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Telephony Information Tutorial</title> 
+</head> 
+<body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Telephony Information Tutorial</h1>
+<p>This tutorial demonstrates how you can get the state of both voice and video calls, get notified when the user makes a voice or video call or hangs up the phone, extract information stored on a SIM card, and get IMEI information.</p>
+
+<p>To learn more about the features of <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION.html">Telephony Information<a> API, see the <a href="../../guide/telephony/telephony.htm">Telephony Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+	<li><a href="#init">Initialization and Prerequisites</a></li>
+	<li><a href="#call">Getting Call Information</a>
+	<p>Access call information and track changes in call status.</p></li>
+	<li><a href="#sim">Getting SIM Information</a>
+	<p>Access SIM information and track changes in SIM status.</p></li>
+	<li><a href="#network">Getting Network Information</a>
+	<p>Access network information and track changes in network status.</p></li>
+	<li><a href="#modem">Getting Modem Information</a>
+	<p>Access modem information.</p></li>
+</ul>
+  
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>In a multi-SIM scenario, you must define which subscription you need, in case the application is related to calling, networks, modems, or SIM cards. Telephony provides a function to create handles for different subscriptions.</p>
+
+<ol><li>
+<p>To create a telephony handle, the <span style="font-family: Courier New,Courier,monospace">#include &lt;telephony.h&gt;</span> header file must be included. The <span style="font-family: Courier New,Courier,monospace">telephony_handle_list_s</span> structure holds the handles for all the subscriptions, which are defined in <span style="font-family: Courier New,Courier,monospace">telephony_common.h</span>.</p>
+
+<pre class="prettyprint">
+typedef struct
+{
+&nbsp;&nbsp;&nbsp;unsigned int count;
+&nbsp;&nbsp;&nbsp;telephony_h *handle;
+}
+telephony_handle_list_s;
+</pre>
+<p>Pass the <span style="font-family: Courier New,Courier,monospace">telephony_handle_list_s</span> structure pointer to get the telephony handles for all subscriptions. You can send requests to specific subscriptions using the telephony handle for that subscription.</p></li>
+<li><p>Get the telephony handle by using the <span style="font-family: Courier New,Courier,monospace">telephony_init()</span> function.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_handle_list_s handle_list;
+&nbsp;&nbsp;&nbsp;int i;
+
+&nbsp;&nbsp;&nbsp;ret = telephony_init(&handle_list);// In case of single SIM, we get only one handle
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; handle_list.count; i++)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGI(&quot;telephony handle[%p] for subscription[%d]&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;handle_list.handle[i], i);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return 0;
+ }
+</pre></li>
+
+<li><p>When the telephony handle is no longer needed, the <span style="font-family: Courier New,Courier,monospace">telephony_deinit()</span> function must be called to free the handle.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;ret = telephony_deinit(&amp;handle_list);
+}
+</pre></li></ol>
+
+<h2 id="call" name="call">Getting Call Information</h2>
+
+<p>The Telephony <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__CALL.html">Call API</a> allows you to get the voice and video call states and be notified when the user makes a voice or video call or hangs up the phone. You can use this information in call-related actions.</p>
+
+<h3>Getting the Call State</h3>
+
+<ol><li><p>You can get the state of the current voice call by using the <span style="font-family: Courier New,Courier,monospace">telephony_call_get_voice_call_state()</span> function. It returns one of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__CALL.html#gafef963e029b4d1d48bece63245f692f2">telephony_call_state_e</a> values.</p>
+
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;telephony_call_state_e voice_call_state;
+&nbsp;&nbsp;&nbsp;ret = telephony_call_get_voice_call_state(handle_list.handle[0], &amp;voice_call_state);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;LOGI(&quot;Voice call state: [%d]&quot;, voice_call_state);
+}
+</pre></li>
+
+<li><p>You can use the previous process to get to the video call state by replacing voice with video in the function: <span style="font-family: Courier New,Courier,monospace">telephony_call_get_video_call_state()</span>.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;telephony_call_state_e video_call_state;
+&nbsp;&nbsp;&nbsp;ret = telephony_call_get_video_call_state(handle_list.handle[0], &amp;video_call_state);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;LOGI(&quot;Video call state: [%d]&quot;, video_call_state);
+}
+</pre></li></ol>
+
+<h3>Receiving Change Notifications for the Call States</h3>
+<p>The callback function can be used to obtain change notifications for the call state asynchronously. The call state is returned through a callback function, given to the function as one of its parameters.</p>
+
+<ol><li><p>To be notified when the voice call state changes, implement a callback function compatible with the <span style="font-family: Courier New,Courier,monospace">telephony_noti_cb()</span> function typedef and register this function.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+void voice_call_state_noti_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void* user_data)
+{
+&nbsp;&nbsp;&nbsp;telephony_call_state_e voice_call_state = *(int *)data;
+&nbsp;&nbsp;&nbsp;LOGI(&quot;Voice call state: [%d]&quot;, voice_call_state);
+}
+void main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;ret = telephony_set_noti_cb(handle_list.handle[0], TELEPHONY_NOTI_VOICE_CALL_STATE,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;voice_call_state_noti_cb, NULL);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+
+<p>After registering, you are notified of the voice call state until you cancel the registration of the callback function. To unregister the callback, invoke the <span style="font-family: Courier New,Courier,monospace">telephony_unset_noti_cb()</span> function with <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_VOICE_CALL_STATE</span>.</p></li>
+
+<li><p>To be notified when the video call state changes, use the same callback function typedef as for the voice calls.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+void video_call_state_noti_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void* user_data)
+{
+&nbsp;&nbsp;&nbsp;telephony_call_state_e video_call_state = *(int *)data;
+&nbsp;&nbsp;&nbsp;LOGI(&quot;Video call state: [%d]&quot;, video_call_state);
+}
+void main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;ret = telephony_set_noti_cb(handle_list.handle[0], TELEPHONY_NOTI_VIDEO_CALL_STATE,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;video_call_state_noti_cb, NULL);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+}
+</pre>
+
+<p>After registering, you are notified of the video call state information until you cancel the registration of the callback function. To unregister the callback, invoke the <span style="font-family: Courier New,Courier,monospace">telephony_unset_noti_cb()</span> function with <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_VIDEO_CALL_STATE</span>.</p></li></ol>
+
+<h2 id="sim" name="sim">Getting SIM Information</h2>
+<p>The Telephony <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__SIM.html">SIM API</a> allows you to extract information stored on a SIM card.</p>
+
+<h3>Getting the State of the SIM</h3>
+<p>Before retrieving information from the SIM card, retrieve the state of the SIM card. You can get SIM-related information only if the state of the SIM is <span style="font-family: Courier New,Courier,monospace">TELEPHONY_SIM_STATE_AVAILA<span style="font-family: Courier New,Courier,monospace">BLE</span>.</p>
+
+<p>You can get the state of the SIM card by calling the <span style="font-family: Courier New,Courier,monospace">telephony_sim_get_state()</span> function. It returns the status of the SIM, which is one of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__SIM.html#ga08448f4cfaf7c59cd585008d3bf32b70">telephony_sim_state_e</a> values, through its output parameters.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_sim_state_e state;
+&nbsp;&nbsp;&nbsp;ret = telephony_sim_get_state(&amp;state);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1;
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;LOGI(&quot;SIM status: [%d]&quot;, status);
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<h3>Receiving Change Notifications for the SIM State</h3>
+<p>The <span style="font-family: Courier New,Courier,monospace">telephony_noti_cb()</span> callback function can be used to obtain notifications for the changes in the SIM state asynchronously. The SIM status is returned through a callback function, given to the function as one of its parameters.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+void sim_state_noti_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void* user_data)
+{
+&nbsp;&nbsp;&nbsp;telephony_sim_state_e sim_state = *(int *)data;
+&nbsp;&nbsp;&nbsp;LOGI(&quot;SIM state: [%d]&quot;, sim_state);
+}
+void main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;ret = telephony_set_noti_cb(handle_list.handle[0], TELEPHONY_NOTI_SIM_STATUS,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sim_state_noti_cb, NULL);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The callback function is invoked automatically when the status of the SIM changes, if you register the callback function using the <span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span> function.</p>
+
+<p>Once the callback function of the SIM state change is registered, this callback function is invoked until it is unregistered with the <span style="font-family: Courier New,Courier,monospace">telephony_unset_noti_cb()</span> function by passing the notification ID.</p>
+
+<h3>Getting SIM Information</h3>
+<p>If you know the current SIM state and, for example, it is <span style="font-family: Courier New,Courier,monospace">SIM_STATE_AVAILABLE</span>, call the SIM API to get the following information from the SIM card: ICC-ID, MCC, MNC, SPN, Subscriber name, and Subscriber number.</p>
+
+<p>If you do not get an error (<span style="font-family: Courier New,Courier,monospace">SIM_ERROR_NONE</span>), the requested SIM information is received and stored in an output parameter. You must free all returned variables once you are done with them.</p>
+
+<p>To get ICCID information from a SIM card:</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;char *iccid;
+&nbsp;&nbsp;&nbsp;ret = telephony_sim_get_iccid(&amp;iccid);
+&nbsp;&nbsp;&nbsp;if (ret == TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGI(&quot;Integrated Circuit Card IDentification: %s&quot;, iccid);
+&nbsp;&nbsp;&nbsp;if (iccid)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(iccid);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre>
+
+<h2 id="network" name="network">Getting Network Information</h2>
+<p>The Telephony <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__NETWORK.html">Network API</a> allows you to access, but not change, information about the current cellular network and telephony service.</p>
+
+
+<h3>Getting the Network Service State</h3>
+<p>Determine the state of the service network. The network service state is one of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__NETWORK.html#gae9f3b6e54a1086b8734f4acc71fd001b">telephony_network_service_state_e</a> enumeration values.</p>
+
+<p>You can only get telephony network information if the state is <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NETWORK_SERVICE_STATE_IN_SERVICE</span>.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_sim_state_e network_service_state;
+&nbsp;&nbsp;&nbsp;int ret;
+&nbsp;&nbsp;&nbsp;ret = telephony_network_get_service_state (&amp;network_service_state);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1;
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;LOGI(&quot;Network Service State [%d]&quot;, network_service_state);
+&nbsp;&nbsp;&nbsp;Return 0;
+}
+</pre>
+
+<h3>Receiving Network Service State Change Notifications</h3>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">telephony_noti_cb()</span> callback function can be used to obtain change notifications for a network asynchronously. The network status is returned through a callback function, given to the function as one of its parameters.</p>
+
+<p>The Telephony Network API provides change notifications for the following information:</p>
+<ul>
+	<li>Network service state changes (<span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span>, <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_NETWORK_SERVICE_STATE</span>)</li>
+	<li>Cell ID changes (<span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span>, <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_NETWORK_CELLID</span>)</li>
+	<li>Roaming state changes (<span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span>, <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_NETWORK_ROAMING_STATUS</span>)</li>
+	<li>Signal strength changes (<span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span>, <span style="font-family: Courier New,Courier,monospace">TELEPHONY_NOTI_NETWORK_SIGNALSTRENGTH_LEVEL</span>)</li>
+</ul>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+void network_service_state_noti_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void* user_data)
+{
+&nbsp;&nbsp;&nbsp;telephony_network_service_state_e network_state = *(int *)data;
+&nbsp;&nbsp;&nbsp;LOGI(&quot;SIM state: [%d]&quot;, network_state);
+}
+void main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;ret = telephony_set_noti_cb(handle_list.handle[0], TELEPHONY_NOTI_NETWORK_SERVICE_STATE,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;network_service_state_noti_cb, NULL);
+&nbsp;&nbsp;&nbsp;if (ret != TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<p>The callback function is invoked automatically when the status of the network changes, if you register the callback function using the <span style="font-family: Courier New,Courier,monospace">telephony_set_noti_cb()</span> function. To get additional notifications when the Cell ID, RSSI level, or roaming state changes, define corresponding callback functions. Register each one of them with their corresponding notification ID.</p>
+
+<p>Once the callback function of the network state change is registered, this callback function is invoked until it is unregistered with the <span style="font-family: Courier New,Courier,monospace">telephony_unset_noti_cb()</span> function by passing the notification ID.</p>
+
+<h3>Getting Network Information</h3>
+<p>If the current network service state is <span style="font-family: Courier New,Courier,monospace">NETWORK_INFO_SERVICE_STATE_IN_SERVICE</span>, use the Telephony Network API to get the network information: LAC, Cell ID, RSSI, roaming state, MNC, network provider name, and network type.</p>
+
+<p>You must free all returned variables (strings) once you are done with them.</p>
+
+<p>To get network information:</p>
+
+<ul><li><p>To get the Cell ID:</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;int cell_id;
+&nbsp;&nbsp;&nbsp;ret = telephony_network_get_cell_id(&amp;cell_id);
+&nbsp;&nbsp;&nbsp;if (ret == TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGI(&quot;Cell Id: %d&quot;, cell_id);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre></li>
+
+<li><p>To get the MNC:</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;char *mnc;
+&nbsp;&nbsp;&nbsp;ret = telephony_network_get_mnc (&amp;mnc);
+&nbsp;&nbsp;&nbsp;if (ret == TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGI(&quot;mnc: %s&quot;, mnc);
+&nbsp;&nbsp;&nbsp;if (mnc)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(mnc);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre></li></ul>
+
+<h2 id="modem" name="modem">Getting Modem Information</h2>
+<p>The Telephony <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION__MODEM.html">Modem API</a> allows you to get IMEI information.</p>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace">telephony_modem_get_imei()</span> function, and free all returned variables (strings) once you are done with them.</p>
+
+<pre class="prettyprint">
+#include &lt;telephony.h&gt;
+int main()
+{
+&nbsp;&nbsp;&nbsp;telephony_error_e ret;
+&nbsp;&nbsp;&nbsp;char *imei;
+&nbsp;&nbsp;&nbsp;ret = telephony_modem_get_imei(&amp;imei);
+&nbsp;&nbsp;&nbsp;if (ret == TELEPHONY_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGI(&quot;imei: %s&quot;, imei);
+&nbsp;&nbsp;&nbsp;if (imei)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(imei);
+&nbsp;&nbsp;&nbsp;return ret;
+}
+</pre>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="telephony_tutorial.htm">Telephony Tutorials</a></li>
+	<li><a href="../../guide/telephony/telephony.htm">Telephony Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__TELEPHONY__INFORMATION.html">Telephony Information API Reference</a></li>
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

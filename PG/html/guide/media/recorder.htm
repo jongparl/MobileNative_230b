@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Audio and Video Recorder</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Audio and Video Recorder</h1>
+
+
+ <p>Tizen offers basic recorder features, including an audio and video recorder. With the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html">Recorder</a> APIs, sound and video can be kept in your target device.</p>
+ 
+  <p>The main features of the Recorder API include:</p> 
+  <ul> 
+    <li>Basic recording functionalities (record, stop, pause, cancel, and mute).
+	</li>	
+    <li>Setting the maximum recording time and size</li>
+	<li>Controlling the system volume level</li>	
+  </ul>
+  
+  <p>The following file formats are supported:</p>
+	<ul> 
+    <li>Video: <span style="font-family: Courier New,Courier,monospace">mp4</span> and <span style="font-family: Courier New,Courier,monospace">3gp</span></li>
+	<li>Audio: <span style="font-family: Courier New,Courier,monospace">m4a</span> and <span style="font-family: Courier New,Courier,monospace">amr</span></li> 
+   </ul>
+  <p>Valid input sources consist of internal and external microphones and a camera. The used input audio or video source depends on the currently connected audio path and camera module of the device. The operations of the Recorder APIs can work in asynchronous mode, which means that callbacks are required to pass an event notification to the application. The recorder APIs in the video recorder serve as the interface with the hardware. Input is processed through that handle.</p>
+
+  <p>During testing, you can use the Emulator to imitate audio or video recording, as long as your computer has a proper input source device.</p> 
+
+  <p>The following figure illustrates the general recorder state changes.</p> 
+  <p class="figure">Figure: Recorder states</p> 
+  <p style="text-align:center;"><img src="../../images/using_recorder_states.png" alt="Recorder states" /></p> 
+  
+    <table class="note"> 
+   <tbody> 
+    <tr> 
+     <th class="note">Note</th> 
+    </tr> 
+    <tr> 
+     <td class="note">While running applications on the Emulator, audio-video synchronization errors can occur due to the computer performance.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="media.htm">Multimedia Programming Guide</a></li>
+<li><a href="../../tutorials/media_tutorial/audiorecorder_tutorial.htm">Audio Recorder Tutorial</a></li>
+<li><a href="../../tutorials/media_tutorial/video_recorder_tutorial.htm">Video Recorder Tutorial</a></li>
+</ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

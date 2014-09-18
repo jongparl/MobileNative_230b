@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Application Layout</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+<h1>Application Layout</h1>
+
+<p>This section provides how to use base layout with EFL for your application. Also, you can get some idea of sample layouts for applications.</p>
+
+<h2>Using the Base Layout</h2>
+
+<p>When developing a Tizen native application, it is recommended that you base your application layout on the base layout. The base layout supports the indicator and view management. The following figure shows the wireframe and widget hierarchy of the base layout:</p>
+
+<p class="figure">Figure: Base layout wireframe and widget hierarchy</p>
+<p style="text-align:center;"><img alt="Base layout wireframe and widget hierarchy" src="../images/base_layout.png"/></p>
+
+<p>The widgets have the following roles:</p>
+
+<ul>
+ <li>Window (Elm_win): Every UI widget from Elementary is rendered in a Window.</li>
+ <li>Conformant (Elm_Conformant): The Conformant supports the indicator area and resizing the application due to rotation or the ISF (keypad).</li>
+ <li>Naviframe (Elm_Naviframe): The Naviframe acts as a view manager and optionally provides the application title. The main layout of the application is added to the Naviframe's view area.</li>
+</ul>
+
+
+<h2>Sample Applications with the Base Layout</h2>
+
+<h3>Setting</h3>
+
+<p>The Setting application consists of a list to show as a menu. For organizing the application, create the application layout with a screen-size-list and place the layout into the Naviframe's view area.</p>
+
+<p class="figure">Figure: Setting UI and layout</p>
+<p style="text-align:center;"><img alt="Settings UI and layout" src="../images/setting_sd.png"/></p>
+
+<p>For more information, see the Setting sample application.</p>
+
+<h3>Application Store</h3>
+
+<p>For organizing the Application Store application, you need to add a scroller to the base layout, since the total height of the layout will be greater than the screen size, and you will therefore need to scroll the screen contents up and down. If the layout is larger than the screen, the scroller makes the view itself scrollable.</p>
+
+<p>You can use a list or grid if the same objects are shown repeatedly. In this sample application, however, the various items are shown in a layout.</p>
+
+<p class="figure">Figure: Application Store UI and layout</p>
+<p style="text-align:center;"><img alt="Application Store UI and layout" src="../images/application_store_sd.png"/></p>
+
+<p>For more information, see the Application Store sample application.</p>
+
+<h2>Sample Applications with a Custom Layout</h2>
+
+<h3>Calculator - No Naviframe</h3>
+
+<p>The Calculator is a good example of an exception to the base layout. The application has no view changes and no application title. As these are the two reasons why you should use a Naviframe, you do not need to add a Naviframe to the Calculator.</p>
+
+<p>You can organize the application layout with container widgets. Container widgets are used for arranging widgets, both basic widgets and other container widgets.</p>
+
+<p class="figure">Figure: Calculator UI and layout</p>
+<p style="text-align:center;"><img alt="Calculator UI and layout" src="../images/calculator_sd.png"/></p>
+
+<p>For more information, see the Calculator sample application.</p>
+
+<h3>Email - Drawer</h3>
+
+<p>The Email application shows information using a list. The main view is the same as in the Setting application, consisting of a screen-size-list for displaying emails. However, the Email application has an additional feature: the Drawer, which is used for displaying the menu with a hierarchy.</p>
+
+<p>To develop the application as a Tizen native application, add a layout on the Conformant, and add a Naviframe to the layout. This layout has a content area for the Drawer and Naviframe, and its style name is "layout/drawer/panel". To use this layout, use the following code:</p>
+
+<pre class="prettyprint">
+layout = elm_layout_add(parent);
+elm_layout_theme_set(layout, &quot;layout&quot;, &quot;drawer&quot;, &quot;panel&quot;);
+</pre>
+
+<p>The style includes parts for locating the Drawer and the main view. In the Drawer area, you can add a list to indicate the menu. In the main view, you can add a Naviframe to organize the view of the layout.</p>
+
+<p class="figure">Figure: Email UI and layout</p>
+<p style="text-align:center;"><img alt="Email UI and layout" src="../images/email_sample.png"/></p>
+
+<p>For more information, see the Email sample application.</p>
+  
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

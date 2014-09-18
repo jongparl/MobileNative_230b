@@ -1,0 +1,103 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../../snippet.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../../styles.css" rel="StyleSheet" type="text/css" />
+<link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+<title>Exporting Data Control Functionality</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>Exporting Data Control Functionality</h1> 
+  <p>You can export functionalities of your UI application in the <a href="../../app_dev_process/manifest_advanced.htm">application project settings</a> in the IDE. The provider ID, type, and accessibility must be specified for the data control.</p> 
+  <p class="figure">Figure: Exporting data control</p> 
+  <p style="text-align:center;"><img alt="Exporting data control" src="../../images/exporting_datacontrol.png"></p> 
+  <h2 id="data" name="data">Data Model</h2> 
+  <p>The data model must be opened to the public to help other applications to use the exported data controls. The data model consists of the following data:</p> 
+  <ul>
+<li>Provider ID 
+    <ul>
+<li>It is used for identifying a data control provider.</li> 
+     <li>It must be unique and use a fully qualified domain name.</li> 
+     <li>Platform-defined data control provider is defined in the format: <span style="font-family: Courier New,Courier,monospace">http://tizen.org/datacontrol/provider/&lt;service application name&gt;</span>
+</li> 
+     <li>User-defined data control provider is defined in the format: <span style="font-family: Courier New,Courier,monospace">http://&lt;vendor.com&gt;/datacontrol/provider/&lt;service application name&gt;</span>
+</li> 
+    </ul>
+</li> 
+   <li>Data ID 
+    <ul>
+<li>It is used for identifying data exported by the data control provider.</li> 
+     <li>It must be unique in the data control provider and it is given as a string with a slash as a delimiter.</li> 
+    </ul>
+</li> 
+   <li>Type 
+    <ul>
+<li>You can use UI applications that provide their own data structure table and implement the SQL-type data control provider using the database file.</li> 
+     <li>You can use UI applications that provide their own key-value pairs data structure map and implement the map-type data control provider using registry file or collection map classes.</li> 
+    </ul>
+</li> 
+   <li>Data schema 
+    <ul>
+<li>SQL-type data control exports column names and types of the data structure table.</li> 
+     <li>Map-type data control exports key names and types of the data structure map.</li> 
+    </ul>
+</li> 
+   <li>Data accessibility <p>UI applications can control read and write access from other applications by allowing data control accessibility.</p> </li> 
+  </ul>
+<table border="1" style="width: 100%">
+<caption>
+     Table: Data model example of a data control provider 
+   </caption> 
+   <tbody>
+<tr>
+<th style="text-align:center;margin-left:auto;margin-right:auto;">Data control type</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Data control provider ID</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Data control data ID</th> 
+     <th colspan="2" style="text-align:center;margin-left:auto;margin-right:auto;">Data schema</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Data accessibility</th> 
+    </tr>
+<tr>
+<td>SQL</td> 
+     <td>http://&lt;vendor.com&gt;/datacontrol/provider/sample</td> 
+     <td>data1</td> 
+     <td>
+<p>column1<br/> (type: <span style="font-family: Courier New,Courier,monospace">Integer</span>)</p> </td> 
+     <td>
+<p>column2<br/> (type: <span style="font-family: Courier New,Courier,monospace">String</span>)</p> </td> 
+     <td>Read-Only</td> 
+    </tr>
+<tr>
+<td>Map</td> 
+     <td>http://&lt;vendor.com&gt;/datacontrol/provider/sample2</td> 
+     <td>data2</td> 
+     <td>
+<p>key1<br/> (type: <span style="font-family: Courier New,Courier,monospace">String</span>)</p> </td> 
+     <td>
+<p>key2<br/> (type: <span style="font-family: Courier New,Courier,monospace">String</span>)</p> </td> 
+     <td>Read-Write</td> 
+    </tr>
+</tbody>
+</table>
+<h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="data_controls.htm">Data Controls</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1" />
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

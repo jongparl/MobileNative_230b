@@ -1,0 +1,87 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../styles.css" rel="StyleSheet" type="text/css" />
+<link href="../snippet.css" rel="StyleSheet" type="text/css" />
+<title>Setting Application Manifest</title>
+</head>
+<body onload="prettyPrint()">
+	<h1>
+		<a name="AppInfo" id="AppInfo">Setting Application Manifest</a>
+	</h1>
+	<p>
+		The application manifest consists of application information, such as package, version, features, and privileges, which are available for the application. To configure the application information in
+		the manifest editor, double-click the <span style="font-family: Courier New, Courier, monospace">tizen-manifest.xml</span> file present in the project folder of the application.
+	</p>
+	<p class="figure">Figure: Setting the application manifest</p>
+	<p style="text-align: center;">
+		<img align="center" alt="Setting the application manifest" src="../images/tizen_project_explorer.png">
+	</p>
+	<p>You can edit application properties using the tabs of the manifest editor:</p>
+	<ul>
+		<li><a href="manifest_overview.htm">Overview</a>
+			<p>Create and edit general application information, such as application package, version, author, description, and icons.</p></li>
+		<li><a href="manifest_advanced.htm">Advanced</a>
+			<p>Define the advanced features of an application, such as category, metadata, data control, and miscellaneous options.</p></li>
+		<li><b>Privileges</b>
+			<p>
+				Use features and services provided by <a href="../../../org.tizen.gettingstarted/html/tizen_overview/security.htm">privileged APIs</a>, which handle platform and user-sensitive data.
+				Assign specific <b> privileges</b> to your application, according to the application functionality that you want to develop.
+			</p></li>
+		<li><a href="manifest_features.htm">Application Features</a>
+			<p>You can declare required software or hardware features. This declaration can be used for application filtering on Tizen market place.</p></li>
+		<li><b>Application Service</b>
+			<p>
+				<a href="../guide/app/exporting_application_service_functionality.htm">Export the application service functionality</a> of your application. To define an application service used to access the
+				functionality of your application, click <strong>Add</strong>.
+			</p>
+			<p>Each application service has multiple operation, mime, and uri attributes.</p></li>
+		<li><b>Localization</b>
+			<p>Set the supported locales for selected node elements of the <span style="font-family: Courier New, Courier, monospace">tizen-manifest.xml</span> file. You can provide localization support for the label and description of the <span style="font-family: Courier New, Courier, monospace">tizen-manifest.xml</span> file in the
+				<strong>Localization</strong> tab of the manifest editor.</p></li>
+	</ul>
+	<p>
+		The <strong>tizen-manifest.xml</strong> tab of the manifest editor shows the code of the <span style="font-family: Courier New, Courier, monospace">tizen-manifest.xml</span> file. You can <a
+			href="../ide_sdk_tools/manifest_text_editor.htm">edit the basic syntax of the XML document</a> and also see how changes made on the other tabs are reflected in
+		the raw XML source content.
+	</p>
+	<table class="note">
+		<tbody>
+			<tr>
+				<th class="note">Note</th>
+			</tr>
+			<tr>
+				<td class="note">If you edit application information manually in the <span style="font-family: Courier New, Courier, monospace">tizen-manifest.xml</span> file source code, you can introduce
+					errors preventing the application from running normally.
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<h2>Where to Go Next</h2>
+	<ul>
+		<li><a href="creating_app_project.htm">Creating the Application Project</a></li>
+	</ul>
+	<div id="footer">
+		<hr size="1" />
+		<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative
+				Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details,
+			see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.
+		</font>
+	</div>
+	<!--start-->
+	<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+	<!--end-->
+</body>
+</html>

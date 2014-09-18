@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Sound Manager Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Sound Manager Tutorial</h1> 
+
+<p>This tutorial demonstrates how you can use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__MODULE.html">Sound Manager API</a>.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;sound_manager.h&gt;</span> header file, which has to be included in all applications that use the Sound Manager API.</p>
+
+<p>To learn about the Sound Manager API features, see the <a href="../../guide/media/media.htm">Multimedia Programming Guides</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>  
+<ul>  
+<li><a href="#set">Setting the Sound Session Type</a>
+<p>Set a sound session type for your application.</p></li>
+
+<li><a href="#manage">Managing Volume Control</a>
+<p>Control the volume of your application.</p></li></ul>
+
+<h2 id="set" name="set">Setting the Sound Session Type</h2>
+<p>To set your application sound session type and monitor session changes:</p>
+
+
+<ol><li>Set the sound session type.
+<p>You can set the application sound session type using the <span style="font-family: Courier New,Courier,monospace">sound_manager_set_session_type()</span> function. The function sets the type of your sound session across the system.</p>
+
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga125699870d48881ea153a4fce7140958">sound_session_type_e</a> enumeration defines the available sound session types.</p>
+<pre class="prettyprint">int error_code;
+ 
+error_code = sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
+</pre></li>
+
+<li>Subscribe to the session change notifications.
+<p>To be informed when a sound session change has occurred, define the <span style="font-family: Courier New,Courier,monospace">sound_session_interrupted_cb</span> callback function:</p>
+<pre class="prettyprint">static void sound_session_interrupted_cb(sound_interrupted_code_e code, void *user_data) 
+{
+&nbsp;&nbsp;&nbsp;if (SOUND_INTERRUPTED_BY_MEDIA == code)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create_info_pop(&quot;Session of application has interrupted by media application&quot;);
+&nbsp;&nbsp;&nbsp;if (SOUND_INTERRUPTED_COMPLETED == code)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create_info_pop(&quot;Session interrupt of application has completed&quot;);
+}</pre></li>
+
+<li><p>To register the callback function, call <span style="font-family: Courier New,Courier,monospace">sound_manager_set_session_interrupted_cb()</span> with a callback and the data which passes the user data:</p>
+<pre class="prettyprint"><pre class="prettyprint">error_code = sound_manager_set_session_interrupted_cb(_sound_session_interrupted_cb, NULL);
+</pre></li></ol>
+
+<h2 id="manage" name="manage">Managing Volume Control</h2>
+<p>To control your application volume:</p>
+
+<ol><li>Subscribe to the volume change notifications.
+<p>Define the <span style="font-family: Courier New,Courier,monospace">sound_manager_volume_changed_cb</span> callback, which is called every time the sound volume changes. Register the callback function using <span style="font-family: Courier New,Courier,monospace">sound_manager_set_volume_changed_cb()</span>. When the volume changes and the callback function is invoked, you can use the callback to see which sound type has changed and what the new volume level is.</p>
+
+<pre class="prettyprint">#define MBUF 128
+ 
+int error_code;
+ 
+static void _sound_manager_volume_changed_cb(sound_type_e type, unsigned int volume, void* user_data)  
+{
+&nbsp;&nbsp;&nbsp;char buf[MBUF] = {0, };
+ 
+&nbsp;&nbsp;&nbsp;snprintf(buf, MBUF, &quot;(%d) type volume changed to (%d)&quot;, type, volume);
+&nbsp;&nbsp;&nbsp;printf(&quot;%s\n&quot;, buf);
+}
+
+error_code = sound_manager_set_volume_changed_cb(_sound_manager_volume_changed_cb, NULL);
+</pre></li>
+
+<li>Get the max and current volume.
+<p>To get the current volume, call <span style="font-family: Courier New,Courier,monospace">sound_manager_get_volume()</span> with the sound type and the <span style="font-family: Courier New,Courier,monospace">int</soan> value where the function places the current volume. You can call this function for every sound media type. To get the max volume, call <span style="font-family: Courier New,Courier,monospace">sound_manager_get_max_volume()</span> with similar parameters.</p>
+<pre class="prettyprint">int error_code;
+sound_type_e type = SOUND_TYPE_MEDIA;
+ 
+int max_vol = 0;
+error_code = sound_manager_get_max_volume(type, &amp;max_vol);
+
+int cur_vol = 0;
+error_code = sound_manager_get_volume(type, &amp;cur_vol);
+</pre></li>
+
+<li>Set a new volume.
+<p>To set a new volume level, call <span style="font-family: Courier New,Courier,monospace">sound_manager_set_volume()</span>. In the following example code, the first parameter is the sound type and the second parameter is a value received from the slider in the application UI, with which the user sets the volume value.</p>
+<pre class="prettyprint">int error_code;
+sound_type_e type = SOUND_TYPE_MEDIA;
+int value;
+
+// Use sound_manager_get_max_volume() to make sure the value is within the system max volume  
+
+error_code = sound_manager_set_volume(type, value);
+</pre></li></ol>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/media.htm">Multimedia Programming Guides</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__MODULE.html">Sound Manager API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

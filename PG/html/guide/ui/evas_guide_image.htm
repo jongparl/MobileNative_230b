@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Image Objects</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Image Objects</h1>
+  
+<p>Evas supports managing image objects in the following ways:</p>
+
+<ul>
+<li>Limiting visibility
+<p>Evas always supports the image file type it was compiled with. Check your software packager for the information and use the <span style="font-family: Courier New,Courier,monospace;">evas_object_image_extension_can_load_get()</span> function:</p>
+
+<pre class="prettyprint">
+img = evas_object_image_add(canvas);
+evas_object_image_file_set(img, &quot;path/to/img&quot;, NULL);
+evas_object_image_fill_set(img, 0, 0, w, h);
+</pre>
+
+<p>Create the image object. Set a source file on it, so that the object knows where to fetch the image data.</p>
+<p>Define how to fill the image object area with the given pixel data. You can use a sub-region of the original image, or have it tiled repeatedly on the image object.</p>
+<p>If the entire source image is to be displayed on the image object, stretched to the destination size, use the <span style="font-family: Courier New,Courier,monospace;">evas_object_image_filled_set()</span> function helper that you can use instead of the <span style="font-family: Courier New,Courier,monospace;">evas_object_image_fill_set()</span> function:</p>
+
+<pre class="prettyprint">
+evas_object_image_filled_set(img, EINA_TRUE);
+</pre>
+</li>
+
+<li>Scaling
+<p>Resizing image objects scales the source images to the image object size, if the source images are set to fill the object area using the <span style="font-family: Courier New,Courier,monospace;">evas_object_image_filled_set()</span> function.</p>
+<p>Control the aspect ratio of an image for different sizes with functions to load images scaled up or down in memory.</p>
+
+<p>Evas has a scale cache, which caches scaled versions of images used often.</p>
+</li>
+
+<li>Giving performance hints
+<p>In image viewer applications, you can display an image in full size. The navigation to the adjacent images on your album is fluid and fast. Thus, while displaying a given image, the program is loading the next and previous image in the background to be able to immediately repaint the screen with a new image.</p>
+
+<p>Evas addresses this issue with image preloading:</p>
+
+<pre class="prettyprint">
+prev = evas_object_image_filled_add(canvas);
+evas_object_image_file_set(prev, &quot;/path/to/prev&quot;, NULL);
+evas_object_image_preload(prev, EINA_TRUE);
+next = evas_object_image_filled_add(canvas);
+evas_object_image_file_set(next, &quot;/path/to/next&quot;, NULL);
+evas_object_image_preload(next, EINA_TRUE);
+</pre>
+
+<p>If you are loading an image, which is too big, set its loading size smaller.</p>
+
+
+<p>Load a scaled down version of the image in the memory if that is the size you are displaying:</p>
+<pre class="prettyprint">evas_object_image_load_scale_down_set(img, zoom);</pre>
+<p>If you know you are showing a sub-set of the image pixels, you can avoid loading the complementary data:</p>
+<pre class="prettyprint">evas_object_image_load_region_set(img, x, y, w, h);
+</pre>
+</li>
+
+<li>Specifying borders
+<p>With Evas, you can specify an image&#39;s margins to be treated as borders. The margins then maintain their aspects when the image is resized. This makes setting frames around other UI objects easier. The following figure illustrates the border behavior, when the image is resized.</p>
+
+<p class="figure">Figure: Borders in Evas</p> 
+<p style="text-align:center;"><img alt="Borders in Evas" src="../../images/9patch.png" /></p> 
+
+<!-- <p style="text-align:center;"><img src="9patch-comparison.svg" alt="9patch-comparison.svg"/></p>
+
+This image is missing from the source text as well.-->
+</li>
+</ul>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="evas_guide.htm">Evas Rendering</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

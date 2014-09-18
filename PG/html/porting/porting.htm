@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Porting Guide</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Porting Guide</h1>
+  
+<p>The Tizen 2.3 release comes with a new version of the native API, created to give you a possibility to make fast and lightweight native applications. It replaces the native API used in the previous versions of Tizen (2.2.1). Combined with the Enlightenment Foundation libraries (EFL), the new native API provides powerful tools to create fantastic applications for the Tizen platform.</p>
+
+<p>The purpose of this guide is to allow all the current Tizen application developers to port their current 2.2.1 native API-based applications to the new 2.3 native API as simply and quickly as possible. This guide contains basic guides on how to port your 2.2.1 native API application to the 2.3 native API. To fully understand the new API, familiarize yourself with the specifications and tutorials. This guide helps you to understand the main differences and start porting your applications.</p>
+
+<p>For information about the differences between each module of the 2.2.1 and 2.3 version APIs, see <a href="api_comparison.htm">API Comparison</a>.</p>
+
+
+<h2 id="compare" name="compare">Application Model Comparison</h2>
+<p>The new API&#39;s application model is very similar to the one from the older version, so it is easy to adopt it.</p>
+
+<p>The new 2.3 native API as well as the 2.2.1 version both support UI and service applications. UI applications have a graphical user interface, while service applications do not. Also, packaging applications follows same rules in both APIs. Only 1 UI application is allowed in one package.  Applications in a package follow the same installation cycle but they have their own life-cycles. Each application in the package can be identified by its own ID. Applications can communicate with each other using the message port.</p>
+
+<p>Multitasking in Tizen 2.3 works in a similar way as in Tizen 2.2.1, so only 1 application can work in the foreground. The rest are in a PAUSED state, so they are not visible for the user. Since service applications do not have a UI, they all run in the background the whole time.</p>
+
+<p>Different scenarios for switching between UI application states include:</p>
+<ul>
+<li><a href="https://developer.tizen.org/dev-guide/2.2.1/org.tizen.native.appprogramming/html/basics_tizen_programming/tizen_app_model/window_state_transition.htm" target="_blank"> OSP application state transitions  for 2.2.1</a></li>
+<li><a href="../../../org.tizen.mobile.native.apireference/group__CAPI__APPLICATION__MODULE.html">Native API application state transitions for 2.3</a></li>
+</ul>
+<p>Basically, the scenarios are similar, and the same scenarios result in the same corresponding state transitions.</p>
+
+<p>The main difference in developing UI applications is that the Tizen::Ui namespace has been replaced with the EFL. This change require you to recreate the user interface layer in your application. The EFL is very fast and customizable. Study its documentation to effectively use its features.</p>
+
+  <p>For more information about porting issues related to the application model, see:</p> 
+  <ul>
+    <li><a href="app_life_cycle.htm">Application Life-cycle</a></li>
+	<li><a href="app_package.htm">Package Management</a></li>
+		<li><a href="app_model.htm#launch">Application Launch and Termination</a></li>
+		<li><a href="app_model.htm#ui">UI Applications</a></li>
+		<li><a href="app_model.htm#service">Service Applications</a></li>
+		<li><a href="app_model.htm#io">I/O Overview</a></li>
+		<li><a href="app_model.htm#object">Object Ownership Policy</a></li>
+		<li><a href="app_model.htm#low">Low Memory Level Events</a></li>
+		<li><a href="app_model.htm#scene">Scene Transitions</a></li>
+		<li><a href="app_model.htm#keys">Hardware Keys</a></li>
+	<li><a href="logs.htm">Logs and Exceptions</a></li>
+  </ul>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 	
+   <li><a href="../cover_page.htm">Tizen Mobile Native Application Programming</a></li> 
+  </ul>   
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

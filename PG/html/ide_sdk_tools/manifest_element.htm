@@ -1,0 +1,168 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+<title>&lt;manifest&gt; Element</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>&lt;manifest&gt; Element</h1> 
+  <p>The <span style="font-family: Courier New,Courier,monospace">&lt;manifest&gt;</span> element is an easily readable description of the Tizen package and serves as a container for the other elements of the configuration document.</p> 
+
+ <table border="1"><tbody>
+<tr id="manifest" name="manifest">
+<th style="text-align:left;margin-left:auto;margin-right:auto;"> <p><span style="font-family: Courier New,Courier,monospace">&lt;manifest&gt;</span> element</p>
+</th> 
+    </tr>
+<tr>
+<td> <p>Manifest information of the Tizen native application.</p> <p>For more information on the relationship between the elements, see the <a href="manifest_element_hierarchy.htm">element hierarchy</a>.</p> 
+		<p><strong>Occurrences:</strong></p>
+		  <ul>
+<li><p>1</p></li> 
+          </ul>
+<p><strong>Expected children (in the following order):</strong> </p> 
+		  <table border="1" id="feature"><tbody>
+<tr>
+<th width="50%">Child element</th> 
+					<th>Occurrences</th> 
+				</tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="author_element.htm">&lt;author&gt;</a></span></td> 
+					<td>1 (optional)</td> 
+				</tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="description_element.htm">&lt;description&gt;</a></span></td> 
+					<td>1 or more (optional)</td> 
+				</tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="serviceapp_element.htm">&lt;service-application&gt;</a></span></td> 
+					<td>1 (optional)</td> 
+				</tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="uiapp_element.htm">&lt;ui-application&gt;</a></span></td> 
+					<td>1 (optional)</td> 
+				</tr>
+					<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="privileges_element.htm">&lt;privileges&gt;</a></span></td> 
+					<td>1 (optional)</td> 
+					</tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="feature_element.htm">&lt;feature&gt;</a></span></td> 
+					<td>1 or more (optional)</td> 
+				</tr>
+</tbody></table>
+<p id="attributes"><strong>Attributes:</strong></p>
+		<ul>
+<li><p><span style="font-family: Courier New,Courier,monospace"><a href="#installlocation">install-location</a></span></p></li> 
+<li><p><span style="font-family: Courier New,Courier,monospace"><a href="#package">package</a></span></p></li> 
+<li><p><span style="font-family: Courier New,Courier,monospace"><a href="#packagetype">type</a></span></p></li> 
+<li><p><span style="font-family: Courier New,Courier,monospace"><a href="#version">version</a></span></p></li> 
+<li><p><span style="font-family: Courier New,Courier,monospace"><a href="#apiversion">api-version</a></span></p></li> 
+        </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="installlocation"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">install-location</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Installation location for the application.</p>
+    <p><strong>Expected value:</strong> </p> 
+    <ul>
+<li>One of the following values: <span style="font-family: Courier New,Courier,monospace">&quot;auto&quot;</span>, <span style="font-family: Courier New,Courier,monospace">&quot;internal-only&quot;</span>, <span style="font-family: Courier New,Courier,monospace">&quot;prefer-external&quot;</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="package"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">package</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Package of the application.</p>
+    <p><strong>Expected value:</strong> </p> 
+    <ul>
+<li><span style="font-family: Courier New,Courier,monospace">&quot;org.tizen.applicationName&quot;</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="packagetype"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Package type of the application.</p>
+    <p><strong>Expected value:</strong> </p> 
+    <ul>
+<li>One of the following values: <span style="font-family: Courier New,Courier,monospace">&quot;rpm&quot;</span>, <span style="font-family: Courier New,Courier,monospace">&quot;tpk&quot;</span>, <span style="font-family: Courier New,Courier,monospace">&quot;wgt&quot;</span>, <span style="font-family: Courier New,Courier,monospace">&quot;apk&quot;</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="version"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">version</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Version number of the application.</p>
+    <p><strong>Expected value:</strong> </p> 
+    <ul>
+<li>Number in the &quot;x.y.z&quot; format, where 0 &lt; x &lt; 255, 0 &lt; y &lt; 255, and 0 &lt; z &lt; 65535</li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="apiversion"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">api-version</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>API version number for the application.</p>
+    <p><strong>Expected value:</strong> </p> 
+    <ul>
+<li>Number in the &quot;w.x.y&quot; or &quot;w.x.y.z&quot; format, where 0 &lt; w &lt; 35, 0 &lt; x &lt; 35, 0 &lt; y &lt; 1295, and 0 &lt; z &lt; 1295</li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<p><strong>For example:</strong> </p> 
+   <pre class="prettyprint">
+&lt;manifest xmlns=&quot;http://tizen.org/ns/packages&quot; package=&quot;org.tizen.uiapp&quot; version=&quot;1.0.0&quot;  api-version=&quot;2.3.0&quot;&gt;
+&nbsp;&nbsp;&nbsp;&lt;author author=&quot;&quot; email=&quot;&quot; website=&quot;&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;description&gt;.....&lt;/description&gt;
+&nbsp;&nbsp;&nbsp;&lt;ui-application&gt;.....&lt;/ui-application&gt;
+&nbsp;&nbsp;&nbsp;&lt;privileges&gt;.....&lt;/privileges&gt;
+&nbsp;&nbsp;&nbsp;&lt;feature&gt;.....&lt;/feature&gt;
+&lt;/manifest&gt;</pre>
+
+  <h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="manifest_text_editor.htm">Manifest Text Editor</a></li>   
+  <li><a href="manifest_element_hierarchy.htm">Manifest Element Hierarchy</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1">
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Contact Record Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Contact Record Tutorial</h1>
+  
+<p>This tutorial demonstrates how you can create, list, update, and delete phone contacts.
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;contacts.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts</a> API.</p>
+
+<p>To learn about the API features, see the <a href="../../guide/social/contact.htm">Contacts Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#insert">Inserting New Records</a>
+		<p>Add new records to the database</p></li>		
+		<li><a href="#get">Getting Record Details</a>
+		<p>Get information from existing records</p></li>
+		<li><a href="#list">Handling Lists</a>
+		<p>Iterate, filter, and sort record lists.</p></li>
+		<li><a href="#delete">Deleting Records</a>
+		<p>Remove records from the database</p></li>
+		<li><a href="#link">Linking Persons</a>
+		<p>Assign several contacts to one person</p></li>
+   </ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>To start using the Contact Service:</p>
+
+<ol><li>Add the <span style="font-family: Courier New,Courier,monospace;">#include &lt;contacts.h&gt;</span> header to your application.</p></li>
+
+<li><p>Use the <span style="font-family: Courier New,Courier,monospace;">contact_connect()</span> function to connect your application to the Contacts Service. Without this function you cannot access the contact database. Check the error codes returned by the functions each time the Contact API is used. If an error occurs, free the allocated data and do not call database-related functions.</p>
+
+<pre class="prettyprint">
+int error_code = contacts_connect();
+</pre></li>
+
+<li><p>After use, call the disconnect function:</p>
+
+<pre class="prettyprint">
+int error_code = contacts_disconnect();
+</pre></li></ol>
+
+<h2 id="insert" name="insert">Inserting New Records</h2>
+<p>The basic concept in the Contacts API is a record. A record can be a complex set of data, containing other data. For example, an address record can contain the country, region, and street. Also, the contained data can be a reference to another record. For example, a contact record contains the <span style="font-family: Courier New,Courier,monospace;">address</span> property, which is a reference to an address record. Effectively, a record can be a node in a tree or graph of relations between records.</p>
+
+<p>Each record type has a special <span style="font-family: Courier New,Courier,monospace;">view</span> structure, which contains identifiers of its properties. For example, the <span style="font-family: Courier New,Courier,monospace;">_contacts_contact</span> view describes the properties of the contact record. It contains properties, such as name, company, and nickname of the contact. A special property in such structures is the URI, which is used to identify the record type. Every view describing a record has this property.</p>
+
+<p>To insert a new record:</p>
+
+<ol>
+<li>Create a record.
+<p>To create a new contact record, create a root record of the <span style="font-family: Courier New,Courier,monospace;">_contacts_contact</span> view type.</p>
+
+<pre class="prettyprint">
+contacts_record_h hcontact = NULL;
+
+error_code = contacts_record_create(_contacts_contact._uri, &amp;hcontact);
+</pre>
+
+<p>Creating a group is similar to creating a record. The only difference is using another view – group view.</p>
+</li>
+
+<li>Set properties.
+<p>Set the properties of the newly created record. Almost every property in the contact view is a record itself, so create more records, as needed. The following example shows how to add an address record to a contact.</p>
+
+<ol>
+<li>Create a new record.
+<p>Use the address view because the added record is an address:</p>
+
+<pre class="prettyprint">
+contacts_record_h haddress = NULL;
+contacts_record_create(_contacts_address._uri, &amp;haddress);
+</pre>
+</li>
+
+<li>Set the address record properties (parameters available in the current view):
+
+<pre class="prettyprint">
+contacts_record_set_str(haddress, _contacts_address.country, &quot;Korea&quot;);
+</pre>
+</li>
+
+<li>Add the address record to your contact:
+
+<pre class="prettyprint">
+contacts_record_add_child_record(hcontact, _contacts_contact.address, haddress
+</pre>
+<p>Do not destroy the record handle which is added to another as a child.</p>
+</li></ol>
+</li>
+
+<li>Insert records.
+<p>After setting properties, insert the root record only to the database. You receive the ID of this record in the database.</p>
+
+<pre class="prettyprint">
+int id;
+error_code = contacts_db_insert_record(hcontact, &amp;id);
+</pre>
+</li>
+
+<li>Clean up.
+<p>Destroy the record structure.</p>
+
+<pre class="prettyprint">
+error_code = contacts_record_destroy(hcontact, true);
+</pre>
+</li>
+</ol>
+
+
+<h2 id="get" name="get">Getting Record Details</h2>
+<p>To find all records and get their details:</p>
+
+<ol>
+<li>Get a single record.
+<p>Get a record handle when you know its ID:</p>
+
+<pre class="prettyprint">
+contacts_record_h record;
+const int ID = 2;
+
+contacts_db_get_record(_contacts_contact._uri, ID, &amp;record);
+</pre>
+</li>
+
+<li>Get record details.
+<p>To get the details, use the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_*</span> function with the record handle. The following example gets the contact display name:</p>
+
+<pre class="prettyprint">
+char * d_name;
+contacts_record_get_str(record, _contacts_contact.display_name, d_name);
+free(d_name);
+</pre>
+</li>
+
+<li>Get child record details.
+<p>When using one view, you sometimes need details from another view. For example, you get records using the contact view and need to get the first or last name. If you want to get the name, get the record from the name view using the <span style="font-family: Courier New,Courier,monospace;">contacts_db_get_child_record_at_p()</span> function:</p>
+
+<pre class="prettyprint">
+contacts_record_h child_record;
+contacts_record_get_child_record_at_p(record, _contacts_contact.name, 0, &amp;child_record);
+// In child_record, you have record form name view
+char *f_name;
+contacts_record_get_str(record, _contacts_name.first_name, f_name);
+free(f_name);
+</pre>
+</li>
+
+<li>Get parent record details.
+<p>When using the child view, you sometimes need to get details of the parent. For example, you get records using the name view and want to know whether the contact has an email address. To get the parent details, get its ID in almost every view with <span style="font-family: Courier New,Courier,monospace;">contact_id</span>. After that, get the parent record:</p>
+
+<pre class="prettyprint">
+contacts_record_h parent_record;
+int parent_id;
+contacts_record_get_int(record, _contacts_name.contact_id, &amp;parent_id);
+contacts_db_get_child_record(_contacts_contact._uri, parent_id, &amp;parent_record);
+// In parent_record, get bool
+bool h_email;
+contacts_record_get_bool(parent_record, _contacts_contact.has_email, &amp;h_email);
+</pre>
+</li>
+
+<li>Get details through a structure.
+<ol><li><p>For more record details, use a structure to get them.</p>
+<p>The memory for the record data is allocated and the data is copied from the record by functions listed in the following step.</p>
+
+<pre class="prettyprint">
+gldata = _create_gl_data(record);
+char * number = gldata-&gt;number;
+
+typedef struct _contact_gl_data 
+{
+&nbsp;&nbsp;&nbsp;int id;
+&nbsp;&nbsp;&nbsp;char *first;
+&nbsp;&nbsp;&nbsp;char *last;
+&nbsp;&nbsp;&nbsp;char *number;
+&nbsp;&nbsp;&nbsp;char *image_path;
+} contact_gl_data_t;
+
+static contact_gl_data_t *_create_gl_data(contacts_record_h r_contact)
+{
+&nbsp;&nbsp;&nbsp;contact_gl_data_t *data;
+&nbsp;&nbsp;&nbsp;data = malloc(sizeof(contact_gl_data_t));
+&nbsp;&nbsp;&nbsp;memset(data, 0x0, sizeof(contact_gl_data_t));
+
+&nbsp;&nbsp;&nbsp;if (! _get_contact_id(r_contact, &amp;data-&gt;id)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;if (!_get_contact_number(r_contact, &amp;data-&gt;number)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (!_get_contact_first(r_contact, &amp;data-&gt;first)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;number);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (!_get_contact_last(r_contact, &amp;data-&gt;last)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;number);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;first);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;if (!_get_contact_image(r_contact, &amp;data-&gt;image_path)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;number);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;first);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data-&gt;last);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return data;
+}
+</pre>
+</li>
+
+<li>Retrieve record data into the structure.
+<p>Contacts are organized in a parent-child structure. To access specified data from a record, get the child responsible for the requested type using the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_child_record_at_p()</span> function (for the property lists, see <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__VIEW__MODULE.html">View/Property</a>). Any data returned by a function with the <span style="font-family: Courier New,Courier,monospace;">_p</span> suffix must not be passed to <span style="font-family: Courier New,Courier,monospace;">free()</span>.</p>
+
+<ul><li><p>To get the name details, you need to get the <span style="font-family: Courier New,Courier,monospace;">_contacts_contact.name</span> (representing the child) from the <span style="font-family: Courier New,Courier,monospace;">r_contact</span> parent. Both structures have the <span style="font-family: Courier New,Courier,monospace;">contacts_record_h</span> type. After obtaining a child record, get the desired data from it using the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_str()</span> function.</p>
+
+<pre class="prettyprint">
+static bool _get_contact_last(contacts_record_h r_contact, char **last)
+{
+&nbsp;&nbsp;&nbsp;contacts_record_h r_name;
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_child_record_at_p(r_contact,  _contacts_contact.name, 0, &amp;r_name);
+&nbsp;&nbsp;&nbsp;…
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(r_name, _contacts_name.last, last);
+}
+</pre></li>
+
+<li><p>The record ID is obtained directly from the parent record. An ID is a unique number representing the record key in the database. You can manipulate a record with functions, such as <span style="font-family: Courier New,Courier,monospace;">contacts_db_get_record()</span> or <span style="font-family: Courier New,Courier,monospace;">contacts_db_delete_records()</span>, if you know their ID.
+
+<pre class="prettyprint">
+static bool _get_contact_id(contacts_record_h r_contact, int *id)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_int(r_contact, _contacts_contact.id, id);
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+
+<li><p>To get a contact number, check whether it exists using the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_bool()</span> function. If it exists, use the various <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__QUERY__MODULE.html">Query</a>  and <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__FILTER__MODULE.html">Filter</a> functions from the Contacts API to make a query to get a list. At the end, any data returned by a function not containing the <span style="font-family: Courier New,Courier,monospace;">_p</span> suffix must be freed.</p>
+<ul><li>You can get a list of all numbers and filter to get the default:
+<pre class="prettyprint">
+static bool _get_contact_number(contacts_record_h r_contact, char **number)
+{
+&nbsp;&nbsp;&nbsp;int id;
+&nbsp;&nbsp;&nbsp;int error_code;
+&nbsp;&nbsp;&nbsp;contacts_record_h r_number;
+&nbsp;&nbsp;&nbsp;contacts_query_h query = NULL;
+&nbsp;&nbsp;&nbsp;contacts_filter_h filter = NULL;
+&nbsp;&nbsp;&nbsp;contacts_list_h list = NULL;
+
+&nbsp;&nbsp;&nbsp;if (!_get_contact_id(r_contact, &amp;id))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;
+
+
+&nbsp;&nbsp;&nbsp;bool has_number;
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_bool(r_contact, _contacts_contact.has_phonenumber, &amp;has_number);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_query_create(_contacts_number._uri, &amp;query);
+
+&nbsp;&nbsp;&nbsp;unsigned int fields[] = { _contacts_number.number };
+&nbsp;&nbsp;&nbsp;error_code = contacts_query_set_projection(query, fields, 1);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_filter_create(_contacts_number._uri, &amp;filter);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_filter_add_int(filter, _contacts_number.contact_id, CONTACTS_MATCH_EXACTLY, id);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_AND);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_filter_add_bool(filter, _contacts_number.is_default, true);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_query_set_filter(query, filter);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_db_get_records_with_query(query, 0, 1, &amp;list);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_get_current_record_p(list, &amp;r_number);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(r_number, _contacts_number.number, number);  
+
+&nbsp;&nbsp;&nbsp;contacts_query_destroy(query);
+&nbsp;&nbsp;&nbsp;contacts_filter_destroy(filter);
+&nbsp;&nbsp;&nbsp;contacts_list_destroy(list, true);
+}
+</pre></li>
+
+<li><p>You can directly access the default number:</p>
+
+<pre class="prettyprint">
+static bool _get_contact_number(contacts_record_h r_contact, char **number)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+&nbsp;&nbsp;&nbsp;contacts_record_h r_number;
+    
+&nbsp;&nbsp;&nbsp;bool has_number;
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_bool(r_contact, _contacts_contact.has_phonenumber, &amp;has_number);
+
+&nbsp;&nbsp;&nbsp;if (!has_number) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*number = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_child_record_at_p(r_contact, _contacts_contact.number, 0, &amp;r_number);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(r_number, _contacts_number.number, number);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre>
+<p>To get a second number, change the third parameter (<span style="font-family: Courier New,Courier,monospace;">contacts_record_get_child_record_at_p</span>) from 0 to 1.</p></li></ul></li>
+
+
+<li><p>An image can be obtained directly from the parent record:</p>
+
+<pre class="prettyprint">
+static bool _get_contact_image(contacts_record_h r_contact, char **image_path)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(r_contact, _contacts_contact.image_thumbnail_path, image_path);
+
+&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;Thumb path: \&#39;%s\&#39;&quot;, *image_path);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+
+<li><p>Get the first name as the last name:</p>
+
+<pre class="prettyprint">
+static bool _get_contact_first(contacts_record_h r_contact, char **first)
+{
+&nbsp;&nbsp;&nbsp;contacts_record_h r_name;
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_child_record_at_p(r_contact, _contacts_contact.name, 0, &amp;r_name);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_record_get_str(r_name, _contacts_name.first, first);
+}
+</pre></li></ul>
+</li></ol></li>
+
+<li>Clean up.
+<ol><li><p>Destroy the <span style="font-family: Courier New,Courier,monospace;">contacts_list_h</span> list.</p>
+<p>When the access to the database is no longer needed, disconnect from the service using the <span style="font-family: Courier New,Courier,monospace;">contact_disconnect()</span> function.</p>
+
+<pre class="prettyprint">
+error_code = contacts_list_destroy(list, true);
+
+error_code = contacts_disconnect();
+</pre></li>
+
+<li><p>Destroy all other used handles as well:</p>
+
+<pre class="prettyprint">
+contacts_query_destroy(query); // If query has been used
+contacts_filter_destroy(filter); // If filter has been used
+</pre></li></ol>
+</li>
+</ol>
+
+<h2 id="list" name="list">Handling Lists</h2>
+<p>When you need to access multiple records, you can get all records one by one or filter them through contact properties.</p>
+
+<p>To handle lists and filters, and to sort records:</p>
+
+<ol>
+<li>Get a record list.
+<ul><li>To get all records:
+<p>The following function retrieves all records and returns the result list. After all operations, the list must be released with the <span style="font-family: Courier New,Courier,monospace;">contacts_list_destroy()</span> function.</p>
+
+<pre class="prettyprint">
+contacts_list_h list = NULL;
+
+contacts_db_get_all_records(_contacts_contact._uri, 0, 0, &amp;list);
+</pre>
+</li>
+<li>To filter and get specific records:
+<ol>
+<li>Create a query for a list.
+<p>To filter or sort records, you need a record list and query:</p>
+
+<pre class="prettyprint">
+contacts_list_h list = NULL;
+contacts_query_h query = NULL;
+
+contacts_query_create(_contacts_name._uri, &amp;query);
+</pre>
+</li>
+
+<li>Create a filter for the query.
+<p>Before getting contacts, filter the list. It is possible to filter by various parameters, such as the name view.</p>
+
+<pre class="prettyprint">
+contacts_filter_h filter = NULL;
+
+contacts_filter_create (_contacts_name._uri, &amp;filter);
+</pre>
+
+<p>The first parameter defines in which view to place the filter. To filter by the first and last name, use the <span style="font-family: Courier New,Courier,monospace;">_contacts_name</span> filter. The first parameter of the <span style="font-family: Courier New,Courier,monospace;">contacts_query_create()</span> function must be the same parameter as in the filter to be appended. For more information on views, see the <a href="../../../..//org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__VIEW__MODULE.html">View/Property</a> tables.</p></li>
+
+<li><p>Add a condition, such as the following where only contacts beginning with &quot;Za&quot; are shown:</p>
+
+<pre class="prettyprint">
+contacts_filter_add_str(filter, _contacts_name.last_name, CONTACTS_MATCH_CONTAINS, &quot;Za&quot;);
+</pre>
+
+<p>To receive contacts which starts by a given string, the <span style="font-family: Courier New,Courier,monospace;">CONTACTS_MATCH_CONTAINS</span> parameter has to be set. Use the parameter if you need to get records which contain the given string anywhere.</p></li>
+
+<li><p>To add more conditions, add operators between them. In this case, define the operator between conditions first:</p>
+
+<pre class="prettyprint">
+contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_AND);
+</pre>
+
+<p>After that you can add another condition. If you need to use a logic expression &quot;C1 AND (C2 OR C3)&quot;, conditions 2 and 3 must be in another filter to have logical brackets. The following example shows a filter that passes through contacts with a first name starting with &quot;Ada&quot; or &quot;Igo&quot;:</p>
+
+<pre class="prettyprint">
+contacts_filter_h n_filter = NULL;
+contacts_filter_create (_contacts_name._uri, &amp;n_filter); 
+contacts_filter_add_str(n_filter, _contacts_name.first_name, CONTACTS_MATCH_STARTSWITH, &quot;Ada&quot;);
+contacts_filter_add_operator(n_filter, CONTACTS_FILTER_OPERATOR_OR);
+contacts_filter_add_str(n_filter, _contacts_name.first_name, CONTACTS_MATCH_STARTSWITH, &quot;Igo”&quot;);
+</pre></li>
+
+<li><p>To add an extra filter to a parent filter:</p>
+
+<pre class="prettyprint">
+contacts_filter_add_filter(filter, n_filter);
+</pre>
+
+<p>The parent filter passes through contacts with a last name beginning with &quot;Za&quot; and a first name starting with &quot;Ada&quot; or &quot;Igo&quot;.</p></li>
+<li><p>Connect a filter with query:</p>
+
+<pre class="prettyprint">
+contacts_query_set_filter(query, filter);
+</pre></li></ol></li></ul>
+</li>
+
+<li>Sort a record list.
+<p>To sort records by any of its view details:</p>
+
+<pre class="prettyprint">
+contacts_query_set_sort(query, _contacts_name.first, true);
+</pre>
+
+<p>The first parameter is the query to be filtered, the second is the property to sort, and the last sets the ascending order.</p>
+</li>
+
+<li>Set projection to a list.
+<p>A projection allows you to query the data for specific properties of a record. It can reduce latency in case of a large database.</p>
+<p>To set a projection, use the <span style="font-family: Courier New,Courier,monospace;">contacts_query_set_projection()</span> function. The following example limits properties from the previous steps to the first and last name:</p>
+
+<pre class="prettyprint">
+unsigned my_projection[] = {_contacts_name.contact_id, _contacts_name.first, _contacts_name.last}
+contacts_query_set_projection(query, my_projection, sizeof(my_projection)/sizeof(int)); 
+</pre>
+
+<p>After filtering, such as getting numbers, there can be several records which differ only in a few detail types. When setting the projection, the results can contain identical records. To avoid these situations, use the distinction function:</p>
+
+<pre class="prettyprint">
+contacts_query_set_distinct(query, true);
+</pre>
+</li>
+
+<li>Get the record list with a query.
+<p>Get the list with the query:</p>
+
+<pre class="prettyprint">
+contacts_db_get_records_with_query(query, 0, 0, &amp;list);
+</pre>
+
+<p>The third parameter refers to limiting results. If 0 is passed, there are no limits. Release the list after all the operations.</p>
+</li>
+
+<li id="iterate" name="iterate">Iterate on the list and read the records.
+<p>The <span style="font-family: Courier New,Courier,monospace;">contacts_list_get_current_record_p()</span> function retrieves a record from the contacts list. The default current record is the first record.</p>
+
+<p>To iterate on a list, use the <span style="font-family: Courier New,Courier,monospace;">contacts_list_prev()</span>, <span style="font-family: Courier New,Courier,monospace;">contacts_list_next()</span>, <span style="font-family: Courier New,Courier,monospace;">contacts_list_first()</span>, and <span style="font-family: Courier New,Courier,monospace;">contacts_list_last()</span> functions.</p>
+
+  <table class="note"> 
+   <tbody> 
+    <tr> 
+     <th class="note">Note</th> 
+    </tr> 
+    <tr> 
+     <td class="note">Some functions have the <span style="font-family: Courier New,Courier,monospace;">_p</span> postfix. It means that the returned value must not be freed by the application, as it is a pointer to data in an existing record.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+<p>To read records:</p>
+
+<ul><li>To get only a few details:</p>
+
+<pre class="prettyprint">
+contacts_record_h record;
+
+while (contacts_list_get_current_record_p(list, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;// Get details
+&nbsp;&nbsp;&nbsp;char * disp_name;
+&nbsp;&nbsp;&nbsp;contacts_record_get_str(record, _contacts_contact.display_name, &amp;disp_name);
+&nbsp;&nbsp;&nbsp;free(disp_name);
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+} 
+</pre></li>
+
+<li><p>To get more details, use the following example, where the obtained records are passed to the <span style="font-family: Courier New,Courier,monospace;">_create_gl_data</span> function for further processing:</p>
+
+<pre class="prettyprint">
+contacts_record_h record;
+contact_gl_data_t *gldata = NULL;
+
+while (contacts_list_get_current_record_p(list, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;gldata = _create_gl_data(record);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+}
+</pre></li>
+
+<li><p>The previous examples work if you use the default (<span style="font-family: Courier New,Courier,monospace;">_contacts_contact</span>) view. If you use filtering in another view as shown in the filter example, and you want to use this structure (change view to default), use the following code:</p>
+
+<pre class="prettyprint">
+contacts_record_h record;
+contact_gl_data_t *gldata = NULL;
+
+while (contacts_list_get_current_record_p(list, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;int record_id;
+&nbsp;&nbsp;&nbsp;contacts_record_h c_record;
+&nbsp;&nbsp;&nbsp;contacts_record_get_int(record, _contacts_name._uri, &amp;contact_id);
+&nbsp;&nbsp;&nbsp;contacts_db_get_record(_contacts_contact._uri, contact_id, &amp;c_record);
+&nbsp;&nbsp;&nbsp;gldata = _create_gl_data(c_record);
+
+&nbsp;&nbsp;&nbsp;error_code = contacts_list_next(list);
+}
+</pre>
+
+<p>This way it is possible to switch to the default view from another (in a similar manner to in above example <span style="font-family: Courier New,Courier,monospace;">_contacts_name</span>).</p></li></ul>
+</li>
+
+<li>Insert the list to the database.
+<p>You can insert a whole list to the database. This can be useful when you have many records to create and want to insert them all at once.</p>
+
+<ol>
+<li>If you have a list, use it or create new one:
+
+<pre class="prettyprint">
+contacts_list_h list;
+contacts_list_create(&amp;list);
+</pre>
+</li>
+
+<li>Put records into the list:
+
+<pre class="prettyprint">
+contacts_list_add (list, record);
+</pre>
+</li>
+
+<li>Put the list into the database:
+
+<pre class="prettyprint">
+int *ids = NULL;
+unsigned int count = 0;
+contacts_db_insert_records(list, &amp;ids, &amp;count);
+printf (&quot;%d records inserted&quot;, count);
+free(ids);
+</pre>
+
+<p>This inserts entire list to database and gets the IDs of the inserted records.</p>
+</li>
+
+<li>Destroy the list:
+
+<pre class="prettyprint">
+contacts_list_destroy(list, true);
+</pre>
+</li>
+</ol>
+</li>
+</ol>
+
+
+
+<h2 id="delete" name="delete">Deleting Records</h2>
+<p>To delete records from the contact database, you need to know their ID:</p>
+
+<pre class="prettyprint">
+int id;
+// Get id
+int error = contacts_db_delete_record(_contacts_contact._uri, id);
+</pre>
+
+<p>If you only have the record handle, get the ID first:</p>
+
+<pre class="prettyprint">
+contacts_record_get_int(record, _contacts_contact.id, &amp;id);
+</pre>
+
+<h2 id="link" name="link">Linking Persons</h2>
+<p>Linking joins contacts and can be useful if there are several contacts assigned to one person.</p>
+<p>To link persons:</p>
+
+<ol>
+<li>Link a person to another person.
+<p>To link persons with the <span style="font-family: Courier New,Courier,monospace;">contacts_person_link_person()</span> function, you need the person ID. To get the person ID, use the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_int()</span> function.</p>
+
+<pre class="prettyprint">
+int first_person_id;
+contacts_record h record1;
+// Get first record
+int error_code = contacts_record_get_int(record1, _contacts_contact.person_id, &amp;first_person_id);
+
+contacts_record h record2;
+// Get second record
+error_code = contacts_record_get_int(record2, _contacts_contact.person_id, &amp;second_person_id); 
+
+contacts_person_link_person(first_person_id, second_person_id);
+</pre>
+
+<p>This links 2 contacts, which are available through record handles.</p>
+</li>
+
+<li>Set default properties.
+<p>Set default values from one of the linked contacts with the <span style="font-family: Courier New,Courier,monospace;">contacts_person_set_default_property()</span> function. The first parameter determines the detail to be set using the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__PERSON__MODULE.html#ga641465951ce76daa56bb430b37cc8d90">contacts_person_property_e</a> enum.</p>
+
+<p>To set a default number from one of the persons, you have to know its ID. Get the detail ID using the <span style="font-family: Courier New,Courier,monospace;">contacts_record_get_child_record_at_p()</span> function, because you need to get the value from the <span style="font-family: Courier New,Courier,monospace;">_contact_number</span> view.</p>
+
+<pre class="prettyprint">
+contacts_record_h record;
+int record_number = -1;
+// Get record handle
+contacts_record_h record_number;
+error_code = contacts_record_get_child_record_at_p(record, _contacts_contact.number, 0, &amp;record_number);
+
+error_code = contacts_record_get_int(record_number, _contacts_number.id, &amp;number_id);
+
+error_code = contacts_record_destroy(record_number, true);
+
+// Use record_number variable
+error_code = contacts_person_set_default_property(CONTACTS_PERSON_PROPERTY_NUMBER, person_id, number_id);
+</pre>
+</li>
+
+<li>Get default properties.
+<p>Get the default property values of a person with the <span style="font-family: Courier New,Courier,monospace;">contacts_person_get_default_property</span> function:</p>
+
+<ol><li><p>Get the ID of the default email details:</p>
+
+<pre class="prettyprint">
+int person_email_number;
+error_code = contacts_person_get_default_property (CONTACTS_PERSON_PROPERTY_EMAIL, person_id, &amp;person_email_number);
+</pre></li>
+
+<li><p>Get the default email: </p>
+
+<pre class="prettyprint">
+int person_email_detail_number;
+error_code = contacts_person_get_default_property (CONTACTS_PERSON_PROPERTY_EMAIL, person_id, &amp;person_email_number);
+
+contacts_record_h email_record;
+error_code = contacts_db_get_record(_contacts_email._uri, person_email_detail_number, &amp;email_record);
+char * default_email;
+
+error_code = contacts_record_get_str_p(email_record, _contacts_email.email, &amp;default_email);
+
+// Use default_email
+
+error_code = contacts_record_destroy(email_record, true);
+</pre></li></ol>
+</li>
+
+<li>Unlink persons
+<p>To unlink a contact with the <span style="font-family: Courier New,Courier,monospace;">contacts_person_unlink_contact()</span> function:</p>
+
+<ol><li><p>If you have the record handle, get the contact ID: </p>
+
+<pre class="prettyprint">
+int person_id;
+contacts_record_get_int(record, _contacts_contact.id, &amp;person_id);
+</pre></li>
+
+<li><p>Unlink a contact from another and get its ID:</p>
+
+<pre class="prettyprint">
+int unlinked_person_id;
+int contacts_person_unlink_contact(person_id,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contact_id,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;unlinked_person_id)
+</pre></li></ol>
+</li>
+</ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorials</a></li>
+	<li><a href="../../guide/social/contact.htm">Contacts Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

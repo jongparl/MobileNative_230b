@@ -1,0 +1,539 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+<title>&lt;service-application&gt; Element</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>&lt;service-application&gt; Element</h1> 
+<p>The <span style="font-family: Courier New,Courier,monospace">&lt;service-application&gt;</span> element represents the manifest information of a Tizen native application without a graphical user interface (GUI).</p>
+
+
+  <table border="1"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">&lt;service-application&gt;</span> element</th> 
+    </tr>
+<tr>
+<td> <p>Manifest information of a Tizen native service application.</p>
+<p>For more information on the relationship between the elements, see the <a href="manifest_element_hierarchy.htm">element hierarchy</a>.</p> <p><strong>Occurrences:</strong> </p> 
+      <ul>
+<li>1 or more (optional)</li> 
+      </ul>
+<p><strong>Expected children (in the following order):</strong> </p>      
+	    <table border="1" id="feature"><tbody>
+<tr>
+<th width="50%">Child element</th> 
+     <th>Occurrences</th> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="label_element.htm">&lt;label&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="icon_element.htm">&lt;icon&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="appcontrol_element.htm">&lt;app-control&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="metadata_element.htm">&lt;metadata&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="permission_element.htm">&lt;permission&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace"><a href="datacontrol_element.htm">&lt;datacontrol&gt;</a></span></td> 
+     <td>1 or more (optional)</td> 
+    </tr>
+</tbody></table>
+<p><strong>Attributes:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace"><a href="#appid">appid</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#exec">exec</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#multiple">multiple</a></span></li> 
+	   <li><span style="font-family: Courier New,Courier,monospace"><a href="#nodisplay">nodisplay</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#taskmanage">taskmanage</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#enabled">enabled</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#type">type</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#categories">categories</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#extraid">extraid</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#hw-acceleration">hw-acceleration</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#screen-reader">screen-reader</a></span></li> 
+	   <li><span style="font-family: Courier New,Courier,monospace"><a href="#recentimage">recentimage</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#mainapp">mainapp</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#indicatordisplay">indicatordisplay</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#portrait-effectimage">portrait-effectimage</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#landscape-effectimage">landscape-effectimage</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#guestmode-visibility">guestmode-visibility</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#effectimage-type">effectimage-type</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#launchcondition">launchcondition</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#permission-type">permission-type</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#component-type">component-type</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#submode">submode</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#submode-mainid">submode-mainid</a></span></li> 
+	   <li><span style="font-family: Courier New,Courier,monospace"><a href="#process-pool">process-pool</a></span></li>
+	   <li><span style="font-family: Courier New,Courier,monospace"><a href="#auto-restart">auto-restart</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#on-boot">on-boot</a></span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#multi-instance">multi-instance</a></span></li>
+       <li><span style="font-family: Courier New,Courier,monospace"><a href="#multi-instance-mainid">multi-instance-mainid</a></span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="appid"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">appid</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Application unique ID. This can be used at launching or terminating the application explicitly. </p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="exec"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">exec</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Application executable file path.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="multiple"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">multiple</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application can be launched as multiple.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">false</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="nodisplay"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">nodisplay</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is shown in the app-tray.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">false</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="taskmanage"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">taskmanage</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is shown in the task manager.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">false</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+
+<table border="1" id="enabled"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">enabled</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is enabled.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">false</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="type"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Tizen application type.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">capp</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">c++app</span></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">webapp</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="categories"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">categories</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Categories the Tizen application belongs to.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="extraid"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">extraid</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Extra ID for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="hw-acceleration"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">hw-acceleration</span> attribute</th> 
+    </tr>
+<tr>
+<td>Property based on which hardware rendering is used by the application. 
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">use-GL</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">not-use-GL</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">use-system-setting</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="screen-reader"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">screen-reader</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the screen is enabled.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">screen-reader-on</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">screen-reader-off</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">use-system-setting</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="recentimage"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">recentimage</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Image for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">icon</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">capture</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="mainapp"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">mainapp</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the executable file is the main application executable file for the Tizen package.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="indicatordisplay"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">indicatordisplay</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the indicator display is enabled.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="portrait-effectimage"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">portrait-effectimage</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Portrait effect image or edj path.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="landscape-effectimage"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">landscape-effectimage</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Landscape effect image or edj path.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="effectimage-type"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">effectimage-type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Effect image type before the application is launched.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="guestmode-visibility"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">guestmode-visibility</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Guest mode visibility for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="launchcondition"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">launchcondition</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the Tizen application has launch conditions.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="permission-type"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">permission-type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Permission type for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="component-type"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">component-type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is a UI or service application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="submode"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">submode</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the sub mode is enabled for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="submode-mainid"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">submode-mainid</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Sub mode ID for the Tizen application.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="process-pool"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">process-pool</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application uses the process pool for the performance enhancement.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="auto-restart"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">auto-restart</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is relaunched automatically if it is terminated abnormally.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="on-boot"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">on-boot</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application is launched automatically on device booting time or application installation time.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="multi-instance"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">multi-instance</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Indicates whether the application can have multi instance.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">true</span></li> 
+<li><span style="font-family: Courier New,Courier,monospace">false</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="multi-instance-mainid"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">multi-instance-mainid</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>ID for the multi instance.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	 <ul>
+<li><span style="font-family: Courier New,Courier,monospace">String</span></li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<p><strong>For example:</strong></p>
+<pre class="prettyprint">&lt;service-application appid=&quot;org.tizen.servicenew&quot; auto-restart=&quot;false&quot; exec=&quot;servicenew&quot; multiple=&quot;false&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nodisplay=&quot;true&quot; on-boot=&quot;true&quot; taskmanage=&quot;false&quot; type=&quot;capp&quot;&gt;
+&nbsp;&nbsp;&nbsp;&lt;label&gt;servicenew&lt;/label&gt;
+&nbsp;&nbsp;&nbsp;&lt;label xml:lang=&quot;eng-GB&quot;&gt;testlabel&lt;/label&gt;
+&nbsp;&nbsp;&nbsp;&lt;icon&gt;servicenew.png&lt;/icon&gt;
+&nbsp;&nbsp;&nbsp;&lt;app-control&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;operation name=&quot;http://tizen.org/appcontrol/operation/compose&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mime name=&quot;application/pdf&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;uri name=&quot;testuristring&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;/app-control&gt;
+&nbsp;&nbsp;&nbsp;&lt;metadata key=&quot;testkey1&quot; value=&quot;testvalue2&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&lt;metadata key=&quot;testkey&quot; value=&quot;testvalue&quot;/&gt;
+&lt;/service-application&gt;
+</pre>  
+  
+  <h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="manifest_element.htm">&lt;manifest&gt; Element</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1">
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

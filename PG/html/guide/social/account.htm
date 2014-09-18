@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Account Management</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Account Management</h1> 
+  <p>An account is a collection of information representing the user of a specific provider. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__ACCOUNT__MANAGER__MODULE.html">Account Manager</a> API provides functions for managing and accessing accounts.</p> 
+  <p>The main features of the Account Manager API include:
+</p> 
+  <ul> 
+   <li>Creating and managing accounts</li> 
+   <li>Retrieving account information</li>
+   <li>Receiving account change notifications</li> 
+  </ul> 
+  <table class="note"> 
+   <tbody> 
+    <tr> 
+     <th class="note">Note</th> 
+    </tr> 
+    <tr> 
+     <td class="note">To add, update, or remove an account, you must <a href="#provider">register your account provider</a> for all your applications belonging to the same package.</td> 
+    </tr> 
+   </tbody> 
+  </table>
+  
+  <p>The <span style="font-family: Courier New,Courier,monospace">account.h</span> header file handles account-related information. The following table lists the account properties that can be modified.</p> 
+  <table border="1"> 
+   <caption>
+     Table: Account properties 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Account property</th> 
+     <th>Property type</th> 
+    </tr> 
+    <tr> 
+     <td>User name</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span> <p>This is a mandatory property.</p></td> 
+    </tr> 
+    <tr> 
+     <td>Extended data</td> 
+     <td>Key-value string pairs <p>This is an optional property.</p></td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  
+ 
+  
+<h2 id="provider" name="provider">Account Providers</h2> 
+  <p>Account providers, such as Google and Facebook, represent specific service provider-related information or protocol that provides the user accounts. To add, update, or remove accounts, you must register a specific account provider in your application.</p> 
+  <p>To register an account provider, define the account provider information in the <strong>Account</strong> tab of the manifest editor, as described in the following table, and implement the <a href="#appcontrol">account application control</a>.</p> 
+  <table border="1"> 
+   <caption>
+     Table: Account provider properties 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Account property</th> 
+     <th>Data type</th> 
+     <th>Property type</th> 
+    </tr> 
+    <tr> 
+     <td>Multiple accounts support</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span> </td> 
+     <td><p>Indicates whether multiple accounts are supported.</p><p>This is a mandatory property.</p></td> 
+    </tr> 
+    <tr> 
+     <td>Icon</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span> </td> 
+     <td><p>File path of the account provider icon.</p> <p>The icon size is:</p>
+	 <ul>
+		<li>72 x 72 for Xhigh (HD)</li>
+		<li>48 x 48 for High (WVGA)</li>
+	 </ul>
+	 <p>Since the icon is used in <strong>Settings &gt; Accounts</strong>, place the icon in a shared directory.</p><p>This is a mandatory property.</p></td> 
+    </tr> 
+    <tr> 
+     <td>Small icon</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span> </td> 
+     <td><p>File path of the account provider icon.</p> <p>The icon size is:</p>
+	 <ul>
+		<li>45 x 45 for Xhigh (HD)</li>
+		<li>30 x 30 for High (WVGA)</li>
+	 </ul>
+	 <p>Since the small icon is used in other applications, place the icon in a shared directory.</p><p>This is a mandatory property.</p></td> 
+    </tr> 
+    <tr> 
+     <td>Display name</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span> </td> 
+     <td><p>Display name of the account provider.</p><p>This is a mandatory property.</p></td> 
+    </tr> 
+    <tr> 
+     <td>Capabilities</td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span></td> 
+     <td> <p>Capability of the account provider.</p><p>Several capabilities are defined for the account-manager in Tizen, regarding the related services:</p>
+      <ul> 
+       <li><span style="font-family: Courier New,Courier,monospace">http://tizen.org/account/capability/contact</span> <p>If you register this capability in the manifest file, the user using the contact application can see a list of accounts with the account of your service in the contact application.</p></li> 
+       <li><span style="font-family: Courier New,Courier,monospace">http://tizen.org/account/capability/calendar</span> <p>If you register this capability in the manifest file, the user using the calendar application can see a list of accounts with the account of your service in the calendar application.</p></li> 
+      </ul> <p>This is an optional property.</p></td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p>If the application has defined the account provider information and implements the appcontrol for the account provider, the account provider is automatically registered when the application is installed.</p>   
+  
+<h2 id="appcontrol" name="appcontrol">Account Application Control</h2> 
+  <p>The account application control, which allows the user to add and configure accounts, must be implemented in all applications that define an account provider. You are not required to define the application control information in the <strong>Application Control</strong> tab of the manifest editor.</p> 
+  
+  <p>This application control supports the <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/add</span> and <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/configure</span> operations.</p> 
+ 
+  <h3 id="ADD" name="ADD">ACCOUNT_ADD Operation</h3> 
+  <p>The <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/add</span> operation enables the user to add a new account for a specific account provider. With the operation, the login page for the specific account provider can be displayed. In <strong>Settings &gt; Accounts</strong>, if the account provider is clicked for adding a new account, this operation is launched.</p>
+  <h4 id="input" name="input">Input Data</h4> 
+  <p>There is no input data for this operation.</p> 
+  <h4 id="output" name="output">Output Data</h4> 
+  <p>The results of the operation are returned in the <span style="font-family: Courier New,Courier,monospace">OnAppControlCompleteResponseReceived()</span> event handler.</p> 
+  <p>The following table shows the output data for the <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/add</span> operation.</p> 
+  <table border="1"> 
+   <caption>
+     Table: Output data for the ACCOUNT_ADD operation 
+   </caption> 
+   <colgroup> 
+    <col /> 
+    <col /> 
+    <col /> 
+   </colgroup> 
+   <tbody> 
+    <tr> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Key</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Value</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/data/account/id</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">AccountId</span></td> 
+     <td>Account ID of the added account.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h3 id="CONFIG" name="CONFIG">ACCOUNT_CONFIGURE Operation</h3> 
+  <p>The <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/configure</span> operation enables the user to set account information, such as synchronization settings. The delete button must be included for removing accounts.</p> 
+  <p>In <strong>Settings &gt; Accounts</strong>, if the specific account is clicked for setting the account information, this operation is launched.</p>
+  <h4 id="input_data" name="input_data">Input Data</h4> 
+  <p>The following table shows the (key, value) pairs required in the input extra data for the <span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/operation/account/configure</span> operation.</p> 
+  <table border="1"> 
+   <caption>
+     Table: Input data for the ACCOUNT_CONFIGURE operation 
+   </caption> 
+   <colgroup> 
+    <col /> 
+    <col /> 
+    <col /> 
+   </colgroup> 
+   <tbody> 
+    <tr> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Key</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Value</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/appcontrol/data/account/id</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">AccountId</span></td> 
+     <td>Account ID for setting account information.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h4 id="output" name="output">Output Data</h4> 
+  <p>There is no output data for this operation, but the <span style="font-family: Courier New,Courier,monospace">OnAppControlCompleteResponseReceived()</span> event handler must be called.</p>
+  
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="social.htm">Social Programming Guide</a></li> 
+   <li><a href="../../tutorials/social_tutorial/account_tutorial.htm">Account Tutorial</a></li> 
+  </ul> 
+
+  <div id="footer">
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

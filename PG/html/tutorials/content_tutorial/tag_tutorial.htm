@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Tag Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Tag Tutorial</h1> 
+  
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__TAG__MODULE.html">Media Tag</a> API. Functions in this module enable you to get basic information about existing tags and manage tags associated with media information.</p>
+
+To learn about the Media Tag API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+<li><a href="#initialize">Initialization and Prerequisites</a></li>
+
+<li><a href="#tag_list">Getting the Tag List</a>
+<p>Get information about media tags.</p></li>
+</ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>Before retrieving tag information, open a connection to the Content Service by calling the <span style="font-family: Courier New,Courier,monospace">media_content_connect()</span> function:</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>Close the connection when the service is no longer needed:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+
+<h2 id="tag_list" name="tag_list">Getting the Tag List</h2>
+<p>To get the tag list:</p>
+
+<ol>
+<li>Register a callback function:
+<pre class="prettyprint">
+// glib library is used, so include glib.h
+
+bool gallery_tag_item_cb(media_tag_h tag, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_tag_h new_tag = NULL;
+&nbsp;&nbsp;&nbsp;media_tag_clone(&amp;new_tag, tag);
+
+&nbsp;&nbsp;&nbsp;GList **list = (GList**)user_data;
+&nbsp;&nbsp;&nbsp;*list = g_list_append(*list, new_tag);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+
+bool gallery_media_item_cb(media_info_h media, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_info_h new_media = NULL;
+&nbsp;&nbsp;&nbsp;media_info_clone(&amp;new_media, media);
+
+&nbsp;&nbsp;&nbsp;GList **list = (GList**)user_data;
+&nbsp;&nbsp;&nbsp;*list = g_list_append(*list, new_media);
+
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre></li>
+<li>After getting the tag information which is already set, you can import individual media information.
+
+<p>Get a tag and media list using a tag ID:</p>
+<pre class="prettyprint">
+media_tag_h tag_handle = NULL;
+GList *tag_list = NULL;
+GList *media_list_in_tag = NULL;
+
+ret = media_tag_foreach_tag_from_db (filter, gallery_tag_item_cb, &amp;tag_list);
+
+if (ret != MEDIA_CONTENT_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;media_tag_foreach_tag_from_db failed: %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;return ret;
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_tag_foreach_tag_from_db success&quot;);
+&nbsp;&nbsp;&nbsp;char *tag_name = NULL;
+&nbsp;&nbsp;&nbsp;int tag_id;
+&nbsp;&nbsp;&nbsp;filter_h filter = NULL;
+
+&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; g_list_length(tag_list); i++) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tag_handle = (media_tag_h)g_list_nth_data(tag_list, i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_tag_get_tag_id(tag_handle, &amp;tag_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_tag_get_name(tag_handle, &amp;tag_name);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_tag_foreach_media_from_db(tag_id, filter, gallery_media_item_cb, &amp;media_list_in_tag);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, LOG_TAG, &quot;media_tag_foreach_media_from_db failed: %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ret;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;media_tag_foreach_media_from_db success&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int j = 0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_info_h tag_media_handle;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *media_id = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *media_name = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *media_path = NULL;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;media_content_type_e media_type = MEDIA_CONTENT_TYPE_IMAGE;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (j = 0; j &lt; g_list_length(media_list_in_tag); j++) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tag_media_handle = (media_info_h)g_list_nth_data(media_list_in_tag, j);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_media_id(tag_media_handle, &amp;media_id);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_display_name(tag_media_handle, &amp;media_name);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_file_path(tag_media_handle, &amp;media_path);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret = media_info_get_media_type(tag_media_handle, &amp;media_type);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;[%s] media_id [%d] : %s&quot;, tag_name, j, media_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;[%s] media_type [%d] : %d&quot;, tag_name, j, media_type);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;[%s] media_name [%d] : %s&quot;, tag_name, j, media_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;[%s] media_path [%d] : %s&quot;, tag_name, j, media_path);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(media_id);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(media_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(media_path);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(tag_name);
+&nbsp;&nbsp;&nbsp;}
+}
+</pre></li>
+</ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__TAG__MODULE.html">Media Tag API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

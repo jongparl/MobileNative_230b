@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Clock Sample: Simple View</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+
+<h1>Clock Sample: Simple View</h1>
+
+<p>This sample creates a basic clock view that shows the time, current city, and date. This sample demonstrates how to use a box, container widget, and label to create a basic layout. The application includes the following widgets:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_window</span>: Basic canvas for rendering the screen</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_conformant</span>: Support indicator area</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_naviframe</span>: View manager widget</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_box</span>: Container widget for layouting other widgets</li>
+<li><span style="font-family: Courier New,Courier,monospace">Elm_label</span>: Basic widget for showing text with a tag</li>
+</ul> 
+
+<p>The following figure illustrates the main view of the simple clock sample application and its wireframe structure.</p>
+  
+  <p class="figure">Figure: Simple clock screen</p>
+<p style="text-align:center;"><img alt="Simple clock screen" src="../images/efl_simple_clock.png" /></p>
+
+<p>The basic clock is implemented in the <span style="font-family: Courier New,Courier,monospace">world_clock.c</span> file. In this application, the data structure for application is following:</p>
+
+<pre class="prettyprint">typedef struct appdata
+{
+&nbsp;&nbsp;&nbsp;// Save the window
+&nbsp;&nbsp;&nbsp;Evas_Object *win;
+} 
+appdata_s;
+</pre>
+
+<p>The information in <span style="font-family: Courier New,Courier,monospace">appdata</span> is used for the entire system. In this sample application, the information is related to handling the HW back key.</p> 
+
+<p>The  single callback function for application handling is <span style="font-family: Courier New,Courier,monospace">app_create</span>, and it only creates the basic GUI:</p>
+
+<pre class="prettyprint">int
+main(int argc, char *argv[])
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = {0,};
+&nbsp;&nbsp;&nbsp;app_event_callback_s event_callback = {0,};
+&nbsp;&nbsp;&nbsp;int ret = 0;
+
+&nbsp;&nbsp;&nbsp;event_callback.create = app_create;
+&nbsp;&nbsp;&nbsp;event_callback.terminate = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.pause = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.resume = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.app_control = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.language_changed = NULL;
+
+&nbsp;&nbsp;&nbsp;event_callback.low_memory = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.low_battery = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.device_orientation = NULL;
+&nbsp;&nbsp;&nbsp;event_callback.region_format_changed = NULL;
+
+&nbsp;&nbsp;&nbsp;ret = app_efl_main(&amp;argc, &amp;argv, &amp;event_callback, &amp;ad);
+&nbsp;&nbsp;&nbsp;if (ret != APP_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOGE(&quot;app_efl_main() is failed. err = %d&quot;, ret);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return ret;
+}
+
+static bool
+app_create(void *data)
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;create_base_gui(ad);
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace">create_base_gui()</span> function to create a basic layout with a window, conformant and naviframe. This is the basic layout in the Tizen mobile environment.</p>
+  
+<pre class="prettyprint">&nbsp;&nbsp;&nbsp;ad-&gt;win = elm_win_util_standard_add(PACKAGE, PACKAGE);
+&nbsp;&nbsp;&nbsp;elm_win_autodel_set(ad-&gt;win, EINA_TRUE);
+
+&nbsp;&nbsp;&nbsp;// Conformant
+&nbsp;&nbsp;&nbsp;conform = elm_conformant_add(ad-&gt;win);
+&nbsp;&nbsp;&nbsp;evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+&nbsp;&nbsp;&nbsp;elm_win_resize_object_add(ad-&gt;win, conform);
+&nbsp;&nbsp;&nbsp;evas_object_show(conform);
+
+&nbsp;&nbsp;&nbsp;// Naviframe
+&nbsp;&nbsp;&nbsp;nf = elm_naviframe_add(conform);
+&nbsp;&nbsp;&nbsp;elm_object_content_set(conform, nf);
+&nbsp;&nbsp;&nbsp;evas_object_show(nf);
+</pre>
+
+<p>After creating a basic layout, create the main layout for the application. In this sample, it contains a box with 3 labels. The labels show the time, city and date. To add the labels to the box, use the <span style="font-family: Courier New,Courier,monospace">elm_box_pack_end()</span> function.</p>
+  
+<p>After adding the labels, you must set their text. You can set or decorate the text in the labels using the <span style="font-family: Courier New,Courier,monospace">elm_object_text_set()</span> function. You can modify the text size (<span style="font-family: Courier New,Courier,monospace">font_size</span>), color (<span style="font-family: Courier New,Courier,monospace">color</span>), and thickness (<span style="font-family: Courier New,Courier,monospace">b</span>).</p>
+  
+  <pre class="prettyprint">
+&nbsp;&nbsp;&nbsp;// Add the box
+&nbsp;&nbsp;&nbsp;box = elm_box_add(nf);
+&nbsp;&nbsp;&nbsp;// Create a label
+&nbsp;&nbsp;&nbsp;label1 = elm_label_add(box);
+&nbsp;&nbsp;&nbsp;// Set text to the label with a tag
+&nbsp;&nbsp;&nbsp;elm_object_text_set(label1, &quot;&lt;font_size=110&gt;&lt;color=#000000&gt;07:26&lt;/color&gt;&lt;/font_size&gt;&quot;);
+&nbsp;&nbsp;&nbsp;// Add the label to the box
+&nbsp;&nbsp;&nbsp;elm_box_pack_end(box, label1);
+&nbsp;&nbsp;&nbsp;// Change label visibility
+&nbsp;&nbsp;&nbsp;evas_object_show(label1);
+
+&nbsp;&nbsp;&nbsp;// Repeat with other labels
+
+&nbsp;&nbsp;&nbsp;evas_object_show(box);
+</pre>
+
+<p>After creating the box with labels, set the box as a new view. You can also set the title of the application. These operations are handled by the naviframe using the <span style="font-family: Courier New,Courier,monospace">elm_naviframe_item_push()</span> function:</p>
+  
+  <pre class="prettyprint">elm_naviframe_item_push(nf, _(&quot;World Clock&quot;), NULL, NULL, box, &quot;basic&quot;);</pre>
+  
+<p>The parameters include the title, the name of the widget added as a new view, and the naviframe style. The basic style is used for a simple view with normal title.</p>
+  
+  <p>The following figure illustrates the widget hierarchy of the application.</p>
+
+  <p class="figure">Figure: Simple clock widgets</p>
+<p style="text-align:center;"><img alt="Simple clock widgets" src="../images/efl_simple_clock_tree.png" /></p>
+  
+<p>Set the HW key handler. The Tizen mobile environment supports the <strong>More</strong> and back keys, but only the back key is handled in this sample. </p> 
+<pre class="prettyprint">ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, keydown_cb, NULL);
+</pre> 
+
+<p>After setting the callback function, the <span style="font-family: Courier New,Courier,monospace">keydown_cb</span> callback is invokes when a key is pressed. The <span style="font-family: Courier New,Courier,monospace">keydown_cb</span> callback checks, whether the event comes from the back key. If so, the window is hidden:</p> 
+<pre class="prettyprint">static Eina_Bool
+keydown_cb(void *data , int type , void *event)
+{
+&nbsp;&nbsp;&nbsp;appdata_s *ad = data;
+&nbsp;&nbsp;&nbsp;Ecore_Event_Key *ev = event;
+&nbsp;&nbsp;&nbsp;if (!strcmp(ev-&gt;keyname, KEY_END)) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Hide the window
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elm_win_lower(ad-&gt;win);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ECORE_CALLBACK_DONE;
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return ECORE_CALLBACK_PASS_ON;
+}
+</pre>
+
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><script type="text/javascript" src="../snippet.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link href="../styles.css" rel="StyleSheet" type="text/css">
+  <link href="../snippet.css" rel="StyleSheet" type="text/css">
+  <title>Application Directory Policy</title>
+</head>
+
+<body onload="prettyPrint()">
+
+
+<h1>Application Directory Policy</h1>
+
+<p>All files in an application package have a relative path, but in case of an RPM, an absolute path is used.</p>
+
+<p>The following list shows the directory hierarchy:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">/bin</span>
+<p>Executable binary path</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">/lib</span>
+<p>Library path</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">/res</span>
+<p>Resource path</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">/data</span>
+<p>The application&#39;s own directory (read or write): no initial data</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">/shared/</span>
+<p>For sharing with other applications</p>
+<p>Sandboxing refers to an application package which can access its own directories only. It is used to share resources in the <span style="font-family: Courier New,Courier,monospace;">/shared</span> directories.</p>
+<p>In sandboxing, <a href="installer_smack.htm">SMACK</a> is used, and discretionary access control (DAC) is applied to application package directories and files. The 
+uid(root, app) is applied to directories and files.</p></li>
+</ul>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span> file and signature files are located in the application root directory.</p>
+
+<h2>Permissions</h2>
+<p>The installed packages have a user ID, a group ID, permissions, and a smack label.</p>
+
+  <p class="figure">Figure: Permissions</p> 
+  <p><img src="../images/permissions.png" alt="Permissions" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+
+<p>The following table shows the details of files and directories.</p>
+  
+<table>
+<caption>Table: Package data</caption>
+<tbody>
+<tr>
+ <th>Name</th>
+ <th>File or directory</th>
+ <th>Owner:Group</th>
+ <th>Permission</th>
+ <th>Smack label</th>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">bin</span></td>
+ <td rowspan="8">Directory</td>
+ <td>root:root</td>
+ <td rowspan="13">rwxr-xr-x</td>
+ <td rowspan="4">{PackageId}<sup>1</sup></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">data</span></td>
+ <td>app:app</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">lib</span></td>
+ <td rowspan="3">root:root</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">res</span></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">shared</span></td>
+ <td>_</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">shared/data</span></td>
+ <td>app:app</td>
+ <td>{Random}<sup>2</sup>, transmute</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">shared/res</span></td>
+ <td>root:root</td>
+ <td>_</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">shared/trusted</span></td>
+ <td>app:app</td>
+ <td>{Cert Hash}<sup>3</sup>, transmute</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">author-signature.xml</span></td>
+ <td rowspan="5">File</td>
+ <td rowspan="5">root:root</td>
+ <td rowspan="5">{PackageId}
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">signature1.xml</span></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">signature2.xml</span></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">signatureN.xml</span></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace;">tizen-manifest.xml</span></td>
+</tr>
+</tbody>
+</table>
+
+<p><sup>1</sup> The {PackageId} is the package ID, such as <span style="font-family: Courier New,Courier,monospace;">com.samsung.browser</span>.<br/>
+<sup>2</sup> {Random} means that there is a 28-byte random string created by the smack module.<br/>
+<sup>3</sup> {Cert Hash} refers to a 28-byte string where [Raw Hash] equals to Base64Encode (SHA1 author certificate in <span style="font-family: Courier New,Courier,monospace;">author-signature.xml</span>) and {Cert Hash} replaces &quot;/&quot; with &quot;#&quot; in [Raw Hash].</p>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="native_app_model.htm">Native Application Model</a></li> 
+  </ul>  
+ 
+<div id="footer"><hr size="1"><font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font></font></div>
+<!--start-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!--end-->
+
+
+</body>
+</html>

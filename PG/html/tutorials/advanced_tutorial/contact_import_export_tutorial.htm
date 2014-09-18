@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>vCard Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>vCard Tutorial</h1> 
+
+<p>This tutorial demonstrates how to you can import and export contacts from vCard files.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;contacts.h&gt;</span> header file, which has to be included in all applications using the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts</a> API.</p>
+
+<p>To learn about the Contacts API features, see the <a href="../../guide/social/contact.htm">Contacts Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#import">Importing from vCard</a>
+		<p>Import contacts from vCard files.</p></li>
+		<li><a href="#export">Exporting to vCard</a>
+		<p>Export contacts to vCard files.</p></li>
+   </ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>This tutorial uses contact database. To write and read records from the database, connect with the contact database using the <span style="font-family: Courier New,Courier,monospace;">contacts_connect()</span> function:</p>
+
+<pre class="prettyprint">
+int err = contacts_connect();
+</pre>
+
+<p>When the database connection is no longer needed, disconnect it:</p>
+
+<pre class="prettyprint">
+int err = contacts_disconnect();
+</pre>
+
+<h2 id="import" name="import">Importing from vCard</h2>
+<p>To import contacts from all vCard files from a specified directory:</p>
+
+<ul>
+<li>Get contact records from a stream.
+<p>To receive a records list from the vCard stream, use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_parse_to_contacts()</span> function. Afterwards, the received list is ready to use and you can perform the iteration on the list.</p>
+
+<p>The following example uses the stream in the vCard format and gets records from the received list: </p>
+
+<pre class="prettyprint">
+char * vcard_stream;
+// Get vCard stream
+contacts_list_h contacts_list;
+int err = contacts_vcard_parse_to_contacts(vcard_stream, contacts_list);
+
+while (contacts_list_get_current_record_p(list_import, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;// Get next records from file
+&nbsp;&nbsp;&nbsp;err = contacts_list_next(list_import);
+}
+err = contacts_list_destroy(list_import, true);
+</pre>
+
+<p>You can also use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_parse_to_contact_foreach()</span> function. With this function, you do have to get the file content manually, and it needs a callback:</p>
+
+<pre class="prettyprint">
+bool contacts_vcard_cb(contacts_record_h record, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;// Here you have record
+&nbsp;&nbsp;&nbsp;return true;
+}
+</pre>
+
+<p>The callback is called for each record from a vCard file. The iteration continues as long as the callback returns <span style="font-family: Courier New,Courier,monospace;">true</span>.</p>
+
+<p>To check how many records are contained in a vCard file, you can use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_get_entity_count()</span> function.</p>
+
+</li>
+
+<li>Import the vCard stream.
+<ul><li><p>Get all files with a .vcf extension from the directory. It can be done through dirent structures available in the <span style="font-family: Courier New,Courier,monospace;">&lt;dirent.h&gt;</span> header. The following example gets the path to every file in a directory:</p>
+
+<pre class="prettyprint">
+char folder[] = &quot;/tmp&quot;;
+DIR *dir = opendir(folder);
+struct dirent *pDirent = NULL;
+if (dir) 
+{
+&nbsp;&nbsp;&nbsp;while ((pDirent = readdir(dir)) != NULL) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (pDirent-&gt;d_type != DT_REG)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *extension = strrchr(pDirent-&gt;d_name, &#39;.&#39;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!extension || strcmp(extension, &quot;.vcf&quot;))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char * filepath = malloc(strlen(folder)+strlen(pDirent-&gt;d_name)+4);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sprintf(filepath, &quot;%s/%s&quot;, folder, pDirent-&gt;d_name);
+        
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Full path to file available through filepath string
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(filepath);
+&nbsp;&nbsp;&nbsp;}
+}
+</pre></li>
+
+<li><p>If you use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_parse_to_contacts()</span> function, you need to get the file stream manually. The following example shows how to get a records list from a file:</p>
+
+<pre class="prettyprint">
+FILE *fp = fopen(filepath, &quot;r&quot;);
+fseek(fp, 0, 2);
+int bufsize = ftell(fp);
+rewind(fp);
+if (bufsize &lt; 1)
+&nbsp;&nbsp;&nbsp;return 1;
+char * vcard_stream = malloc(sizeof(char) * (bufsize));
+memset(vcard_stream, &#39;\0&#39;, sizeof(vcard_stream));
+if (fp != NULL) 
+{
+&nbsp;&nbsp;&nbsp;char str[200];
+&nbsp;&nbsp;&nbsp;while(fgets(str, 200, fp) != NULL)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sprintf(vcard_stream+strlen(vcard_stream), &quot;%s&quot;, str);
+&nbsp;&nbsp;&nbsp;fclose(fp); 
+} 
+else
+&nbsp;&nbsp;&nbsp;// Error handling
+int err = contacts_vcard_parse_to_contacts(vcard_stream, contacts_list);
+free(vcard_stream);
+</pre></li>
+
+<li><p>You can also use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_parse_to_contact_foreach()</span>  function. It requires a callback and retrieves the file path instead of a file stream:</p>
+
+<pre class="prettyprint">
+bool contacts_vcard_cb(contacts_record_h record, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;// Here you have record
+&nbsp;&nbsp;&nbsp;return true;
+}
+
+err = contacts_vcard_parse_to_contact_foreach (filepath, contacts_vcard_cb, NULL);
+</pre></li>
+
+<li><p>Add a record in  a callback function:</p>
+
+<pre class="prettyprint">
+int id = -1;
+err = contacts_db_insert_record(record, &amp;id);
+</pre></li></ul>
+
+<p>The following example represents the full code of the previous step:</p>
+
+<pre class="prettyprint">
+char []folder = &quot;/path/&quot;;
+contacts_list_h list_import;
+contacts_record_h record;
+err = contacts_vcard_parse_to_contacts(content, &amp;list_import);
+
+while (contacts_list_get_current_record_p(list_import, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;int id = -1;
+&nbsp;&nbsp;&nbsp;err = contacts_db_insert_record(record, &amp;id); // Add to list
+
+&nbsp;&nbsp;&nbsp;contacts_list_next(list_import);
+}
+
+DIR *dir = opendir(folder);
+struct dirent *pDirent = NULL;
+if (dir) 
+{
+&nbsp;&nbsp;&nbsp;while ((pDirent = readdir(dir)) != NULL) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (pDirent-&gt;d_type != DT_REG)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *exte = strrchr(pDirent-&gt;d_name, &#39;.&#39;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!exte || strcmp(exte, &quot;.vcf&quot;))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;file %s\n&quot;, pDirent-&gt;d_name);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char * file_path = malloc(strlen(folder)+strlen(pDirent-&gt;d_name)+4);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sprintf(file_path, &quot;%s/%s&quot;, folder, pDirent-&gt;d_name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int count;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_vcard_get_entity_count(file_path, &amp;count);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Number of records in file: count
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (count &lt; 1)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FILE * fp = fopen(file_path, &quot;r&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (fseek(fp, 0, 2) != 0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int bufsize = ftell(fp);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewind(fp);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;file size: %i\n&quot;, bufsize); 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (bufsize &lt; 1)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char * vcard_stream = malloc(sizeof(char) * (bufsize));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;memset(vcard_stream, &#39;\0&#39;, sizeof(vcard_stream));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (fp != NULL) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char str[150];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(fgets(str, 150, fp) != NULL)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sprintf(vcard_stream+strlen(vcard_stream), &quot;%s&quot;, str);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fclose(fp);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Here import
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contacts_list_h list_import;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err = contacts_vcard_parse_to_contacts(vcard_stream, &amp;list_import);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (err != 0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts_vcard_parse_to_contacts failed: %d\n&quot;, err);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(vcard_stream);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (contacts_list_get_current_record_p(list_import, &amp;record) == 0) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int id = -1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err = contacts_db_insert_record(record, &amp;id); // Add to list
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (err != 0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts_list_add failed&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err = contacts_list_next(list_import);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err = contacts_list_destroy(list_import, true);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (err != 0) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;contacts_list_destroy failed: %d\n&quot;, err);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free (file_path);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;closedir(dir);
+}
+</pre>
+</li>
+</ul>
+
+<h2 id="export" name="export">Exporting to vCard</h2>
+<p>To export your contacts to a vCard file:</p>
+
+<ol>
+<li>Export contacts to a file.
+<ul><li><p>To export a contact from the <span style="font-family: Courier New,Courier,monospace;">_contacts_contact</span> view to the vCard format, use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_make_from_contact()</span> function.</p></li>
+
+
+<li><p>To export details from the <span style="font-family: Courier New,Courier,monospace;">_contacts_person</span> view, use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_make_from_person()</span> function. If you need to export details from the <span style="font-family: Courier New,Courier,monospace;">_contacts_my_profile</span> view, use the <span style="font-family: Courier New,Courier,monospace;">contacts_vcard_make_from_my_profile</span> function.</p></li></ul>
+
+<p>The following example uses the <span style="font-family: Courier New,Courier,monospace;">_contacts_contact</span> view, but the use of the other views is the same:</p>
+
+<pre class="prettyprint">
+contacts_record_h contact;
+// Get record to contacts_record_h
+char *vcard_stream;
+int err = contacts_vcard_make_from_contact(contact, &amp;vcard_stream);
+
+// Stream in vCard format is now in vcard_stream
+free(vcard_stream);
+</pre></li>
+
+<li><p>Write to a file:</p>
+
+<pre class="prettyprint">
+FILE * file = fopen(&quot;/path/contacts.vcf&quot;, &quot;w&quot;);
+fwrite(vcard_stream, 1, strlen(vcard_stream), file);
+fclose(file);
+</pre></li></ol>
+
+
+<p>The following example shows how to get all records from a database and put them into a single file.</p>
+<p>Get the list of all records using the <span style="font-family: Courier New,Courier,monospace;">contacts_db_get_all_records()</span> function and the current records using the <span style="font-family: Courier New,Courier,monospace;">contacts_list_get_current_record_p()</span> function. Get the vCard stream and write to the file in a <span style="font-family: Courier New,Courier,monospace;">while</span> loop:</p>
+
+<pre class="prettyprint">
+char file_path[] = &quot;/path/contacts.vcf&quot;;
+contacts_list_h list = NULL;
+err = contacts_db_get_all_records(_contacts_contact._uri, 0, 0, &amp;list);
+
+contacts_record_h record;
+FILE * file = fopen(file_path, &quot;w&quot;);
+
+while (contacts_list_get_current_record_p(list, &amp;record) == 0) 
+{
+&nbsp;&nbsp;&nbsp;err = contacts_vcard_make_from_contact(record, &amp;vcard_stream);
+&nbsp;&nbsp;&nbsp;// Save to file
+&nbsp;&nbsp;&nbsp;fwrite(vcard_stream, 1, strlen(vcard_stream), file);
+&nbsp;&nbsp;&nbsp;free(vcard_stream);
+&nbsp;&nbsp;&nbsp;err = contacts_list_next(list);
+}
+fclose(file);
+contacts_list_destroy(list, true);
+</pre>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorial</a></li>
+	<li><a href="../../guide/social/contact.htm">Contacts Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

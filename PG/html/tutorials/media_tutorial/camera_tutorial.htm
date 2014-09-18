@@ -1,0 +1,453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <script type="text/javascript" src="../../snippet.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+  <title>Camera Tutorial</title>
+ </head>
+ <body onload="prettyPrint()">
+  <!--<div id="banner">
+Tizen</div>-->
+
+<h1>Camera Tutorial</h1>
+
+<p>This tutorial demonstrates how you can start a camera preview and take a photo. This tutorial also demonstrates how you can configure a camera by setting selected attributes.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;camera.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html">Camera API</a>.</p>
+
+<p>To learn about the Camera API features, see the <a href="../../guide/media/camera.htm">Camera Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#photo">Taking a Photo</a>
+  <p>Start a camera preview and take a photo.</p>
+ </li>
+ <li><a href="#attributes">Setting Camera Attributes</a>
+  <p>Set the camera preview, zoom, and brightness attributes.</p>
+ </li>
+ <li><a href="#release">Releasing Resources</a>
+  <p>Stop the camera, unregister the callback functions, and destroy the camera handle and release all its resources.</p>
+ </li>
+
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Before you can start a camera preview or take a photo, you must:</p>
+
+<ol>
+ <li>Create a handle for the camera, and configure the camera.</li>
+ <li>Register callback functions for handling the camera preview and camera auto-focus.</li>
+</ol>
+
+<h3 id="configure" name="configure">Creating and Configuring a Camera</h3>
+
+<ol>
+
+<li>
+
+<p>Create a structure for storing the global data related to the camera handle. In this tutorial, the <span style="font-family: Courier New,Courier,monospace">camdata</span> structure is used to store the <span style="font-family: Courier New,Courier,monospace">g_camera</span> variable, which is the camera handle.</p>
+
+<pre class="prettyprint">typedef struct _camdata
+{
+&nbsp;&nbsp;&nbsp;int g_preview_win;
+&nbsp;&nbsp;&nbsp;camera_h g_camera; // Camera handle
+}
+camdata;
+
+static camdata cam_data;</pre>
+
+</li>
+
+<li>
+
+<p>Create 2 auxiliary variables to control whether taking photos (<span style="font-family: Courier New,Courier,monospace">g_enable_shot</span>) and auto-focusing (<span style="font-family: Courier New,Courier,monospace">g_enable_focus</span>) are allowed. These variables are used in the <span style="font-family: Courier New,Courier,monospace">_camera_preview_cb()</span> and <span style="font-family: Courier New,Courier,monospace">_camera_focus_cb()</span> functions.</p>
+
+<pre class="prettyprint">static bool g_enable_shot = false;
+static bool g_enable_focus = true;</pre>
+
+</li>
+
+<li>
+
+<p>Create a handle for the camera by using the <span style="font-family: Courier New,Courier,monospace">camera_create()</span> function:</p>
+
+<pre class="prettyprint">int error_code = 0;
+
+// Create camera handle
+error_code = camera_create(CAMERA_DEVICE_CAMERA0, cam_data.g_camera);
+if (error_code == CAMERA_ERROR_NONE) 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, &quot;Camera&quot;, &quot;error code = %d&quot;, error_code);
+} 
+else 
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, &quot;Camera&quot;, &quot;error code = %d&quot;, error_code);
+}</pre>
+
+
+</li>
+
+<li>
+
+<p>Check the current state of the camera by using the <span style="font-family: Courier New,Courier,monospace">camera_get_state()</span> function:</p>
+
+<pre class="prettyprint">camera_state_e state;
+
+// Check camera state after create
+error_code = camera_get_state(cam_data.g_camera, &amp;state);
+</pre>
+
+
+<p>The returned state is one of the values defined in the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html#ga28cde1b92417f9ce43dde605ed822cde">camera_state_e</a> enumeration. If the state is not <span style="font-family: Courier New,Courier,monospace">CAMERA_STATE_CREATED</span>, reinitialize the camera.</p>
+
+</li>
+
+<li>
+
+<p>Set the image quality by using the <span style="font-family: Courier New,Courier,monospace">camera_attr_set_image_quality()</span> function:</p>
+
+<pre class="prettyprint">error_code = camera_attr_set_image_quality(cam_data.g_camera, 100);
+</pre>
+
+</li>
+
+<li>
+
+<p>Set the display handle for showing preview images by using the <span style="font-family: Courier New,Courier,monospace">camera_set_display()</span> function:</p>
+
+<pre class="prettyprint">
+appdata_s *ad = data;
+
+// struct appdata *ad = data;
+Evas_Object *win = NULL;
+// Create window
+win = create_win(PACKAGE);
+if (win == NULL) 
+{
+&nbsp;&nbsp;&nbsp;return -1;
+}
+ad-&gt;win = win;
+// Create evas image object for Evas surface
+ad-&gt;evas = evas_object_evas_get(ad-&gt;win);
+// Set evas image object for drawing
+g_eo = evas_object_image_add(ad-&gt;evas);
+evas_object_image_size_set(g_eo, g_w, g_h);
+evas_object_image_fill_set(g_eo, 0, 0, g_w, g_h);
+evas_object_move(g_eo, 0, 100);
+evas_object_resize(g_eo, g_w, g_h);
+evas_object_show(g_eo);
+evas_object_show(win);
+create_base_gui(ad);
+
+error_code = camera_set_display(cam_data.g_camera, CAMERA_DISPLAY_TYPE_EVAS, g_eo);
+// If you want to set CAMERA_DISPLAY_TYPE_OVERLAY, set
+// &quot;camera_set_display(cam_data.g_camera, CAMERA_DISPLAY_TYPE_OVERLAY, ad-&gt;win);&quot;
+</pre>
+
+
+<p>This function must be called before previewing and thus the camera state must be <span style="font-family: Courier New,Courier,monospace">CAMERA_STATE_CREATED</span>.</p>
+</li>
+
+<li>
+
+<p>Set the camera preview resolution by using the <span style="font-family: Courier New,Courier,monospace">camera_set_preview_resolution()</span> function (this function must be called before previewing).</p>
+
+
+<p>To find out which resolutions can be set for the camera preview on a specific device, use the <span style="font-family: Courier New,Courier,monospace">camera_foreach_supported_preview_resolution()</span> function. It invokes a callback function for every supported preview resolution.</p>
+
+<p>The following example code sets the camera preview resolution to the first found supported resolution:</p>
+
+<pre class="prettyprint">int resolution[2];
+
+static bool _preview_resolution_cb(int width, int height, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int *resolution = (int*)user_data;
+&nbsp;&nbsp;&nbsp;resolution[0] = width;
+&nbsp;&nbsp;&nbsp;resolution[1] = height;
+&nbsp;&nbsp;&nbsp;return false;
+}
+
+// Find resolution that is supported in the device
+error_code = camera_foreach_supported_preview_resolution(cam_data.g_camera, _preview_resolution_cb, resolution);
+
+// Set supported resolution for camera preview
+error_code = camera_set_preview_resolution(cam_data.g_camera, resolution[0], resolution[1]);
+</pre>
+
+</li>
+
+<li>
+
+<p>Set the capture format by using the <span style="font-family: Courier New,Courier,monospace">camera_set_capture_format()</span> function:
+
+<pre class="prettyprint">
+error_code = camera_set_capture_format(cam_data.g_camera, CAMERA_PIXEL_FORMAT_JPEG);
+</pre>
+
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html#ga18b291f5f688ef92692b0cc273fd6ece">camera_pixel_format_e</a> enumeration defines the available capture formats.</p>
+
+</li>
+
+</ol>
+
+<h3 id="callbacks" name="callbacks" >Setting Callbacks for Camera Preview and Camera Focus</h3>
+
+<ol>
+
+<li>
+
+<p>To receive notifications about delivering a copy of the newly previewed frame, register a callback function by using the <span style="font-family: Courier New,Courier,monospace">camera_set_preview_cb()</span> function.  The callback function is called once per frame during the preview.</p>
+
+<pre class="prettyprint">// Set camera preview callback
+error_code = camera_set_preview_cb(cam_data.g_camera,_camera_preview_cb, NULL);
+</pre>
+
+<p>The following example code implements the <span style="font-family: Courier New,Courier,monospace">_camera_preview_cb()</span> callback function. The callback function starts auto-focusing by using the <span style="font-family: Courier New,Courier,monospace">camera_start_focusing()</span> function, whose parameters are the camera handle (<span style="font-family: Courier New,Courier,monospace">camera_h</span>) and a Boolean flag defining whether the camera must continuously try to focus. The <span style="font-family: Courier New,Courier,monospace">g_enable_shot</span> flag is set to <span style="font-family: Courier New,Courier,monospace">false</span> to prevent the capturing process from restarting.</p>
+
+<pre class="prettyprint">
+static void _camera_preview_cb(camera_preview_data_s *frame, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int error_code = 0;
+
+&nbsp;&nbsp;&nbsp;if (g_enable_focus == true)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = camera_start_focusing(cam_data.g_camera, true);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g_enable_focus = false;
+&nbsp;&nbsp;&nbsp;}
+}</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">g_enable_focus</span> flag is set to <span style="font-family: Courier New,Courier,monospace">true</span> at application startup. When the callback is called for the first time (for the first frame of the given preview), the camera starts auto-focusing and the flag is set to <span style="font-family: Courier New,Courier,monospace">false</span>. All subsequent calls to the callback (for the remaining frames) do not take any action.</p>
+
+</li>
+
+<li>
+
+<p>To receive notifications about auto-focus state changes, register a callback function by using the <span style="font-family: Courier New,Courier,monospace">camera_set_focus_changed_cb()</span> function:</p>
+
+<pre class="prettyprint">// Set camera focus change callback
+error_code = camera_set_focus_changed_cb(cam_data.g_camera, _camera_focus_cb, NULL);
+</pre>
+
+<p>After the <span style="font-family: Courier New,Courier,monospace">camera_start_focusing()</span> function is called, and the camera starts auto-focusing. Before the auto-focus starts, the focus state is <span style="font-family: Courier New,Courier,monospace">CAMERA_FOCUS_STATE_RELEASED</span>. When the auto-focus starts, the state changes to <span style="font-family: Courier New,Courier,monospace">CAMERA_FOCUS_STATE_ONGOING</span>. If the process finishes successfully, the state changes to <span style="font-family: Courier New,Courier,monospace">CAMERA_FOCUS_STATE_FOCUSED</span>. If there are errors, the state changes to <span style="font-family: Courier New,Courier,monospace">CAMERA_FOCUS_STATE_FAILED</span>.</p>
+
+<p>The following example code implements the <span style="font-family: Courier New,Courier,monospace">_camera_focus_cb()</span> callback function, which is called whenever the auto-focus state changes. The callback function starts the capture process if the camera is in the <span style="font-family: Courier New,Courier,monospace">CAMERA_FOCUS_STATE_FOCUSED</span> state and the <span style="font-family: Courier New,Courier,monospace">g_enable_shot</span> flag is true.</p>
+
+<pre class="prettyprint">
+static void _camera_focus_cb(camera_focus_state_e state, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int error_code;
+
+&nbsp;&nbsp;&nbsp;if (state == CAMERA_FOCUS_STATE_FOCUSED &amp;&amp; g_enable_shot == true)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//  Start capture
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code = camera_start_capture(cam_data.g_camera, _camera_capturing_cb, _camera_completed_cb, NULL);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g_enable_shot = false;
+&nbsp;&nbsp;&nbsp;}
+}</pre>
+
+</li>
+
+</ol>
+
+<h2 id="photo" name="photo">Taking a Photo</h2>
+
+<p>Before taking photos, complete the tasks described in <a href="#init">Initialization and Prerequisites</a>.</p>
+
+<p>To take a photo:</p>
+
+<ol>
+ <li>Start the camera preview.
+<p>The camera preview draws preview frames on the screen and allows you to capture frames as still images.</p>
+
+<p>To start the camera preview, use the <span style="font-family: Courier New,Courier,monospace">camera_start_preview()</span> function:</p>
+
+<pre class="prettyprint">error_code = camera_start_preview(cam_data.g_camera);
+</pre>
+
+</li>
+ <li>Capture an image:
+
+<ol>
+
+<li>
+
+<p>When the camera preview starts, the application calls the camera preview callback function (see <a href="#callbacks">Setting Callbacks for Camera Preview and Changing Focus</a>). The callback function then calls the <span style="font-family: Courier New,Courier,monospace">camera_start_focusing()</span> function.</p>
+
+</li>
+
+<li>
+
+<p>When the camera auto-focusing starts, the application calls the camera focus callback function (see <a href="#callbacks">Setting Callbacks for Camera Preview and Changing Focus</a>). The callback function then calls the <span style="font-family: Courier New,Courier,monospace">camera_start_capture()</span> function, which starts capturing still images.</p>
+
+<p>The following example code implements the <span style="font-family: Courier New,Courier,monospace">_camera_capturing_cb()</span> callback function. The callback function is called once for each captured frame and is used to get information about the captured image. The image is saved in the format set by the <span style="font-family: Courier New,Courier,monospace">camera_set_capture_format()</span> function (see <a href="#configure">Creating and Configuring a Camera</a>). In this example, the format is JPEG.</p>
+
+<pre class="prettyprint">
+static void _camera_capturing_cb(camera_image_data_s* image, camera_image_data_s* postview, camera_image_data_s* thumbnail, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, &quot;Camera&quot;, &quot;Writing image to file&quot;);
+&nbsp;&nbsp;&nbsp;FILE *file = fopen(g_fname, &quot;w+&quot;);
+
+&nbsp;&nbsp;&nbsp;if (image-&gt;data != NULL)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fwrite(image-&gt;data, 1, image-&gt;size, file);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;fclose(file);
+}</pre>
+
+</li>
+
+<li>
+
+<p>The following example code implements the <span style="font-family: Courier New,Courier,monospace">_camera_completed_cb()</span> function. The callback function is used to provide a notification after capturing is finished. In this example, the application waits 0.025 seconds before restarting the camera preview with auto-focusing.</p>
+
+<pre class="prettyprint">
+static void _camera_completed_cb(void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int error_code = 0;
+
+&nbsp;&nbsp;&nbsp;usleep(25000);  // Wait 0.025 seconds to show captured image
+
+&nbsp;&nbsp;&nbsp;// Start camera preview
+&nbsp;&nbsp;&nbsp;error_code = camera_start_preview(cam_data.g_camera);
+
+&nbsp;&nbsp;&nbsp;// Start camera focusing
+&nbsp;&nbsp;&nbsp;error_code = camera_start_focusing(cam_data.g_camera, true);
+
+&nbsp;&nbsp;&nbsp;g_enable_focus = true;
+}</pre>
+
+</li>
+
+</ol></li>
+</ol>
+
+<h2 id="attributes" name="attributes">Setting Camera Attributes</h2>
+
+<p>You can set the following additional camera attributes:</p>
+
+<ul>
+ <li>Camera preview attributes</li>
+ <li>Camera zoom attribute</li>
+ <li>Camera brightness attribute</li>
+</ul>
+
+<h3>Setting the Camera Preview Attributes</h3>
+
+<p>The camera preview attributes are a group of attributes that you can set before starting the preview. The following example code sets the FPS and image quality attributes:</p>
+
+<pre class="prettyprint">error_code = camera_attr_set_preview_fps(cam_data.g_camera, CAMERA_ATTR_FPS_AUTO);
+
+error_code = camera_attr_set_image_quality(cam_data.g_camera, 100);
+</pre>
+
+<h3>Setting the Camera Zoom Attribute </h3>
+
+<p>To set the zoom level, use the <span style="font-family: Courier New,Courier,monospace">camera_attr_set_zoom()</span> function, and to get the range of available zoom level values, use the <span style="font-family: Courier New,Courier,monospace">camera_attr_get_zoom_range()</span> function.</p>
+
+<p>The following example code sets the zoom level to minimum:</p>
+
+<pre class="prettyprint">int min, max;
+
+error_code = camera_attr_get_zoom_range(cam_data.g_camera, &amp;min, &amp;max);
+assert_neq(max, -1);
+
+error_code = camera_attr_set_zoom(cam_data.g_camera, min);
+</pre>
+
+<h3>Setting the Camera Brightness Attribute</h3>
+
+<p>The current brightness level is stored in the global <span style="font-family: Courier New,Courier,monospace">g_bright_level</span> variable. In this tutorial, the brightness level is limited by <span style="font-family: Courier New,Courier,monospace">LEVEL_LOWER_BOUND</span> and <span style="font-family: Courier New,Courier,monospace">LEVEL_UPPER_BOUND</span>:</p>
+
+<pre class="prettyprint">#define LEVEL_UPPER_BOUND 7
+#define LEVEL_LOWER_BOUND 1
+
+static int g_bright_level;</pre>
+
+<p>To get the current brightness level, use the <span style="font-family: Courier New,Courier,monospace">camera_attr_get_brightness()</span> function:</p>
+
+<pre class="prettyprint">
+error_code = camera_attr_get_brightness(cam_data.g_camera, &amp;g_bright_level);
+</pre>
+
+<p>To set a new brightness level, use the <span style="font-family: Courier New,Courier,monospace">camera_attr_set_brightness()</span> function:</p>
+
+<pre class="prettyprint">if (g_bright_level &gt;= LEVEL_UPPER_BOUND)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, &quot;Camera&quot;, &quot;Brightness is set to maximum level&quot;);
+&nbsp;&nbsp;&nbsp;g_bright_level = LEVEL_UPPER_BOUND - 1;
+}
+else if (g_bright_level &lt;= LEVEL_LOWER_BOUND)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, &quot;Camera&quot;, &quot;Brightness is set to maximum level&quot;);
+&nbsp;&nbsp;&nbsp;g_bright_level = LEVEL_LOWER_BOUND + 1;
+}
+else
+{
+&nbsp;&nbsp;&nbsp;g_bright_level++;
+}
+
+// Set camera brightness
+error_code = camera_attr_set_brightness(cam_data.g_camera, g_bright_level);
+</pre>
+
+<h2 id="release" name="release">Releasing Resources</h2>
+
+<p>After you have finished working with the camera, stop the camera and clean up the application environment:</p>
+
+<ol>
+ <li>If the auto-focus is switched on, switch if off by using the <span style="font-family: Courier New,Courier,monospace">camera_cancel_focusing()</span> function.</li>
+ <li>Stop the camera preview by using the <span style="font-family: Courier New,Courier,monospace">camera_stop_preview()</span> function.</li>
+ <li>Unregister the camera preview and camera focus change callback functions by using the <span style="font-family: Courier New,Courier,monospace">camera_unset_preview_cb()</span> and <span style="font-family: Courier New,Courier,monospace">camera_unset_focus_changed_cb()</span> functions, respectively.</li>
+ <li>Destroy the camera handle and release all its resources by using the <span style="font-family: Courier New,Courier,monospace">camera_destroy()</span> function.</li>
+</ol>
+
+<pre class="prettyprint">// Cancel camera focusing
+error_code = camera_cancel_focusing(cam_data.g_camera);
+
+// Stop camera preview
+error_code = camera_stop_preview(cam_data.g_camera);
+
+// Unregister camera preview callback
+error_code = camera_unset_preview_cb(cam_data.g_camera);
+
+// Unregister camera focus change callback
+error_code = camera_unset_focus_changed_cb(cam_data.g_camera);
+
+// Destroy camera handle
+error_code = camera_destroy(cam_data.g_camera);
+</pre>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/camera.htm">Camera Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html">Camera API Reference</a></li>
+</ul>
+
+  <div id="footer">
+   <hr size="1" />
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+  </div>
+  <!--start-->
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+  <!--end-->
+ </body>
+</html>

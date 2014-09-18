@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Packaging Applications</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Packaging Applications</h1> 
+
+  <p>You can package your application using the Tizen IDE.</p> 
+
+  <p>To package your application using the Tizen IDE:</p> 
+  <ol> 
+   <li><p>If you have made changes to the application after testing it, <a href="building_app.htm">rebuild the application</a>.</p> </li> 
+   <li><p>Select the project in the <strong>Project Explorer</strong> view.</p></li> 
+   <li><p>Right-click the project and select <strong>Project &gt; Build Package &gt; TPK</strong>.</p> 
+   
+   <p>You must sign your application package for its author to be identified and its integrity verified.</p>
+   <p>If you have registered your certificate in the IDE, the signature is generated automatically 
+   	  during application packaging. Otherwise, the <strong>Signing</strong> pop-up is displayed. 
+   	 <a href="../../../org.tizen.gettingstarted/html/dev_env/register_author_certificate.htm">Register your certificate</a> by clicking on the <strong>Preferences &gt; Secure Profiles</strong> link displayed in the pop-up.</p>
+ 
+   <p style="text-align: center;">
+   <img alt="Application signing popup" src="../images/application_signing_popup.png">
+    
+   <p>If you do not have a certificate for signing and verifying your application, create it using the <a href="../../../org.tizen.gettingstarted/html/dev_env/certificate_generator.htm">certificate generator</a>.</p></li> 
+      	
+   <li>Click <strong>OK</strong>. <p>After the packaging is complete, check the package in the project folder to ensure that the packaging was successful.</p>
+
+  </ol> 
+  
+
+ 
+  <h2 id="multi" name="multi">Packaging a Multi-project Application</h2> 
+  <p>Tizen supports the multi-project application that consists of the native service and UI application.</p> 
+  <p>To package your application using Tizen IDE:</p> 
+  <ol> 
+   <li>In the IDE, make sure all the applications you want to include in the package are located in the <strong>Project Explorer</strong> view. <p>To make the projects appear in the <strong>Project Explorer</strong> view, you can create new applications, or import existing projects or sample applications into the IDE.</p> </li> 
+   <li><p>To establish a project reference between UI application and service application:</p> 
+    <ul> 
+     <li>In the <strong>Project Explorer</strong> view, right-click the UI application.</li> 
+     <li>Select <strong>Properties &gt; Project References</strong>.</li> 
+     <li>Select the check box for service application, and click <strong>OK</strong>. <p>In the <strong>Project Explorer</strong> view, a message (with the UI application) appears next to the service application project name for all the applications you have added to the package.</p> </li> 
+    </ul> </li> 
+  </ol> 
+  <p>After packaging the multi-project application, the packaging files contain the application binary, resource, and data files of the root and referenced applications. Their <span style="font-family: Courier New,Courier,monospace">tizen-manifest.xml</span> files are merged into one.</p> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+
+   <li><a href="overview_of_app_dev.htm">Native Application Development Process</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

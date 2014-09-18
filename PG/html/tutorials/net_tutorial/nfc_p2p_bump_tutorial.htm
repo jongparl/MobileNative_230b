@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>NFC P2P Bump Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>NFC P2P Bump Tutorial</h1> 
+
+<p>This tutorial demonstrates how to use the NFC API. Functions contained in this module provide very short-range radio communication technology. This document demonstrates how to send and receive NDEF (NFC Data Exchange Format) messages using the NFC P2P (Peer to Peer) mode.<p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;nfc.h&gt;</span> header. This header file has to be included in all applications that use the NFC API.<p>
+
+<p>To learn about the NFC API features, see the <a href="../../guide/net/network.htm">Network Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul><li><a href="#init">Initialization and Prerequisites</a>
+<p>Prepare an application to use the NFC API and release any resources at the end of using the API.</p></li>
+
+<li><a href="#send">Sending and Receiving a Message through NFC P2P</a>
+<p>Exchange NDEF messages using NFC P2P between 2 devices.</p></li></ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>You need 2 target devices that support the NFC P2P mode. Note that the device screen should be unlocked to use NFC.</p>
+
+<ol><li>To start using the NFC API, you need to initialize the API by calling the <span style="font-family: Courier New,Courier,monospace">nfc_manager_initialize()</span> function. This function is asynchronous – it returns immediately and the result is passed to a callback specified as an argument. 
+<pre class="prettyprint">nfc_manager_initialize(initialize_completed_cb, NULL);</pre></li>
+<li><p>After the initialization of the API manager, ensure that NFC is supported and activated on the device. The <span style="font-family: Courier New,Courier,monospace">nfc_manager_is_supported()</span> function checks whether NFC is supported. The <span style="font-family: Courier New,Courier,monospace">nfc_manager_is_activated()</span> function gets the NFC activation state. </p>
+<pre class="prettyprint">if (!nfc_manager_is_supported()) 
+{
+&nbsp;&nbsp;&nbsp;// Report error, end the application
+}
+if (!nfc_manager_is_activated()) 
+{
+&nbsp;&nbsp;&nbsp;// Report error, switch on NFC
+}</pre></li>
+
+<li><p>At the end of the application life-cycle, call the <span style="font-family: Courier New,Courier,monospace">nfc_manager_deinitialize()</span> function. It releases all resources of the NFC manager and disconnects the session between it and your application.</p>
+<pre class="prettyprint">nfc_manager_deinitialize();</pre></li></ol>
+
+<h2 id="send" name="send">Sending and Receiving a Message through NFC P2P</h2>
+<p>This tutorial shows how to send and receive messages using the NFC P2P mode. For example, a simple NDEF message containing a business card (name, phone number, and e-mail address) of the device owner will be prepared and exchanged with the second device.</p>
+
+<ol><li>Prepare the NDEF message.
+<p>An NDEF message consists of several NDEF records. A record payload type is determined by two values: the TNF (Type Name Format) and type. There are a few TNFs and related types of the NDEF records, like text record, URI record, and MIME record. In this tutorial, only text records will be used.</p>
+<p>The sample message in this tutorial will contain a name, phone number, and e-mail address of the device owner. Values can be stored in a file or taken from the UI of the application – in this tutorial getting values has been omitted.</p>
+<p>To create a text record, you can use the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_record_create_text()</span> function. Its arguments are: a record handle, the text to store, the language code (for example en-US or ko-KR) and the encoding type. Below 3 records for a name, phone number, and e-mail address are created.</p>
+<pre class="prettyprint">nfc_ndef_record_h ndef_name_record = NULL;
+nfc_ndef_record_h ndef_phone_record = NULL;
+nfc_ndef_record_h ndef_email_record = NULL;
+
+const char *name = &quot;John Doe&quot;;
+const char *phone = &quot;+82556666888&quot;;
+const char *email = &quot;john.doe@tizen.org&quot;;
+
+nfc_ndef_record_create_text(&amp;ndef_name_record, name, &quot;en-US&quot;, NFC_ENCODE_UTF_8);
+nfc_ndef_record_create_text(&amp;ndef_phone_record, phone, &quot;en-US&quot;, NFC_ENCODE_UTF_8);
+nfc_ndef_record_create_text(&amp;ndef_email_record, email, &quot;en-US&quot;, NFC_ENCODE_UTF_8);</pre>
+<p>When the records are created, they should be appended to a message. Before that, you should create and initialize an NDEF message using the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_message_create()</span> function. As an argument, pass a handle to the created message.</p>
+<pre class="prettyprint">nfc_ndef_message_h ndef_message = NULL;
+nfc_ndef_message_create(&amp;ndef_message);</pre>
+<p>Then you can append created records to the message using the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_message_append_record()</span> function. This function appends the record with the next index. If you want to insert a record at the specified index, use the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_message_insert_record()</span> function instead.</p>
+<pre class="prettyprint">nfc_ndef_message_append_record(ndef_message, ndef_name_record);
+nfc_ndef_message_append_record(ndef_message, ndef_phone_record);
+nfc_ndef_message_append_record(ndef_message, ndef_email_record);</pre></li>
+
+<li>Notify the application about the discovered P2P target.
+<p>To exchange messages using P2P, firstly you should register a callback for receiving notifications about discovered P2P targets using the <span style="font-family: Courier New,Courier,monospace">nfc_manager_set_p2p_target_discovered_cb()</span> function. When the P2P target is discovered, the callback will provide a handle to that device and information on whether it is attached or detached.</p>
+<pre class="prettyprint">nfc_manager_set_p2p_target_discovered_cb(on_target_discovered, NULL);</pre></li>
+
+<li id="received" name="received">Notify the application about the received data.
+<p>In this tutorial, both devices will receive and send a message to each other, so when another P2P target is attached, you should register a callback for receiving notifications about received data from this device. Use the <span style="font-family: Courier New,Courier,monospace">nfc_p2p_set_data_received_cb()</span> function (the best way is to place this code in the callback called after the P2P device is discovered). Specify the peer target handle – it was provided by the previously set callback.</p>
+<pre class="prettyprint">nfc_p2p_set_data_received_cb(target, on_p2p_data_received, NULL);</pre>
+</li>
+
+<li>Send a message to another device.
+<p>When another P2P device is attached, you can send the prepared message to it. You can use the <span style="font-family: Courier New,Courier,monospace">nfc_p2p_send()</span> or <span style="font-family: Courier New,Courier,monospace">nfc_p2p_send_no_permission()</span> function if you do not want to check permissions. Provide a target handle and a sent message handle. You can also set a callback called when the sending is completed.</p>
+<pre class="prettyprint">nfc_p2p_send(target, ndef_message, NULL, NULL);</pre></li>
+
+<li id="receive" name="receive">Receive a message from another device.
+<p>When the callback about receive data is called, the device received a message from another device. The callback provides a handle to a received message and a handle to the source of the message.</p>
+<p>You can get the number of records in the received message using the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_message_get_record_count()</span> function. In this example, it should be equal to 3, since there are records with a name, phone number, and e-mail address.</p>
+<pre class="prettyprint">int count;
+nfc_ndef_message_get_record_count(message, &amp;count);</pre>
+<p>To get a specified record from the message, use the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_message_get_record()</span> function. You should specify a message handle, a record index, and a handle to store the obtained record. When the text record is obtained, you can get the stored text using the <span style="font-family: Courier New,Courier,monospace">nfc_ndef_record_get_text()</span> function. In the tutorial, there are 3 text records to obtain.</p>
+<pre class="prettyprint">nfc_ndef_record_h ndef_record;
+
+char *name = NULL;
+nfc_ndef_message_get_record(message, 0, &amp;ndef_record);
+nfc_ndef_record_get_text(ndef_record, &amp;name);
+
+char *phone = NULL;
+nfc_ndef_message_get_record(message, 1, &amp;ndef_record);
+nfc_ndef_record_get_text(ndef_record, &amp;phone);
+
+char *email = NULL;
+nfc_ndef_message_get_record(message, 2, &amp;ndef_record);
+nfc_ndef_record_get_text(ndef_record, &amp;email);</pre>
+<p>Then you can use obtained values to create, for example, a new contact.</p>
+
+<p>Note that depending on a record type, some obtained values should be freed and others should not. For example, the obtained text from a text record should be freed by you. See the documentation to know how to get the payload of other types of records.</p></li></ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="net_tutorial.htm">Network Tutorials</a></li>
+	<li><a href="../../guide/net/network.htm">Network Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__NETWORK__FRAMEWORK.html">Network API Reference</a></li>    
+  </ul> 
+
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

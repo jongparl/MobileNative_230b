@@ -1,0 +1,1487 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>UI Widgets</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>UI Widgets</h1> 
+
+
+<p>Elementary provides various widgets that can be directly used in the user interface of the application. This guide describes the following common widgets:</p>
+
+<ul>
+<li><a href="#win">Win</a></li>
+<li><a href="#bg">Background</a></li>
+<li><a href="#btn">Button </a></li>
+<li><a href="#ctx">Ctxpopup</a></li>
+<li><a href="#date">Datetime</a></li>
+<li><a href="#entry">Entry</a></li>
+<li><a href="#flip">Flip</a></li>
+<li><a href="#img">Image</a></li>
+<li><a href="#index">Index</a></li>
+<li><a href="#list">List</a></li>
+<li><a href="#gen">Genlist</a></li>
+<li><a href="#label">Label</a></li>
+<li><a href="#map">Map</a></li>
+<li><a href="#popup">Popup</a></li>
+<li><a href="#prog">Progressbar</a></li>
+<li><a href="#radio">Radio</a></li>
+<li><a href="#check">Check</a></li>
+<li><a href="#slider">Slider</a></li>
+<li><a href="#tool">Toolbar</a></li>
+</ul>
+
+<h2 id="win" name="win">Win</h2>
+
+<p>The window widget is a root widget often used in applications for creating content. It is handled by the window manager.</p>
+
+<p>To create the win widget, use the <span style="font-family: Courier New,Courier,monospace;">elm_win_add()</span> or <span style="font-family: Courier New,Courier,monospace;">elm_win_util_standard_add()</span> function. Add content to the window using the <span style="font-family: Courier New,Courier,monospace;">elm_win_resize_object_add()</span> function so that resizing the window also resizes the content inside.</p>
+
+<h3>Creating a Window</h3>
+
+<p>Create a new window and change its title:</p>
+
+<pre class="prettyprint">
+Evas_Object *window;
+// Create a window
+window = elm_win_add(NULL, &quot;main&quot;, ELM_WIN_BASIC);
+// Change the window title
+elm_win_title_set(window, &quot;Example Window&quot;);
+</pre>
+
+<p>In the example above:</p>
+<ul>
+<li>The first parameter of the <span style="font-family: Courier New,Courier,monospace;">elm_win_add()</span> function is a parent window. <span style="font-family: Courier New,Courier,monospace;">NULL</span> means that there is no parent element.</li> 
+<li><span style="font-family: Courier New,Courier,monospace;">main</span> is the window name. It is used by the window manager for identifying the window uniquely amongst all the windows within this application and all instances of the application.</li>
+<li>The last parameter refers to the type, which in this case is a basic window (<span style="font-family: Courier New,Courier,monospace;">ELM_WIN_BASIC</span>).</li>
+</ul>
+
+<p>The following example is a shortcut of the previous one. It also creates a standard background to the window using the <span style="font-family: Courier New,Courier,monospace;">elm_bg_add()</span> function. The window created is of the <span style="font-family: Courier New,Courier,monospace;">ELM_WIN_BASIC</span> type.´:</p>
+
+<pre class="prettyprint">
+Evas_Object *window;
+// Create a standard window
+window = elm_win_util_standard_add(&quot;main&quot;, &quot;Example Window&quot;);
+</pre>
+
+<h3>Closing a Window</h3>
+
+<p>When closing a window outside the program control (for example, pressing the X button in the title bar or using a command from the Window Manager), a <span style="font-family: Courier New,Courier,monospace;">delete,request</span> signal is emitted to indicate that the event occurred.</p>
+
+<p>When the <span style="font-family: Courier New,Courier,monospace;">autodel</span> parameter is set, the window is automatically destroyed when this event occurs, after the signal is emitted. If <span style="font-family: Courier New,Courier,monospace;">autodel</span> is set to <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> (default), the window is destroyed and it is up to the program to destroy it when required.</p>
+
+<p>The following example sets the <span style="font-family: Courier New,Courier,monospace;">autodel</span> parameter:</p>
+
+<pre class="prettyprint">
+elm_win_autodel_set(window, EINA_TRUE);
+</pre>
+
+<p>To close the window, use the <span style="font-family: Courier New,Courier,monospace;">evas_object_del()</span> function. The window is destroyed and the <span style="font-family: Courier New,Courier,monospace;">delete,request</span> signal is sent.</p>
+
+<h3>Manipulating a Window</h3>
+
+<p>The following example activates the window:</p>
+
+<pre class="prettyprint">
+elm_win_activate(window);
+</pre>
+
+<p>The following example raises the window:</p>
+
+<pre class="prettyprint">
+elm_win_raise(window);
+</pre>
+
+<p>The following example requests the window manager to hide its borders:</p>
+
+<pre class="prettyprint">
+elm_win_borderless_set(window, EINA_TRUE);
+</pre>
+
+<p>The following example maximizes the window:</p>
+
+<pre class="prettyprint">
+elm_win_maximized_set(window, EINA_TRUE);
+</pre>
+
+<p>The following example sets the window to fullscreen:</p>
+
+<pre class="prettyprint">
+elm_win_fullscreen_set(window, EINA_TRUE);
+</pre>
+
+<p>The following example rotates the window 45 degrees:</p>
+
+<pre class="prettyprint">
+elm_win_rotation_with_resize_set(window, 45);
+</pre>
+
+<h3>Using Window Callbacks</h3>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">delete,request</span> signal occurs when the user must close the window. It is one of the several available <a href="../../../../org.tizen.mobile.native.apireference\group__Win.html">signals</a>. With all the signals, the <span style="font-family: Courier New,Courier,monospace;">event_info</span> parameter is set to <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</p>
+
+<p>The following example registers a callback function called on the <span style="font-family: Courier New,Courier,monospace;">fullscreen</span> signal:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(window, &quot;fullscreen&quot;, fullscreen_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the window becomes fullscreen
+void fullscreen_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Window fullscreen\n&quot;);
+}
+</pre>
+
+<h2 id="bg" name="bg">Background</h2>
+
+<p>The background widget can be used to set a solid background decoration to a window or container object. It works like an image, but has some background-specific properties, such as tiling, centering, scaling, or stretching. There are no specific signals related to the background widget.</p>
+
+<p class="figure">Figure: Background widget</p> 
+<p style="text-align:center;"><img alt="Background widget" src="../../images/bg.png" /></p>
+
+<h3>Adding a Background</h3>
+
+<p>Create a background using the <span style="font-family: Courier New,Courier,monospace;">elm_bg_add()</span> function:</p>
+
+<pre class="prettyprint">
+Evas_Object *bg, *parent;
+...
+// Create a background
+bg = elm_bg_add(parent);
+</pre>
+
+<h3>Changing the Color and Image of the Background</h3>
+
+<p>You can set the background color using the <span style="font-family: Courier New,Courier,monospace;">with elm_bg_color_set()</span> function:</p>
+
+<pre class="prettyprint">
+Evas_Object *bg;
+...
+// Use red color for background
+elm_bg_color_set(bg, 0xFF, 0x00, 0x00);
+</pre>
+
+<p>You can also set an image or an Edje group using the <span style="font-family: Courier New,Courier,monospace;">elm_bg_file_set()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__Bg.html#gac13a24993e39fac3484bd29a9bfeea26">display mode</a> of the image in the background can be selected using the <span style="font-family: Courier New,Courier,monospace;">elm_bg_option_set()</span> function.</p>
+
+<p>The following example stretches the background image to fill the widget area:</p>
+
+<pre class="prettyprint">
+Evas_Object *bg;
+...
+// Set a file on the disk as background image
+elm_bg_file_set(bg, &quot;/path/to/the/image&quot;, NULL); 
+// Set an edje group as a background image 
+elm_bg_file_set(bg, &quot;/path/to/the/edje&quot;, &quot;edje_group&quot;);
+elm_bg_option_set(bg, ELM_BG_OPTION_STRETCH)
+</pre>
+
+<h3>Using Overlay</h3>
+<p>To set an overlay, use the <span style="font-family: Courier New,Courier,monospace;">overlay</span> part name. In the following example an Edje object is displayed on top of the current background object:</p>
+
+<pre class="prettyprint">
+elm_object_part_content_set(bg, &quot;overlay&quot;, over);
+</pre>
+
+<h2 id="btn" name="btn">Button</h2>
+
+<p>The Elementary button widget is a simple push button. It is composed of a label icon and icon object, and has an autorepeat feature.</p>
+
+<p class="figure">Figure: Button widget</p> 
+<p style="text-align:center;"><img alt="Button widget" src="../../images/button_widget.png" /></p> 
+
+<p>The following example adds a button:</p>
+<pre class="prettyprint">
+Evas_Object *button, *parent;
+// Create a button
+button = elm_button_add(parent);
+</pre>
+
+<p>You can add an icon in a button using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">icon</span> part name:</p>
+
+<pre class="prettyprint">
+Evas_Object *icon; ic = elm_icon_add(button);
+elm_image_file_set(ic, &quot;icon.png&quot;, NULL);
+elm_object_part_content_set(button, &quot;icon&quot;, icon);
+</pre>
+
+<p>You can add text in a button using the <span style="font-family: Courier New,Courier,monospace;">elm_object_text_set()</span> function:</p>
+
+<pre class="prettyprint">
+elm_object_part_text_set(button, &quot;Click me!&quot;);
+</pre>
+
+<p>You can also use a button as an anchor by changing the style of the button using the <span style="font-family: Courier New,Courier,monospace;">elm_object_style_set()</span> function:</p>
+
+<pre class="prettyprint">
+elm_object_style_set(button,&quot;anchor&quot;);
+</pre>
+
+<h3>Using Button Callbacks</h3>
+
+<p>A button emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">clicked</span>: User clicked the button (press/release).</li>
+<li><span style="font-family: Courier New,Courier,monospace;">repeated</span>: User pressed the button without releasing it.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">pressed</span>: Button was pressed.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">unpressed</span>: Button was released after being pressed.</li>
+</ul>
+
+<p>For all these signals, the callback returns the <span style="font-family: Courier New,Courier,monospace;">event_info</span> parameter as <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</p>
+
+<p>The following example registers and defines the <span style="font-family: Courier New,Courier,monospace;">clicked</span> signal callback function:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(button, &quot;clicked&quot;, clicked_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the user clicks the button
+void clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Button clicked\n&quot;);
+}
+</pre>
+
+<h3>Using Autorepeat</h3>
+<p>Autorepeat means calling the <span style="font-family: Courier New,Courier,monospace;">repeated</span> signal when the user keeps the button pressed. The autorepeat feature is enabled by default and can be disabled using the <span style="font-family: Courier New,Courier,monospace;">elm_button_autorepeat_set()</span> function. The following example shows the configuration for autorepeat.</p>
+
+<p>In the example:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">elm_button_autorepeat_initial_timeout_set()</span> sets the initial timeout before the autorepeat event is generated.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">elm_button_autorepeat_gap_timeout_set()</span> sets the interval between 2 autorepeat events.</li>
+</ul>
+
+<p>Disable the autorepeat feature:</p>
+
+<pre class="prettyprint">
+elm_button_autorepeat_set(button, EINA_FALSE);
+</pre>
+
+<p>Re-enable the autorepeat feature:</p>
+
+<pre class="prettyprint">
+elm_button_autorepeat_set(button, EINA_TRUE);
+</pre>
+
+<p>Set the initial timeout to 5 seconds:</p>
+
+<pre class="prettyprint">
+elm_button_autorepeat_initial_timeout_set(button, 5.0);
+</pre>
+
+<p>Set the gap between to signal to 0.5 seconds:</p>
+
+<pre class="prettyprint">
+elm_button_autorepeat_gap_timeout_set(button, 0.5);
+</pre>
+
+<h2 id="ctx" name="ctx">Ctxpopup</h2>
+
+<p>The ctxpopup widget is a contextual popup, which can show a list of items.</p>
+
+<p class="figure">Figure: Context popup widget</p> 
+<p style="text-align:center;"><img alt="Context popup widget" src="../../images/ctxpopup.png" /></p> 
+
+<p>Create a ctxpopup using the <span style="font-family: Courier New,Courier,monospace;">elm_ctxpopup_add()</span> function. When shown, it automatically selects an area inside its parent object&#39;s view (set using the <span style="font-family: Courier New,Courier,monospace;">elm_ctxpopup_hover_parent_set()</span> function) to optimally fit into it:</p>
+
+<pre class="prettyprint">
+Evas_Object *ctxpopup, *parent;
+// Creating a ctxpopup
+ctxpopup = elm_ctxpopup_add(parent);
+</pre>
+
+<p>Set the ctxpopup orientation using the <span style="font-family: Courier New,Courier,monospace;">elm_ctxpopup_horizontal_set()</span> function. In the following example, the orientation is horizontal:</p>
+
+<pre class="prettyprint">
+elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
+</pre>
+
+<p>Auto hide is enabled by default. Disable auto hiding if you want the ctxpopup never to be hidden:</p>
+
+<pre class="prettyprint">
+elm_ctxpopup_auto_hide_disabled_set(ctxpopup, EINA_TRUE);
+</pre>
+
+<h3>Managing Ctxpopup Items</h3>
+
+<p>The ctxpopup can contain a small number of items. Each of them can have a label and an icon. The following example appends an item with the <span style="font-family: Courier New,Courier,monospace;">Test</span> label and no icon:</p>
+
+<pre class="prettyprint">
+Elm_Object_Item *it;
+it = elm_ctxpopup_item_append(ctxpopup, &quot;test&quot;, NULL, _ctxpopup_item_cb,NULL);
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">_ctxpopup_item_cb()</span> callback is called when the item is clicked. The following example defines this callback:</p>
+
+<pre class="prettyprint">
+static void
+_ctxpopup_item_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;ctxpopup item selected\n&quot;);
+}
+</pre>
+
+<p>The item label is defined as <span style="font-family: Courier New,Courier,monospace;">New label</span>:</p>
+
+<pre class="prettyprint">
+elm_object_item_part_text_set(it, &quot;default&quot;, &quot;New label&quot;);
+</pre>
+
+<p>The icon is modified as the standard <span style="font-family: Courier New,Courier,monospace;">home</span> icon:</p>
+
+<pre class="prettyprint">
+Evas_Object *home_icon = elm_icon_add(ctxpopup);
+elm_icon_standard_set(home_icon, &quot;home&quot;);
+elm_object_item_part_content_set(it, &quot;icon&quot;, home_icon);
+</pre>
+
+<h3>Dismissing Ctxpopup</h3>
+
+<p>The ctxpopup emits the <span style="font-family: Courier New,Courier,monospace;">dismissed</span> signal when it is dismissed. You can register a callback for this signal. The <span style="font-family: Courier New,Courier,monospace;">event_info</span> parameter is <span style="font-family: Courier New,Courier,monospace;">NULL</span>:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(ctxpopup, &quot;dismissed&quot;, dismissed_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the ctxpopup is dismissed
+void dismissed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Ctxpopup dismissed\n&quot;);
+}
+</pre>
+
+<h2 id="date" name="date">Datetime</h2>
+
+<p>The datetime widget can display and input date and time values.</p>
+
+<p class="figure">Figure: Datetime widget</p> 
+<p style="text-align:center;"><img alt="Datetime widget" src="../../images/date.png" /></p> 
+
+<h3>Creating Datetime</h3>
+
+<p>Create the widget using the <span style="font-family: Courier New,Courier,monospace;">elm_datetime_add()</span> function. You can select the visible fields using the <span style="font-family: Courier New,Courier,monospace;">elm_datetime_field_visible_set()</span> function. The following fields can be controlled:</p>
+
+<ul>
+<li>ELM_DATETIME_YEAR: Year</li>
+<li>ELM_DATETIME_MONTH: Month</li>
+<li>ELM_DATETIME_DATE: Date</li>
+<li>ELM_DATETIME_HOUR: Hour</li>
+<li>ELM_DATETIME_MINUTE: Minute</li>
+<li>ELM_DATETIME_AMPM: AM/PM</li>
+</ul>
+
+<p>The following example creates a datetime widget and sets the <span style="font-family: Courier New,Courier,monospace;">HOUR</span> and <span style="font-family: Courier New,Courier,monospace;">MINUTE</span> fields visible:</p>
+
+<pre class="prettyprint">
+Evas_Object *datetime, *parent;
+datetime = elm_datetime_add(parent);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_HOUR, EINA_TRUE);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_MINUTE, EINA_TRUE);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_YEAR, EINA_FALSE);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_MONTH, EINA_FALSE);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_DATE, EINA_FALSE);
+elm_datetime_field_visible_set(datetime, ELM_DATETIME_AMPM, EINA_FALSE);
+</pre>
+
+<p>The format of the date and time can be configured with the <span style="font-family: Courier New,Courier,monospace;">elm_datetime_format_set()</span> function using a combination of allowed <a href="http://www.gnu.org/software/hello/manual/libc.html" target="_blank">Libc date format specifiers</a>. In the following example, the format is set to &quot;HH : MM&quot;:</p>
+
+<pre class="prettyprint">
+elm_datetime_format_set(datetime, &quot;%H : %M&quot;);
+</pre>
+
+<h3>Changing Datetime</h3>
+
+<p>A callback can be registered for the <span style="font-family: Courier New,Courier,monospace;">changed</span> signal to detect when the Datetime field values are changed. The <span style="font-family: Courier New,Courier,monospace;">event_info</span> parameter is <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(datetime, &quot;changed&quot;, changed_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the datetime fields change
+void changed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Datetime field changed. \n&quot;);
+}
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">language,changed</span> signal is emitted when the system locale changes.</p>
+
+<h2 id="entry" name="entry">Entry</h2>
+ 
+<p>The entry widget is a box where the user can enter text.</p>
+
+<p class="figure">Figure: Entry widget</p> 
+<p style="text-align:center;"><img alt="Entry widget" src="../../images/entry.png" /></p>
+
+<p>The entry widget supports the following features:</p>
+
+<ul>
+<li>Text wrapping</li>
+<li>Multiline</li>
+<li>Scrolling</li>
+<li>Formatted markup text</li>
+<li>Password mode</li>
+<li>Filtering text</li>
+<li>Read/write from a file</li>
+<li>Theme style overrides</li>
+</ul>
+
+<p>To create an entry widget, use the <span style="font-family: Courier New,Courier,monospace;">elm_entry_add()</span> function. Set the text within the entry using the <span style="font-family: Courier New,Courier,monospace;">elm_entry_entry_set()</span> function:</p>
+
+<pre class="prettyprint">
+Evas_Object *entry, *parent;
+entry = elm_entry_add(parent);
+elm_entry_entry_set(entry, &quot;A short text.&quot;);
+</pre>
+
+<h3>Editing Text</h3>
+
+<p>Append text to the end of existing content:</p>
+
+<pre class="prettyprint">
+elm_entry_entry_append(entry, &quot;END&quot;);
+</pre>
+
+<p>Insert text at the current cursor position:</p>
+
+<pre class="prettyprint">
+elm_entry_entry_insert(entry, &quot;CURSOR&quot;);
+Eina_Bool Empty = elm_entry_is_empty(entry);
+</pre>
+
+<p>Call the <span style="font-family: Courier New,Courier,monospace;">elm_entry_is_empty()</span> function to check, whether the entry is empty. The boolean variable <span style="font-family: Courier New,Courier,monospace;">Empty</span> returns <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span>.</p>
+
+<p>By default, the user can enter text in the entry widget when it gets the focus. You can prevent the user from editing text:</p>
+
+<pre class="prettyprint">
+elm_entry_editable_set(entry, EINA_FALSE);
+</pre>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">You can use the functions described above also to modify the text of a non-editable entry.</td>
+</tr>
+</tbody>
+</table> 
+
+<p>Finally, when dealing with password content, the password mode is activated to hide what the user is typing. In this mode, the display of any text is replaced by asterisks (*), and the entry is a single line (no line wrap).</p>
+
+<pre class="prettyprint">
+elm_entry_password_set(entry, EINA_TRUE);
+</pre>
+
+<h3>Setting Entry Line Modes and Wrapping</h3>
+
+<p>The entry widget has two line modes:</p>
+
+<ul>
+<li>Single line</li>
+<li>Multiline</li>
+</ul>
+
+<p>Set the entry in the single line mode:</p>
+
+<pre class="prettyprint">
+elm_entry_single_line_set(entry, EINA_TRUE);
+</pre>
+
+<p>In this mode, the text does not wrap when reaching the edge, but grows horizontally instead. Pressing <strong>Enter</strong> in this mode generates an <span style="font-family: Courier New,Courier,monospace;">activate</span> event instead of adding a new line.</p>
+
+<p>When the entry is set to multiline mode, text wraps at the end of the entry and pressing <strong>Enter</strong> creates a new line.</p>
+
+<pre class="prettyprint">
+elm_entry_single_line_set(entry, EINA_FALSE);
+elm_entry_line_wrap_set(entry, ELM_WRAP_WORD);
+</pre>
+
+<p>In multiline entries, use the <span style="font-family: Courier New,Courier,monospace;">elm_entry_line_wrap_set()</span> function to configure how the text is implicitly cut into a new line when it reaches the edge of the widget. The following wrap modes are available:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_WRAP_NONE </span>: No wrap</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_WRAP_CHAR </span>: Wrap between characters</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_WRAP_WORD </span>: Wrap in allowed wrapping points (as defined in the unicode standard)</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_WRAP_MIXED</span>: Word wrap, and if that fails, char wrap</li>
+</ul>
+
+<h3>Selecting Text</h3>
+
+<p>You can select text through various functions. The following example selects all the content in an entry widget:</p>
+
+<pre class="prettyprint">
+elm_entry_select_all(entry);
+</pre>
+
+<p>Drop the current selection:</p>
+
+<pre class="prettyprint">
+elm_entry_select_none(entry);
+</pre>
+
+<p>To select a part of the text, use the <span style="font-family: Courier New,Courier,monospace;">elm_entry_select_region_set()</span> function. The following example selects the first 20 characters of an entry:</p>
+
+<pre class="prettyprint">
+elm_entry_select_region_set(entry, 0, 20);
+</pre>
+
+<p>Retrieve the currently selected text within the entry:</p>
+
+<pre class="prettyprint">
+const char *selection;
+selection = elm_entry_selection_get(entry);
+</pre>
+
+<p>If there is no entry text, the <span style="font-family: Courier New,Courier,monospace;">elm_entry_selection_get()</span> function returns as <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</p>
+
+<p>Cut the selection to the clipboard:</p>
+
+<pre class="prettyprint">
+elm_entry_selection_cut(entry);
+</pre>
+
+<p>Paste the selection to an entry:</p>
+
+<pre class="prettyprint">
+elm_entry_selection_paste(entry);
+</pre>
+
+<h3>Controlling the Cursor</h3>
+
+<p>The cursor position can be modified using various functions. The following example moves the cursor to the beginning of the entry:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_begin_set(entry);
+</pre>
+
+<p>Move the cursor position to the end of the entry:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_end_set(entry);
+</pre>
+
+<p>Move the cursor position one line down or up:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_down(entry);
+elm_entry_cursor_up(entry);
+</pre>
+
+<p>Move the cursor position one character to the left or right:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_prev(entry);
+elm_entry_cursor_next(entry);
+</pre>
+
+<p>You can move the cursor to a specific position. In the following example, it is moved to the 15th character of the entry:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_pos_set(entry, 15);
+</pre>
+
+<p>Start a selection at the current cursor position, then move 5 characters to the right, and end the selection:</p>
+
+<pre class="prettyprint">
+elm_entry_cursor_selection_begin(entry);
+for(i=0 ; i&lt;5 ; i++)
+{
+&nbsp;&nbsp;&nbsp;elm_entry_cursor_next(entry);
+}
+elm_entry_cursor_selection_end(entry);
+</pre>
+
+<h3>Formatting Text</h3>
+
+<p>Text within an entry can be formatted using markup tags, which are defined in the theme. The following markups are available in the default theme:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;br&gt;</span>: Inserts a line break.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;ps&gt;</span>: Inserts a paragraph separator. This is preferred over line breaks.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;tab&gt;</span>: Inserts a tab.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;em&gt;...&lt;/em&gt;</span>: Emphasis. Sets the oblique style for the enclosed text.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;b&gt;...&lt;/b&gt;</span>: Sets the bold style for the enclosed text.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;link&gt;...&lt;/link&gt;</span>: Underlines the enclosed text.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;hilight&gt;...&lt;/hilight&gt;</span>: Highlights the enclosed text.</li>
+</ul>
+
+<h3>Using Special Markups</h3>
+
+<p>You can add special markups within the text of the entry:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;a href=..&gt;...&lt;/a&gt;</span>: Anchors</li>
+<li><span style="font-family: Courier New,Courier,monospace;">&lt;item size=.. vsize=.. href=..&gt;...&lt;/item&gt;</span>: Items</li>
+</ul>
+
+<p>Anchors generate an <span style="font-family: Courier New,Courier,monospace;">anchor,clicked</span> signal when the user clicks the anchor. The <span style="font-family: Courier New,Courier,monospace;">href</span> attribute is used to identify the anchor. It also reacts to the <span style="font-family: Courier New,Courier,monospace;">anchor,in</span> (mouse in), <span style="font-family: Courier New,Courier,monospace;">anchor,out</span> (mouse out), <span style="font-family: Courier New,Courier,monospace;">anchor,down</span> (mouse down), and <span style="font-family: Courier New,Courier,monospace;">anchor,up</span> (mouse up) events.</p>
+
+<p>The item markup provides a way to insert any <span style="font-family: Courier New,Courier,monospace;">Evas_Object</span> in the text. The <span style="font-family: Courier New,Courier,monospace;">Evas_Object</span> name has to be specified in the <span style="font-family: Courier New,Courier,monospace;">href</span> attribute.</p>
+
+<h3>Overriding Text Style</h3>
+
+<p>To modify the text style within the entry widget, you can override parts of the theme style in the textblock object using the <span style="font-family: Courier New,Courier,monospace;">elm_entry_text_style_user_push()</span> function. The function pushes a new style on top of the user style stack that overrides the current style. Remove the style on the top of the user style stack using the <span style="font-family: Courier New,Courier,monospace;">elm_entry_text_style_user_pop()</span> function.</p>
+
+<h3>Filtering Text</h3>
+
+<p>You can filter text within an entry by size. The following example sets the maximum number of characters allowed in the entry to 8:</p>
+
+<pre class="prettyprint">
+static Elm_Entry_Filter_Limit_Size limit_size = 
+{
+&nbsp;&nbsp;&nbsp;.max_char_count = 8,
+&nbsp;&nbsp;&nbsp;.max_byte_count = 0
+};
+elm_entry_markup_filter_append(entry, elm_entry_filter_limit_size, &amp;limit_size);
+</pre>
+
+<p>You can filter the content by passing the <span style="font-family: Courier New,Courier,monospace;">Elm_Entry_Filter_Accept_Set</span> structure. The structure contains the accepted and rejected characters. The following example has rejected characters &#39;+&#39;, &#39;-&#39;, &#39;*&#39;, and &#39;/&#39;:</p>
+
+<pre class="prettyprint">
+static Elm_Entry_Filter_Accept_Set accept_set = 
+{
+&nbsp;&nbsp;&nbsp;.accepted = NULL,
+&nbsp;&nbsp;&nbsp;.rejected = &quot;+-*/&quot;
+};
+elm_entry_markup_filter_append(entry, elm_entry_filter_accept_set, &amp;accept_set);
+</pre>
+
+<h3>Saving and Loading Files</h3>
+
+<p>The entry content can be saved to a file and named (in the following example the name is<span style="font-family: Courier New,Courier,monospace;">/tmp/test.txt</span>):</p>
+
+<pre class="prettyprint">
+// Set the file in which the entry text is saved. This function
+* implicitly loads the existing file content
+elm_entry_file_set(entry, &quot;/tmp/test.txt&quot;, ELM_TEXT_FORMAT_MARKUP_UTF8);
+</pre>
+
+<p>By default, autosave is activated and changes are written back to the file after a short delay. You can deactivate this feature and manually save content when needed.</p>
+
+<pre class="prettyprint">
+// Disable autosaving
+elm_entry_autosave_set(entry, EINA_FALSE);
+// Trigger saving when needed
+elm_entry_file_save(entry);
+</pre>
+<h3>Using Entry Theme Content</h3>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">icon</span> and <span style="font-family: Courier New,Courier,monospace;">end</span> content parts of the default theme can be set. The following example sets an icon in the <span style="font-family: Courier New,Courier,monospace;">end</span> content part.</p>
+
+<pre class="prettyprint">
+Evas_Object *icon;
+ic = elm_icon_add(entry);
+elm_image_file_set(ic, &quot;icon.png&quot;, NULL);
+elm_object_part_content_set(entry, &quot;end&quot;, icon);
+</pre>
+
+<h3>Using Entry Theme Texts</h3>
+
+<p>The default theme allows the use of the following text parts:</p>
+
+<ul>
+<li>&quot;default&quot;: Entry text</li>
+<li>&quot;guide&quot;: Entry placeholder</li>
+</ul>
+
+<p>The following example sets the placeholder text of the entry to &quot;Hello World&quot;:</p>
+
+<pre class="prettyprint">
+elm_object_part_text_set(entry, &quot;Hello World&quot;);
+</pre>
+
+<h3>Using Entry Callbacks</h3>
+
+<p>The entry widget <a href="../../../../org.tizen.mobile.native.apireference/group__Entry.html#entry-signals">emits specific signals</a>.</p>
+
+<p>For signals with <span style="font-family: Courier New,Courier,monospace;">event_info</span> not explicitly described, the value is set to NULL.</p>
+
+<p>The following example registers a callback to the <span style="font-family: Courier New,Courier,monospace;">focused</span> signal:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(entry, &quot;focused&quot;, focused_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the entry receive the focus
+void focused_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Entry focused\n&quot;);
+}
+</pre>
+
+<h2 id="flip" name="flip">Flip</h2>
+
+<p>The flip widget can hold 2 <span style="font-family: Courier New,Courier,monospace;">Evas_Objects</span> and let the user flip between these objects using various predefined animations.</p>
+
+<p>The following example creates a flip widget:</p>
+
+<pre class="prettyprint">
+Evas_Object *flip, *parent, *content1, *content2;
+flip = elm_flip_add(parent);
+</pre>
+
+<p>Add content to the widget. <span style="font-family: Courier New,Courier,monospace;">content1</span> is set to the front, and <span style="font-family: Courier New,Courier,monospace;">content2</span> is set to the back:</p>
+
+<pre class="prettyprint">
+elm_object_part_content_set(flip, &quot;front&quot;, content1);
+elm_object_part_content_set(flip, &quot;back&quot;, content2);
+</pre>
+
+<h3>Running Flip Animation</h3>
+
+<p>Run an flip animation. The following example flips up the front content object as if it was on a cube, letting the down face of the cube appear with the back content object:</p>
+
+<pre class="prettyprint">
+elm_flip_go(flip, ELM_FLIP_CUBE_UP);
+</pre>
+
+<h3>Handling User Interaction</h3>
+
+<p>By default, the user cannot interact with the flip. To enable user interaction, you have to choose which animation appears when the user acts. In the following, rotation has been selected:</p>
+
+<pre class="prettyprint">
+elm_flip_interaction_set(flip, ELM_FLIP_INTERACTION_ROTATE);
+</pre>
+
+<p>The following interaction modes are available:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_FLIP_INTERACTION_NONE</span>: No interaction is allowed</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_FLIP_INTERACTION_ROTATE</span>: Interaction causes a rotate animation</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_FLIP_INTERACTION_CUBE</span>: Interaction causes a cube animation</li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_FLIP_INTERACTION_PAGE</span>: Interaction causes a page animation</li>
+</ul>
+
+<p>Select which interaction directions are enabled. In the following example, only right and left are enabled:</p>
+
+<pre class="prettyprint">
+elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
+elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
+</pre>
+
+<p>Set the flip amount that is sensitive to user interaction for the entire flip (1) to make the flip easy to interact with:</p>
+
+<pre class="prettyprint">
+elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_LEFT, 1);
+elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_RIGHT, 1);
+</pre>
+
+<h3>Using Flip Callbacks</h3>
+
+<p>The flip widget emits signals when an animation starts and ends. For these signals, <span style="font-family: Courier New,Courier,monospace;">event_info</span> parameter is <span style="font-family: Courier New,Courier,monospace;">NULL</span>:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">animate,begin</span>: Flip animation started</li>
+<li><span style="font-family: Courier New,Courier,monospace;">animate,done</span>: Flip animation finished</li>
+</ul>
+
+<p>The following example registers a callback on the <span style="font-family: Courier New,Courier,monospace;">animation,begin</span> signal:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(entry, &quot;animate,begin&quot;, anim_start_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the flip animation starts
+void anim_start_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Animation starts\n&quot;);
+}
+</pre>
+
+<h2 id="img" name="img">Image</h2>
+
+<p>The image widget can load and display an image from a disk file or memory.</p>
+
+<p class="figure">Figure: Image widget</p> 
+<p style="text-align:center;"><img alt="Image widget" src="../../images/image.png" /></p> 
+
+<p>The following object is created using the <span style="font-family: Courier New,Courier,monospace;">elm_image_add()</span> function:</p>
+
+<pre class="prettyprint">
+Evas_Object *image, *parent;
+image = elm_image_add(parent);
+</pre>
+
+<h3>Configuring Image Widget</h3>
+
+<p>Various properties of an image can be tuned. The following example disables the Elementary scaling so that the image is not scaled but resizes in both directions:</p>
+
+<pre class="prettyprint">
+elm_image_no_scale_set(image, EINA_TRUE);
+elm_image_resizable_set(image, EINA_TRUE, EINA_TRUE);
+</pre>
+
+<p>When scaling images, you can use the smooth scaling algorithm. It provides a better quality image but is slower than the default algorithm:</p>
+
+<pre class="prettyprint">
+elm_image_smooth_set(image, EINA_TRUE);
+</pre>
+
+<p>Use preloading to load images faster and avoid flickering. You can disable it when needed:</p>
+
+<pre class="prettyprint">
+elm_image_preload_disabled_set(image, EINA_TRUE);
+</pre>
+
+<p>You can also rotate or flip the image. The following example rotates the image 180 degrees:</p>
+
+<pre class="prettyprint">
+elm_image_orient_set(image, ELM_IMAGE_ROTATE_180);
+</pre>
+
+<p>To keep the original aspect ratio when resizing the image, you need to define how the image fits into the object area:</p>
+
+<pre class="prettyprint">
+// Keep original aspect ratio
+elm_image_aspect_fixed_set(image, EINA_TRUE);
+// Let the image fit the entire object
+elm_image_fill_outside_set(image, EINA_TRUE);
+</pre>
+
+<p>In this configuration, a part of the image can go outside the object. If <span style="font-family: Courier New,Courier,monospace;">elm_image_fill_outside_set</span> is set to <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span>, the image stays inside the limits of the parent object.</p>
+
+<h3>Using Image Callbacks</h3>
+
+<p>The image widget emits the following signals:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">drop</span>: Called when a user has dropped an image typed object onto the object in question - the <span style="font-family: Courier New,Courier,monospace;">event_info</span> argument is the path to that image file.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">clicked</span>: Called when a user has clicked the image. <span style="font-family: Courier New,Courier,monospace;">event_info</span> is <span style="font-family: Courier New,Courier,monospace;">NULL</span>.</li>
+</ul>
+
+<p>The following example registers a callback when a user has clicked on the image:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(image, &quot;clicked&quot;, clicked_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the image is clicked
+void clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Image clicked\n&quot;);
+}
+</pre>
+
+<h2 id="index" name="index">Index</h2>
+
+<p>The index widget creates an index for fast access to a group of other UI items. It is hidden by default, and appears when the user clicks on its reserved area on the canvas. In the default theme, the reserved area is one-finger wide and located at the right side of the index widget container. Generally an index is used together with lists, generic lists, or generic grids.</p>
+
+<p class="figure">Figure: Index widget</p> 
+<p style="text-align:center;"><img alt="Index widget" src="../../images/index.png" /></p> 
+
+<p>To create a new index widget, use the <span style="font-family: Courier New,Courier,monospace;">elm_index_add()</span> function:</p>
+
+<pre class="prettyprint">
+Evas_Object *index, *parent;
+index = elm_index_add(parent);
+</pre>
+
+<h3>Adding Items</h3>
+
+<p>You can ass items to the index. The following example adds the listitem object at the letter &quot;A&quot;, calling the smart <span style="font-family: Courier New,Courier,monospace;">callback it_select_cb()</span> function when this item is selected:</p>
+
+<pre class="prettyprint">
+Elm_Object_Item *list_item1, *list_item2;
+elm_index_item_append(index, &quot;A&quot;, it_select_cb, list_item1);
+</pre>
+
+<p>The following defines the smart callback:</p>
+
+<pre class="prettyprint">
+// Callback function called when the list_item1 object is selected
+void it_select_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;Item1 selected\n&quot;);
+}
+</pre>
+
+<p>The new index is appended to the existing ones. You can also prepend index items using the <span style="font-family: Courier New,Courier,monospace;">elm_index_item_prepend()</span> function.</p>
+
+<h3>Sorting Items</h3>
+
+<p>You can insert index items using a sorting function, and sort the indexes.</p>
+
+<p>Write a comparison function that returns a positive <span style="font-family: Courier New,Courier,monospace;">int</span>, <span style="font-family: Courier New,Courier,monospace;">0</span> or a negative <span style="font-family: Courier New,Courier,monospace;">int</span> respectively, when the <span style="font-family: Courier New,Courier,monospace;">data2</span> item parameter is greater or lower than or equal to the <span style="font-family: Courier New,Courier,monospace;">data1</span> parameter.</p>
+
+<pre class="prettyprint">
+static int
+_index_icmp(const void *data1,
+const void *data2)
+{
+&nbsp;&nbsp;&nbsp;int result;
+&nbsp;&nbsp;&nbsp;// Code for item comparison
+&nbsp;&nbsp;&nbsp;return result;
+}
+</pre>
+
+<p>Add a new item in the &quot;B&quot; index, using the comparison function to sort the indexes:</p>
+
+<pre class="prettyprint">
+elm_index_item_sorted_insert(index, &quot;B&quot;, NULL, list_item2, _index_icmp, NULL);
+</pre>
+
+<h3>Using Index Callbacks</h3>
+
+<p>The index widget emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">changed</span>: When the selected index item changes. <span style="font-family: Courier New,Courier,monospace;">event_info</span> is the selected item&#39;s data pointer.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">delay,changed</span>: When the selected index item changes, but after a small idling period. <span style="font-family: Courier New,Courier,monospace;">event_info</span> is the selected item&#39;s data pointer.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">selected</span>: When the user releases a mouse button and selects an item. <span style="font-family: Courier New,Courier,monospace;">event_info</span> is the selected item&#39;s data pointer.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">level,up</span>: When the user moves a finger from the first level to the second level</li>
+<li><span style="font-family: Courier New,Courier,monospace;">level,down</span>: When the user moves a finger from the second level to the first level</li>
+</ul>
+
+<p>When the user selects an item in the index, the &quot;selected&quot; signal is emitted. The developer can then implement the associated callback to do the appropriate action (for example, to show a given area or child object depending on the selected index item):</p>
+
+<pre class="prettyprint">
+static void
+_index_selected_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Elm_Object_Item *lit = event_info;
+&nbsp;&nbsp;&nbsp;// Code that does the desired action
+}
+</pre>
+
+<p>Register the callback to the <span style="font-family: Courier New,Courier,monospace;">selected</span> signal:</p>
+
+<pre class="prettyprint">
+evas_object_smart_callback_add(index, &quot;selected&quot;, _index_selected_cb, NULL);
+</pre>
+
+<h2 id="list" name="list">List</h2>
+
+<p>The list widget is a very simple type of a list. Only use it to create small lists. For larger content, use the <a href="#gen">genlist</a> widget.</p>
+
+<p>The list items can contain a text and two contents (&quot;start&quot;, and &quot;end&quot;). These can be set with the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_*()</span> functions.</p>
+
+<p class="figure">Figure: List widget</p> 
+<p style="text-align:center;"><img alt="List widget" src="../../images/list.png" /></p> 
+
+<h3>Creating a List</h3>
+
+<p>The following example creates a list:</p>
+
+<pre class="prettyprint">
+Evas_Object *list, *parent;
+...
+// Create a list
+list = elm_list_add(parent);
+</pre>
+
+<p>The list widget implements a scrollable interface, so the Scroller widget can be used on it. For example, you may want to change the bounce property of the scroller or the scrolling policy:</p>
+
+<pre class="prettyprint">
+Evas_Object *list;
+...
+// Change the scroller policy  - fix the scroll only vertically
+elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_OFF);
+// Enable bounce effect when lists reach the upper and lower limits
+elm_scroller_bounce_set(list, EINA_TRUE, EINA_TRUE);
+</pre>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">elm_list_multi_select_set()</span> function to enable multi-selection of items. When an item is clicked, the state changes to selected.</p>
+
+<pre class="prettyprint">
+Evas_Object *list;
+...
+// Activate multi-selection
+elm_list_multi_select_set(list, EINA_TRUE);
+</pre>
+
+<h3>Adding Items</h3>
+<p>You can add items to the list using the <span style="font-family: Courier New,Courier,monospace;">elm_list_item_append()</span> or <span style="font-family: Courier New,Courier,monospace;">elm_list_item_prepend()</span> function. The following example adds10 items with text and an icon on front. The last 2 arguments are the callback function called when the created item is clicked, and the data passed to the callback function.</p>
+
+<pre class="prettyprint">
+Evas_Object *list;
+int i;
+...
+// Called when the list item is selected
+static void _selected_item_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
+&nbsp;&nbsp;&nbsp;Eina_Bool selected = elm_list_item_selected_get(list_it);
+&nbsp;&nbsp;&nbsp;printf(&quot;item is %s\n&quot;, selected ? &quot;selected&quot; : &quot;unselected&quot;);
+}
+...
+for (i = 0; i &lt; 10; i++)
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *ic;
+&nbsp;&nbsp;&nbsp;char tmp[8];
+&nbsp;&nbsp;&nbsp;snprintf(tmp, sizeof(tmp), &quot;Item %02d&quot;, i);
+&nbsp;&nbsp;&nbsp;// Create an icon
+&nbsp;&nbsp;&nbsp;ic = elm_icon_add(win);
+&nbsp;&nbsp;&nbsp;// Set the file to the icon file
+&nbsp;&nbsp;&nbsp;elm_image_file_set(ic, &quot;path/to/file&quot;, NULL);
+&nbsp;&nbsp;&nbsp;// Add item to the list
+&nbsp;&nbsp;&nbsp;elm_list_item_append(list, tmp, ic, NULL, _selected_item_cb, NULL);
+}
+...
+</pre>
+
+<h3>Changing Text or Icons</h3>
+
+<p>To change the state of an item, use all the functions relative to the <span style="font-family: Courier New,Courier,monospace;">Elm_Object_Item</span>. Each item of the list contains 2 Evas objects, which are included as parameters when appending or prepending the item in the list.</p>
+
+<p>The Evas objects can be changed using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_content_set()</span> function. The first object is referenced as <span style="font-family: Courier New,Courier,monospace;">start</span> object in the theme whereas the second one is referenced as <span style="font-family: Courier New,Courier,monospace;">end</span>.</p>
+<p>You must name these objects when using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_content_set()</span> function. The label of the item can be changed using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_text_set()</span> function.</p>
+
+<pre class="prettyprint">
+Evas_Object *list;
+Eina_List *l;
+Elm_Object_Item *it;
+// Get the current selected item
+it = elm_list_selected_item_get(list);
+if (!it)
+&nbsp;&nbsp;&nbsp;return;
+ic = elm_icon_add(win);
+// Set the file as the icon
+elm_image_file_set(ic, &quot;path/to/file&quot;, NULL);
+// Change the first icon
+elm_object_item_part_content_set(it, &quot;start&quot;, ic);
+// Change the second icon
+elm_object_item_part_content_set(it, &quot;end&quot;, ic);
+// Change the label
+elm_object_item_text_set(it, &quot;I&#39;ve been selected !&quot;);
+</pre>
+
+<h3>Retrieving Selected Items</h3>
+
+<p>You can retrieve the list of currently selected items using the <span style="font-family: Courier New,Courier,monospace;">elm_list_selected_items_get()</span> function. If the multi-selection mode is disabled, you can only retrieve the selected item using the <span style="font-family: Courier New,Courier,monospace;">elm_list_selected_item_get()</span> function. The following example unselects all previously selected items:</p>
+
+<pre class="prettyprint">
+Evas_Object *list; Eina_List *l;
+Eina_List *selected_items;
+// Elm_Object_Item list
+Elm_Object_Item *it;
+selected_items = elm_list_selected_items_get(list);
+EINA_LIST_FOREACH(selected_items, l, it)
+elm_list_item_selected_set(it,EINA_FALSE);
+</pre>
+
+<h3>Manipulating List Items</h3>
+
+<p>To check, whether an item is selected, use the <span style="font-family: Courier New,Courier,monospace;">elm_list_item_selected_get()</span> function. The function returns <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> if the item is selected, and <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> otherwise.</p>
+
+<p>Sometimes it is useful to scroll the list to an specific item. The List widget provides 2 functions for that purpose: the <span style="font-family: Courier New,Courier,monospace;">elm_list_item_show()</span> function shots the item passed as argument, and the <span style="font-family: Courier New,Courier,monospace;">elm_list_item_bring_in()</span> function shows the item only after animating the slide.</p>
+
+<p>You can get to the previous or next item using the <span style="font-family: Courier New,Courier,monospace;">elm_list_item_prev()</span> and <span style="font-family: Courier New,Courier,monospace;">elm_list_item_next()</span> functions.</p>
+
+<p>The following example selects the item next to the currently selected item, unselects it, selects the next item, and displays it on the screen:</p>
+
+<pre class="prettyprint">
+Evas_Object *list;
+Elm_Object_Item *current, *next;
+current = elm_list_selected_item_get(list);
+elm_list_item_selected_set(current, EINA_FALSE);
+next = elm_list_item_next(current);
+elm_list_item_selected_set(next, EINA_TRUE);
+elm_list_item_bring_in(next);
+</pre>
+
+<h3>Using List Callbacks</h3>
+
+<p>You can register to the <span style="font-family: Courier New,Courier,monospace;">clicked,double</span> signal. The currently double-clicked item can be get back through the <span style="font-family: Courier New,Courier,monospace;">event_info</span> pointer. The following example registers to the <span style="font-family: Courier New,Courier,monospace;">clicked,double</span> signal and unselect the item, which has been double-clicked:</p>
+
+<pre class="prettyprint">
+{
+&nbsp;&nbsp;&nbsp;Evas_Object *list;
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;evas_object_smart_callback_add(list, &quot;clicked,double&quot;, clicked_cb, data);
+&nbsp;&nbsp;&nbsp;...
+}
+// Callback function called when the button is clicked by the user
+void double_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;elm_Object_Item *it = event_info;
+&nbsp;&nbsp;&nbsp;elm_list_selected_item_set(it, EINA_FALSE);
+}
+</pre>
+
+<h2 id="gen" name="gen">Genlist</h2>
+
+<p>The genlist widget displays a scrollable list of items. It allows maintaining a large amount of entries, while still being fast. Only the visible items are allocated in memory.</p>
+
+<p class="figure">Figure: Genlist widget</p> 
+<p style="text-align:center;"><img alt="Genlist widget" src="../../images/genlist.png" /></p> 
+<p>An item can have 0 or more texts, 0 or more contents, and 0 or more boolean states. This is defined in the Edje item theme style. Genlist searches for the following data items in the Edje file:</p>
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">labels</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">contents</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">states</span></li>
+</ul>
+<p>The <span style="font-family: Courier New,Courier,monospace;">default</span> item style provides a text part (<span style="font-family: Courier New,Courier,monospace;">elm.text</span>), 2 content parts (<span style="font-family: Courier New,Courier,monospace;">elm.swalllow.icon</span> and <span style="font-family: Courier New,Courier,monospace;">elm.swallow.end</span>), and no state parts.</p>
+
+<p>The following item styles are available:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">default</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">full</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">one_icon</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">end_icon</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">no_icon</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">group_index</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">double_label</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">icon_top_text_bottom</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">edit</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">tree_effect</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">effect_parts</span></li>
+</ul>
+
+<p>The following figures illustrate the different item styles:</p>
+
+<p class="figure">Figure: Default item style</p> 
+<p style="text-align:center;"><img alt="Default item style" src="../../images/genlist_default.png" /></p> 
+
+<p class="figure">Figure: Group_index item style</p> 
+<p style="text-align:center;"><img alt="Group_index item style" src="../../images/genlist_group_index.png" /></p> 
+
+<p class="figure">Figure: Double label item style</p> 
+<p style="text-align:center;"><img alt="Double label item style" src="../../images/genlist_double_label.png" /></p>
+
+<p class="figure">Figure: Icon_top_text_bottom item style</p> 
+<p style="text-align:center;"><img alt="Icon_top_text_bottom item style" src="../../images/genlist_icon_top_text_bottom.png" /></p>  
+
+<p class="figure">Figure: Mode item style</p> 
+<p style="text-align:center;"><img alt="Mode item style" src="../../images/genlist_mode.png" /></p> 
+
+<h3>Creating and Removing Items</h3>
+
+<p>To save memory, the genlist allocates and deletes items while the user scrolls the list. Therefore, you must fill an <span style="font-family: Courier New,Courier,monospace;">Elm_Genlist_Item_Class</span> structure, which informs the genlist widget about the callbacks to call when an item must be created or deleted:</p>
+
+<pre class="prettyprint">
+Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+itc-&gt;item_style = &quot;default</span>;
+itc-&gt;decorate_item_style = NULL;
+itc-&gt;decorate_all_item_style = NULL;
+itc-&gt;func.text_get = _item_label_get;
+itc-&gt;func.content_get = _item_content_get;
+itc-&gt;func.state_get = _item_state_get;
+itc-&gt;func.del = _item_del;
+</pre>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">item_style</span>, <span style="font-family: Courier New,Courier,monospace;">decorate_item_style</span>, and <span style="font-family: Courier New,Courier,monospace;">decorate_all_item_style</span> attributes define the name of the item style, the decorate mode item style, and the decorate all item style.</p>
+
+<p>The function structure contains pointers to functions, which are called when an item is going to be created or deleted. All functions receive a data parameter that points to the same data passed to the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_append()</span> function and related item creation functions, and an <span style="font-family: Courier New,Courier,monospace;">obj</span> parameter that points to the Genlist object itself:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">text_get()</span></li>
+<p>This function receives a <span style="font-family: Courier New,Courier,monospace;">PART</span> parameter, which is the name string of an existing text part in the Edje group implementing the item theme. It must return a <span style="font-family: Courier New,Courier,monospace;">strdup()</span> string corresponding to the <span style="font-family: Courier New,Courier,monospace;">PART</span> parameter. The caller is in charge of freeing the string when done.</p>
+<li><span style="font-family: Courier New,Courier,monospace;">content_get()</span></li>
+<p>The <span style="font-family: Courier New,Courier,monospace;">PART</span> parameter must return NULL when no content is desired, or a valid object handle. The object is deleted by the genlist on its deletion or when the item is unrealized.</p>
+<li><span style="font-family: Courier New,Courier,monospace;">state_get()</span></li>
+<p>Return <span style="font-family: Courier New,Courier,monospace;">EINA_FALSE</span> for false/off and <span style="font-family: Courier New,Courier,monospace;">EINA_TRUE</span> for true/on. Genlist emits a signal to its theming Edje object with <span style="font-family: Courier New,Courier,monospace;">elm,state,xxx,active</span> and <span style="font-family: Courier New,Courier,monospace;">elm</span> as <span style="font-family: Courier New,Courier,monospace;">emission</span> and <span style="font-family: Courier New,Courier,monospace;">source</span> arguments, respectively, when the state is true (the default is false).  xxx is the name of the (state) part.</p>
+<li><span style="font-family: Courier New,Courier,monospace;">del()</span></li>
+<p>This function is called when a genlist item is deleted. It must delete any data that has been allocated at the item creation.</p>
+</ul>
+
+<h3>Managing Items</h3>
+<p>To add an item, you can use various functions:</p>
+<ul>
+<li>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_append()</span> function adds an item to the end of the list, or if there is a parent, to the end of all the child items of the parent.</li>
+<li>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_prepend()</span> function adds an item to the beginning of the list or children list.</li>
+<li>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_insert_before()</span> function inserts an item before another item.</li>
+<li>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_insert_after()</span> function inserts an item after the indicated item.</li>
+</ul>
+
+<p>The previous functions take a <span style="font-family: Courier New,Courier,monospace;">type</span> parameter that can have the following values:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_GENLIST_ITEM_NONE</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_GENLIST_ITEM_TREE</span></li>
+<li><span style="font-family: Courier New,Courier,monospace;">ELM_GENLIST_ITEM_GROUP</span></li>
+</ul>
+
+<p>If the value is <span style="font-family: Courier New,Courier,monospace;">ELM_GENLIST_ITEM_TREE</span>, the item is able to expand and have child items. If the value is <span style="font-family: Courier New,Courier,monospace;">ELM_GENLIST_ITEM_GROUP</span>, the item is a group index item displayed at the top until the next group comes.</p>
+
+<p class="figure">Figure: Genlist tree</p> 
+<p style="text-align:center;"><img alt="Genlist tree" src="../../images/genlist_tree.png" /></p>
+
+<p>The application can clear the list using the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_clear()</span> function, which deletes all the items in the list. The <span style="font-family: Courier New,Courier,monospace;">elm_object_item_del()</span> function deletes a specific item. The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_subitems_clear()</span> function clears all items that are children of the indicated parent item.</p>
+
+<p>To inspect list items, you can jump to the item at the top of the list using the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_first_item_get()</span> function, which returns the item pointer, and the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_last_item_get()</span> function, which gets the item at the end of the list.</p>
+<p>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_next_get()</span> and <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_prev_get()</span> functions get the next and previous items, respectively, relative to the indicated item. Using these functions, you can walk through the entire item list or tree.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">As a tree, the items are flattened in the list. Use the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_parent_get()</span> function to check, which item is the parent (to skip them if wanted).</td>
+</tr>
+</tbody>
+</table> 
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_show()</span> function makes the scroller scroll to show the desired item so it is visible. The <span style="font-family: Courier New,Courier,monospace;">elm_object_item_data_get()</span> function returns the data pointer set by the item creation functions.</p>
+
+<p>If an item changes (boolean state, text, or content changes), use the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_update()</span> function update the genlist item with the new state. The genlist re-realizes the item and calls the functions in the <span style="font-family: Courier New,Courier,monospace;">_Elm_Genlist_Item_Class</span> for that item.</p>
+
+<h3>Selecting Items</h3>
+
+<p>You can manually select and unselect items using the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_selected_set()</span> function, or they can be disabled using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_disabled_set()</span> function. In case of a tree or group item, use the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_expanded_set()</span> function to expand or contract the item.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Calling the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_item_expanded_set()</span> function does not show or hide the children of this item, if any. You must manually delete and create them on the callbacks of the <span style="font-family: Courier New,Courier,monospace;">expanded</span> or <span style="font-family: Courier New,Courier,monospace;">contracted</span> signals.</td>
+</tr>
+</tbody>
+</table>
+
+<p>By default, the genlist is in single-selection mode: only one item can be selected at a time. You can use the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_multi_select_set()</span> function to select multiple items at the same time. In single-selection mode, you can use the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_selected_item_get()</span> function to retrieve the selected item,. If several items are selected, the <span style="font-family: Courier New,Courier,monospace;">elm_genlist_selected_items_get()</span> function returns a list of the currently selected items.</p>
+
+<p>The following figure shows a genlist in multi-selection mode with 2 items selected (#4 and #5) and 1 item disabled (#2).</p>
+
+<p class="figure">Figure: Genlist widget</p> 
+<p style="text-align:center;"><img alt="Genlist widget" src="../../images/genlist_multi.png" /></p>
+
+<h2 id="label" name="label">Label</h2>
+
+<p>The label widget displays text with simple html-like markup. It can display the text with several predefined styles:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">default</span>: No animation.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">marker</span>: Centers the text and makes it bold.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slide_long</span>: The text appears from the right of the screen and slides until it disappears in the left of the screen (reappearing on the right again).</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slide_short</span>: The text appears in the left of the label and slides to the right to show the overflow. When all of the text has been shown, the position is reset.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slide_bounce</span>: The text appears in the left of the label and slides to the right to show the overflow. When all of the text has been shown, the animation reverses, moving the text to the left.</li>
+</ul>
+
+<p class="figure">Figure: Label widget</p> 
+<p style="text-align:center;"><img alt="Label widget" src="../../images/label.png" /></p> 
+
+<p>The label widget emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">language,changed</span>: The program language changed.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slide,end</span>: The slide has reach the end.</li>
+</ul>
+
+<p>To add a label and set the text in it, use the following functions:</p>
+
+<pre class="prettyprint">
+Evas_Object *label = elm_label_add(win); elm_object_text_set(label, &quot;Some long text for our label, that is not so long&quot;);
+</pre>
+
+<p>The duration of the animation and the slide mode can be set.</p>
+
+<pre class="prettyprint">
+elm_label_slide_duration_set(label, 3); elm_label_slide_mode_set(label,ELM_LABEL_SLIDE_MODE_ALWAYS);
+</pre>
+
+<p>You can modify the style:</p>
+
+<pre class="prettyprint">elm_object_style_set(label, slide_bounce);</pre>
+
+<h2 id="map" name="map">Map</h2>
+ 
+<p>The map widget displays a map. The default map data is provided by the <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> project. Custom providers can also be added.</p>
+
+<p class="figure">Figure: Map widget</p> 
+<p style="text-align:center;"><img alt="Map widget" src="../../images/map.png" /></p>
+
+<p>The map widget supports:</p>
+<ul>
+<li>Zooming</li>
+<li>Scrolling</li>
+<li>Markers with content to be displayed when user clicks over them</li>
+<li>Groups of markers</li>
+<li>Routes</li>
+</ul>
+
+<p>The map widget implements the scroller interface so that all the functions that work with the scroller widget also work with maps.</p>
+
+<p>Once created with the <span style="font-family: Courier New,Courier,monospace;">elm_map_add()</span> function, you can set the zoom level using the <span style="font-family: Courier New,Courier,monospace;">elm_map_zoom_set()</span> function. A specific region can be brought in using the <span style="font-family: Courier New,Courier,monospace;">elm_map_region_bring_in()</span> function, giving the latitude and longitude parameters. You can rotate the map using the <span style="font-family: Courier New,Courier,monospace;">elm_map_rotate_set()</span> function.</p>
+
+<p>Several overlays, such as lines, circles, routes, and bubbles can be drawn on the map. Overlays are generally set using the <span style="font-family: Courier New,Courier,monospace;">elm_map_overlay_*()</span> function.</p>
+
+<p>You can calculate a route between a starting point and an ending point using the <span style="font-family: Courier New,Courier,monospace;">elm_map_route_add()</span> function. The transport type and routing calculation method can be defined to achieve the desired result.</p>
+
+<h2 id="popup" name="popup">Popup</h2>
+
+<p>You can create the popup widget using the <span style="font-family: Courier New,Courier,monospace;">elm_popup_add()</span> function.</p>
+
+<p class="figure">Figure: Popup widget</p> 
+<p style="text-align:center;"><img alt="Popup widget" src="../../images/popup_widget.png" /></p> 
+
+<p>The popup area can contain:</p>
+
+<ul>
+<li>Title area (optional)</li>
+<p>The title area icon can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">title,icon</span> partname. The text of this area is set using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_part_text_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">title,text</span> partname.</p>
+<li>Content area</li>
+<p>Set the content are using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">default</span> partname.</p>
+<li>Action area (optional)</li>
+<p>Action area can contain 3 buttons; each of them can be set to the popup object using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">button1</span>, <span style="font-family: Courier New,Courier,monospace;">button2</span>, and <span style="font-family: Courier New,Courier,monospace;">button3</span> partnames.</p>
+</ul>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">elm_popup_timeout_set()</span> function to hide the popup after a certain amount of time. The visible region of the popup is surrounded by a translucent region called the Blocked Event area. When clicking on this area, the <span style="font-family: Courier New,Courier,monospace;">block,clicked</span> signal is sent to the application.</p>
+
+<h2 id="prog" name="prog">Progressbar</h2>
+
+<p>The progressbar widget can be used to display the progress status of a given task.</p>
+
+<p class="figure">Figure: Progressbar widget</p> 
+<p style="text-align:center;"><img alt="Progressbar widget" src="../../images/progressbar.png" /></p>
+
+<p>Create a progressbar widget:</p> 
+
+<pre class="prettyprint">
+Evas_Object *pb = elm_progressbar_add(win);
+</pre>
+
+<p>By default, the progressbar does not show a label or icon, and the unit label is set to <span style="font-family: Courier New,Courier,monospace;">%.0f %%</span>.</p>
+
+<p>Set a label (here, <span style="font-family: Courier New,Courier,monospace;">Test label</span>):</p>
+
+<pre class="prettyprint">
+elm_object_text_set(pb, &quot;Test label&quot;);
+</pre>
+
+<p>Add an icon using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">icon</span> partname:</p>
+
+<pre class="prettyprint">
+elm_object_part_content_set(pb, &quot;icon&quot;, icon_object);
+</pre>
+
+<p>The progressbar pulse mode can be activated to make the progressbar loop infinitely between the start and end position:</p>
+
+<pre class="prettyprint">
+elm_progressbar_pulse_set(pb, EINA_TRUE);
+</pre>
+
+<p>The progressbar can also be inverted, showing the high values on the left and low values on the right:</p>
+
+<pre class="prettyprint">
+elm_progressbar_inverted_set(pb, EINA_TRUE);
+</pre>
+
+<p>The progressbar emits the <span style="font-family: Courier New,Courier,monospace;">changed</span> signal when the progress value is changed. The value can be changed with the <span style="font-family: Courier New,Courier,monospace;">elm_progressbar_value_set()</span> function. Here the pb progress value is set to 20%.</p>
+
+<pre class="prettyprint">
+elm_progressbar_value_set(pb, 0.2);
+</pre>
+
+<h2 id="radio" name="radio">Radio</h2>
+
+<p>The radio widget can display 1 or more options, but the user can only select one of them. The radio is composed of an indicator (selected/unselected), an optional icon and an optional label. While normally grouped with 2 or more other radio objects, it can also be used alone.</p>
+
+<p class="figure">Figure: Radio widget</p> 
+<p style="text-align:center;"><img alt="Radio widget" src="../../images/radio.png" /></p>
+
+<p>Create the radio object using the <span style="font-family: Courier New,Courier,monospace;">elm_radio_add()</span> function. The label can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_object_text_set()</span> function, and the icon using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">icon</span> partname. Use the <span style="font-family: Courier New,Courier,monospace;">elm_radio_state_value_set()</span> function to set the integer value the radio object represents.</p>
+
+<p>To add another radio object to the same group, use the <span style="font-family: Courier New,Courier,monospace;">elm_radio_group_add()</span> function with both objects. The value of the group can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_radio_value_set()</span> function on any radio object of the group.</p>
+
+<p>When the state of a radio is modified in a group of radio objects, the <span style="font-family: Courier New,Courier,monospace;">changed</span> signal is emitted.</p>
+
+<h2 id="check" name="check">Check</h2>
+
+<p>The check widget is similar to the radio widget, but it does not work as a group.</p>
+
+<p class="figure">Figure: Check widget</p> 
+<p style="text-align:center;"><img alt="Check widget" src="../../images/check.png" /></p>
+
+<p>After having created a check object using the <span style="font-family: Courier New,Courier,monospace;">elm_check_add()</span> function, you can set the boolean value using the <span style="font-family: Courier New,Courier,monospace;">elm_check_state_set()</span> function.</p>
+
+<p>When the value changes, the <span style="font-family: Courier New,Courier,monospace;">changed</span> signal is emitted.</p>
+
+<p>As with the radio object, you can set an icon using the <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span> function with the <span style="font-family: Courier New,Courier,monospace;">icon</span> partname, and a label using the <span style="font-family: Courier New,Courier,monospace;">elm_object_text_set()</span> function.</p>
+
+<h2 id="slider" name="slider">Slider</h2>
+
+<p>The slider widget is a draggable bar used to select a value within a range.</p>
+
+<p class="figure">Figure: Slider widget</p> 
+<p style="text-align:center;"><img alt="Slider widget" src="../../images/slider_widget.png" /></p>
+
+<p>You can se the slider orientation using the <span style="font-family: Courier New,Courier,monospace;">elm_slider_horizontal_set()</span> function, and invert the values like with the progressbar widget. The slider can contain icons (<span style="font-family: Courier New,Courier,monospace;">icon</span> and <span style="font-family: Courier New,Courier,monospace;">end</span> partnames), a label, unit label, and indicator label.</p>
+
+<p>Before using the slider, its minimum and maximum values must be set by the application using the <span style="font-family: Courier New,Courier,monospace;">elm_slider_min_max_set()</span> function, and the current value set using the <span style="font-family: Courier New,Courier,monospace;">elm_slider_value_set()</span> function.</p>
+
+<p>The span of the slider represents its length horizontally or vertically. The span can be set using the <span style="font-family: Courier New,Courier,monospace;">elm_slider_span_size_set()</span> function and is scaled by the object, or application scaling factor.</p>
+
+<p>Use the <span style="font-family: Courier New,Courier,monospace;">elm_slider_value_get()</span> function to retrieve the current value of the slider.</p>
+
+<p>The slider widget emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">changed</span>: The slider value has been changed by the user.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slider,drag,start</span>: Dragging the slider indicator around has started.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">slider,drag,stop</span>: Dragging the slider indicator around has stopped.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">delay,changed</span>: A short time after the value is changed by the user. This is called only when the user stops dragging for a very short period or releases the finger or mouse.</li>
+</ul>
+
+<h2 id="tool" name="tool">Toolbar</h2>
+
+<p>The toolbar widget is a scrollable list of items, which can also show a menu when an item is selected. Only a single item can be selected at a time.</p>
+
+<p class="figure">Figure: Toolbar widget</p> 
+<p style="text-align:center;"><img alt="Toolbar widget" src="../../images/toolbar.png" /></p>
+
+<p>Once created using the <span style="font-family: Courier New,Courier,monospace;">elm_toolbar_add()</span> function, you can set the way the items are displayed in the toolbar using the <span style="font-family: Courier New,Courier,monospace;">elm_toolbar_shrink_mode_set()</span> function. The toolbar can scroll (<span style="font-family: Courier New,Courier,monospace;">ELM_TOOLBAR_SHRINK_SCROLL</span>) to show the hidden items, or create a menu (<span style="font-family: Courier New,Courier,monospace;">ELM_TOOLBAR_SHRINK_MENU</span>) containing the hidden items. It can also set a minimum size (<span style="font-family: Courier New,Courier,monospace;">ELM_TOOLBAR_SHRINK_NONE</span>) to show all items.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace;">elm_toolbar_item_append()</span> function provides a way to append and item, and select an icon, label, and function to call when the item is clicked. A toolbar item can be disabled using the <span style="font-family: Courier New,Courier,monospace;">elm_object_item_disabled_set()</span> function. The state of an item can be se using the <span style="font-family: Courier New,Courier,monospace;">elm_toolbar_item_state_add()</span> function.</p>
+
+<p>You can set an item as menu using the <span style="font-family: Courier New,Courier,monospace;">elm_toolbar_item_menu_set()</span> function, and add menu items using the <span style="font-family: Courier New,Courier,monospace;">elm_menu_item_add()</span> function.</p>
+
+<p class="figure">Figure: Toolbar with menus</p> 
+<p style="text-align:center;"><img alt="Toolbar with menus" src="../../images/toolbar_example.png" /></p>
+
+<p>This widget emits the following signals:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">clicked</span>: The user clicks on a toolbar item and becomes selected.</li>
+<li><span style="font-family: Courier New,Courier,monospace;">longpressed</span>: The toolbar is pressed for a certain amount of time.</li>
+</ul>
+
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="widgets_guide.htm">Elementary Toolkit</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

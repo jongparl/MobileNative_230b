@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Build Properties</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Build Properties</h1> 
+  <p>To build project, you can choose many options. For example, optimization level, debugging support, or include path and library link options.</p> 
+  <p>To set the build properties:</p> 
+  <ol> 
+   <li>In the IDE menu, select <strong>Project &gt; Properties</strong>.</li> 
+   <li>In the <strong>Properties</strong> window, go to <strong>C/C++ Build &gt; Tizen Settings</strong>.<p></p></li> 
+   <li>On the <strong>Platform</strong> tab, set the detailed target and tool information.</p> 
+    <ul> 
+     <li>Rootstrap Informations
+	 <p>Shows the rootstrap-related information:</p></li>
+		<ul>
+		<li>Platform
+		<p>Set the platform version.</p></li>
+		<li>Architecture
+		<p>Set the target architecture.</p>
+		<p>To run the application on the x86 emulator, select <strong>X86</strong>. 
+
+			</p></li>
+		<li>Name
+		<p>Set the rootstrap name.</p></li>
+		</ul>
+     <li>Toolchain Informations
+	 <p>Shows the toolchain-related information:</p></li>
+	 <ul>
+		<li>Platform
+	 <p>Set the compiler toolchain used to build the application.</p></li>
+    </ul> </li> </ul></li>
+   <li>On the <strong>Framework</strong> tab, set the detailed customization of the Tizen framework: 
+    <ul> 
+     <li>Framework <p>Search a framework by name filtering and select the frameworks.</p></li> 
+     <li>Selected Framework <p>Shows the all selected frameworks.</p></li> 
+     <li>Description <p>Shows the description of the selected framework.</p></li> 
+    </ul> </li> 
+
+   <li>In the <strong>Properties</strong> window, go to <strong>C/C++ Build &gt; Settings &gt; Tool Settings</strong>.<p></p> <p>This tab includes a build toolchain on left tree view. A toolchain has 3 main items:</p> 
+    <ul> 
+     <li>Compiler</li> 
+     <li>Linker</li> 
+     <li>Assembler</li> 
+    </ul> <p>Each tool is configured by selecting its sub-items.</p></p> 
+    <ul> 
+     <li>C++ Compiler <p>Shows the compiler binary name and summarizes compile options</p> 
+      <ul> 
+       <li>Preprocessor <p>Set the preprocessor option</p> </li> 
+       <li>Includes <p>Set the include path or files</p> </li> 
+       <li>Optimization <p>Set optimization options</p> </li> 
+       <li>Debugging <p>Set debugging options </p> 
+        <table class="note"> 
+         <tbody> 
+          <tr> 
+           <th class="note">Note</th> 
+          </tr> 
+          <tr> 
+           <td class="note"> <p>The <strong>Enable Application logging</strong> option is enabled for the <strong>Debug</strong> build configuration. The option is disabled in the <strong>Release</strong> configuration.</p></td> 
+          </tr> 
+         </tbody> 
+        </table></li> 
+       <li>Warnings <p>Set warning options</p> </li> 
+       <li>Miscellaneous <p>Set miscellaneous options</p> </li> 
+      </ul></li> 
+     <li>C Compiler <p>Shows the compiler binary name and summarizes compile options</p> 
+      <ul> 
+       <li>Preprocessor <p>Set the preprocessor option</p> </li> 
+       <li>Symbols <p>Define or undefine the symbols used in the compilation</p> </li> 
+       <li>Includes <p>Set the include path or files</p> </li> 
+       <li>Optimization <p>Set optimization options</p> </li> 
+       <li>Debugging <p>Set debugging options</p> </li> 
+       <li>Warnings <p>Set warning options</p> </li> 
+       <li>Miscellaneous <p>Set miscellaneous options</p> </li> 
+      </ul></li> 
+     <li>C++ Linker <p>Shows the linker binary name and summarizes link options</p> 
+      <ul> 
+       <li>General <p>Set general options</p> </li> 
+       <li>Libraries <p>Set the library and library paths</p> </li> 
+       <li>Miscellaneous <p>Set miscellaneous linker options</p> </li> 
+       <li>Shared Library Settings <p>Set options for shared library linking</p> </li> 
+      </ul></li> 
+     <li>Assembler <p>Shows the assembler binary name and summarizes assembling options</p> </li> 
+    </ul></li> 
+  </ol> 
+  <p>For more information about build configuration, see the CDT guide.</p> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="building_app.htm">Building Applications</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

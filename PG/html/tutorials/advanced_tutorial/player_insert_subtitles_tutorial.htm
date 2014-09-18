@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Subtitle Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Subtitle Tutorial</h1> 
+
+<p>This tutorial demonstrates how to insert subtitles to video clips.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;player.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player</a> API. In order to set the display, the <span style="font-family: Courier New,Courier,monospace;">&lt;Elementary.h&gt;</span> header must also be included.</p>
+
+<p>To learn about the Player API features, see the <a href="../../guide/media/player.htm">Audio and Video Player Programming Guide</a>.</p> 
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#init">Initialization and Prerequisites</a></li>
+		<li><a href="#insert">Inserting Subtitles</a>
+		<p>Insert subtitles to video files.</p></li>
+		<li><a href="#deinitialize">Deinitializing the Player</a>
+		<p>Deinitialize resources when they are no longer needed.</p></li>
+   </ul>
+ 
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>To use the functions from the Player API:</p>
+
+<ol><li><p>Create a player handle. The <span style="font-family: Courier New,Courier,monospace;">player_create()</span> function takes a reference to the player handle as an argument and creates it. If successful, the handle is initialized and ready to be passed to other Player API functions.</p>
+ 
+<pre class="prettyprint">
+player_h player;
+error_code = player_create(&amp;player);
+_ERR(PLAYER_ERROR_NONE, &quot;player_create&quot;, error_code);
+</pre>
+<p>After creation, the player is in the <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_IDLE</span> state. </p></li>
+
+<li>Define the data source for the player using the <span style="font-family: Courier New,Courier,monospace;">player_set_uri()</span> function. The function takes the player handle and file path as parameters. If the provided URI is invalid, no error messages are received until the <span style="font-family: Courier New,Courier,monospace;">player_start()</span> function is invoked.</p>
+
+<pre class="prettyprint">
+#define MEDIA_PATH &quot;/opt/usr/media/Videos/Color.mp4&quot;
+
+error_code = player_set_uri(player, MEDIA_PATH); 
+_ERR(PLAYER_ERROR_NONE, &quot;player_set_uri()&quot;, error_code);
+</pre></li>
+
+<li><p>Call the <span style="font-family: Courier New,Courier,monospace;">player_prepare()</span> function to prepare the player for playback. If successful, the player state becomes <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_READY</span> and the player is ready to start.</p>
+
+<pre class="prettyprint">
+error_code = player_prepare(player);
+_ERR(PLAYER_ERROR_NONE, &quot;player_prepare()&quot;, error_code);
+</pre></li>
+
+<li><p>Check the player state using the <span style="font-family: Courier New,Courier,monospace;">player_get_state()</span> function which takes the player handle and the <span style="font-family: Courier New,Courier,monospace;">player_state_e</span> enumeration as parameters.</p>
+
+<pre class="prettyprint">
+player_state_e state;
+error_code = player_get_state(player, &amp;state);
+_ERR(PLAYER_ERROR_NONE, &quot;player_get_state&quot;, error_code);
+_ERR(PLAYER_STATE_READY, &quot;PLAYER_STATE_PLAYING&quot;, state);
+</pre></li></ol>
+
+<h2 id="insert" name="insert">Inserting Subtitles</h2>
+<p>To set the subtitle path, use the <span style="font-family: Courier New,Courier,monospace;">player_set_subtitle_path()</span> function:</p>
+
+<pre class="prettyprint">
+#define SUBTITLE_FILE_PATH &quot;/opt/usr/media/subtitles_test_file.srt&quot;
+
+error_code = player_set_subtitle_path(player, SUBTITLE_FILE_PATH);
+_ERR(0, &quot;player_set_subtitle_path()&quot;, error_code);
+</pre>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">The subtitle path can be set when the player state is <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_IDLE</span>, <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_READY</span>, <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_PLAYING</span>, or <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_PAUSED</span>.</td>
+</tr>
+</tbody>
+</table> 
+
+<p>After setting the subtitle path, you can <a href="../media_tutorial/player_tutorial.htm">play the video file</a> as usual, by setting the video display and starting the player.</p>
+
+<h2 id="deinitialize" name="deinitialize">Deinitializing the Player</h2>
+<p>When the player is no longer needed:</p>
+<ol><li>Reset the player using the <span style="font-family: Courier New,Courier,monospace;">player_unprepare()</span> function with the player handle as a parameter. Before using this function, make sure that the player is stopped using the <span style="font-family: Courier New,Courier,monospace;">player_stop()</span> function.</p>
+
+<pre class="prettyprint">
+error_code = player_stop(player);
+_ERR(PLAYER_ERROR_NONE, &quot;player_stop()&quot;, error_code);
+
+error_code = player_unprepare(player);
+_ERR(PLAYER_ERROR_NONE, &quot;player_unprepare()&quot;, error_code);
+</pre></li>
+
+<li><p>When the player is unprepared, it is in the <span style="font-family: Courier New,Courier,monospace;">PLAYER_STATE_IDLE</span> state. Destroy the player handle using the <span style="font-family: Courier New,Courier,monospace;">player_destroy()</span> function.</p>
+
+<pre class="prettyprint">
+error_code = player_destroy(player);
+_ERR(PLAYER_ERROR_NONE, &quot;player_destroy&quot;, error_code);
+</pre></li></ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorial</a></li>
+	<li><a href="../../guide/media/player.htm">Audio and Video Player Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player API Reference</a></li>      
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

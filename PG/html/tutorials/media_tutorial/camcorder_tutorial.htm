@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <script type="text/javascript" src="../../snippet.js"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" />
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" />
+  <title>Camcorder Tutorial</title>
+ </head>
+ <body onload="prettyPrint()">
+  <!--<div id="banner">
+Tizen</div>-->
+<h1>Camcorder Tutorial</h1>
+
+<p>This tutorial demonstrates how you can record and play video.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;camera.h&gt;</span>, <span style="font-family: Courier New,Courier,monospace">&lt;player.h&gt;</span>, and <span style="font-family: Courier New,Courier,monospace">&lt;recorder.h&gt;</span> header files, which have to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html">Camera API</a>, <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player API</a>, and <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html">Recorder API</a>, respectively.</p>
+
+<p>To learn about the Camera API, Player API, and Recorder API features, see the <a href="../../guide/media/media.htm">Multimedia Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#recording">Recording Video</a>
+  <p>Create and prepare a video recorder, and use the recorder to record a video file.</p>
+ </li>
+ <li><a href="#playing">Playing Video</a>
+  <p>Create and prepare a video player, and use the player to play back a video file.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>Define a structure containing the handles for the video recorder and camera, and a Boolean variable specifying whether the video recorder is turned off. In addition, declare constants for recording time and limit, and variables for the video file paths, bitrate, duration, playing flag, and return value.</p>
+
+<pre class="prettyprint">#include &lt;unistd.h&gt;
+#include &lt;cstdio&gt;
+struct recorder_data
+{
+&nbsp;&nbsp;&nbsp;bool shutdown;
+&nbsp;&nbsp;&nbsp;recorder_h recorder;
+&nbsp;&nbsp;&nbsp;camera_h camera;
+};
+static const int RECORD_TIME=2;
+static const int RECORD_LIMIT=4;
+static char *g_file1= &quot;/opt/usr/media/Videos/file&quot;;
+static char *g_video_path = &quot;/opt/usr/media/Videos/file&quot;;
+static int g_bitrate = 288000;
+static int duration;
+static int playing =0;
+static int ret;</pre>
+
+<h2 id="recording" name="recording">Recording Video</h2>
+
+<p>To record video:</p>
+
+<ol>
+ <li>Create a camera.</li>
+ <li>Create a video recorder.</li>
+ <li>Prepare the video recorder.</li>
+ <li>Register the necessary callback functions.</li>
+ <li>Start recording. You can pause or cancel the recording at any time.</li>
+ <li>Stop recording and save the recorded data.</li>
+ <li>Release all camera and video recorder resources.</li>
+</ol>
+
+<h3>Creating a Camera</h3>
+
+<p>Create a handle for the camera by using the <span style="font-family: Courier New,Courier,monospace">camera_create()</span> function. The first parameter defines the camera using the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html#gab030be4ec6b05144c3f2a732541e4104">camera_device_e</a> enumeration.</p>
+
+<p>After successfully creating the handle, the state of the camera is set to <span style="font-family: Courier New,Courier,monospace">CAMERA_STATE_CREATED</span>.</p>
+
+<p>To check the camera state, use the <span style="font-family: Courier New,Courier,monospace">camera_get_state()</span> function. It returns the state in the second parameter as a value of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html#ga28cde1b92417f9ce43dde605ed822cde">camera_state_e</a> enumeration.</p>
+
+<p>To allow the system time to create the camera and set its state, implement the state check in a loop.</p>
+
+<pre class="prettyprint">struct recorder_data rec_data;
+camera_state_e state;
+ret = camera_create(CAMERA_DEVICE_CAMERA0, &amp;(rec_data.camera));
+
+ret = camera_get_state(rec_data.camera,&amp;state);
+
+// Waiting loop
+while (state!=CAMERA_STATE_CREATED)
+{
+&nbsp;&nbsp;&nbsp;ret =  camera_get_state(rec_data.camera,&amp;state);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+<h3>Creating a Video Recorder</h3>
+
+<p>Create a handle for the video recorder by using the <span style="font-family: Courier New,Courier,monospace">recorder_create_videorecorder()</span> function.</p>
+
+<p>After successfully creating the handle, the state of the video recorder is set to <span style="font-family: Courier New,Courier,monospace">RECORDER_STATE_CREATED</span>.</p>
+
+<p>To check the video recorder state, use the <span style="font-family: Courier New,Courier,monospace">recorder_get_state()</span> function. It returns the state in the second parameter as a value of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html#ga7e9d562a740dcf57b4689f8539baa707">recorder_state_e</a> enumeration.</p>
+
+<p>To allow the system time to create the video recorder and set its state, implement the state check in a loop.</p>
+
+<pre class="prettyprint">recorder_state_e state_r;
+ret = recorder_create_videorecorder(rec_data.camera, &amp;(rec_data.recorder));
+
+ret = recorder_get_state(rec_data.recorder,&amp;state_r);
+
+while (state_r!=RECORDER_STATE_CREATED)
+{
+&nbsp;&nbsp;&nbsp;ret = recorder_get_state(rec_data.recorder,&amp;state_r);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+<h3>Preparing the Video Recorder</h3>
+
+<p>Before you can start recording video, you have to prepare the video recorder by setting the filename, file format, video and audio codecs, video bitrate, and various others attributes for the new video file.</p>
+
+<ol>
+
+<li>
+
+<p>To set the filename, use the <span style="font-family: Courier New,Courier,monospace">recorder_set_filename()</span> function:</p>
+
+<pre class="prettyprint">ret = recorder_set_filename(rec_data.recorder, g_file1);
+</pre>
+
+</li>
+
+<li>
+
+<p>To set the file format, use the <span style="font-family: Courier New,Courier,monospace">recorder_set_file_format()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html#ga7d3dbf7b0b3ef68101562b89e81ecf1e">recorder_file_format_e</a> enumeration defines the available file formats.</p>
+
+<pre class="prettyprint">ret = recorder_set_file_format(rec_data.recorder, RECORDER_FILE_FORMAT_MP4);
+</pre>
+
+</li>
+
+<li>
+
+<p>To set the video codec for encoding the video stream, use the <span style="font-family: Courier New,Courier,monospace">recorder_set_video_encoder()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html#gaaf3f0deeb1717f568e2b93bb9a375b63">recorder_video_codec_e</a> enumeration defines the available video codecs.</p>
+
+<pre class="prettyprint">ret = recorder_set_video_encoder(rec_data.recorder, RECORDER_VIDEO_CODEC_MPEG4);
+</pre>
+
+</li>
+
+<li>
+
+<p>To set the audio codec for encoding the audio stream, use the <span style="font-family: Courier New,Courier,monospace">recorder_set_audio_encoder()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html#ga431bd585d929f13a71ecefd58ed17d46">recorder_audio_codec_e</a> enumeration defines the available audio codecs.</p>
+</li>
+
+<li>
+
+<p>To set the video bitrate, use the <span style="font-family: Courier New,Courier,monospace">recorder_attr_set_video_encoder_bitrate()</span> function.</p>
+
+
+</li>
+
+<li>
+
+<p>To set a time limit for recording the video file, use the <span style="font-family: Courier New,Courier,monospace">recorder_attr_set_time_limit()</span> function:</p>
+
+
+<pre class="prettyprint">ret = recorder_attr_set_time_limit(rec_data.recorder, RECORD_LIMIT);
+</pre>
+
+</li>
+
+<li>
+
+<p>To prepare the video recorder for recording, use the <span style="font-family: Courier New,Courier,monospace">recorder_prepare()</span> function:</p>
+
+
+<pre class="prettyprint">ret = recorder_prepare(rec_data.recorder);
+</pre>
+
+<p>After calling the function, the video recorder state is set to <span style="font-family: Courier New,Courier,monospace">RECORDER_STATE_READY</span>.</p>
+
+</li>
+
+<li>
+
+<p>To check the video recorder state, use the <span style="font-family: Courier New,Courier,monospace">recorder_get_state()</span> function:</p>
+
+<p>To allow the system time to prepare the video recorder and set its state, implement the state check in a loop.</p>
+
+<pre class="prettyprint">ret = recorder_get_state(rec_data.recorder,&amp;state);
+
+while(state!=RECORDER_STATE_READY);
+{
+&nbsp;&nbsp;&nbsp;recorder_get_state(rec_data.recorder,&amp;state);
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+</li>
+
+</ol>
+
+<h3>Registering Callback Functions</h3>
+
+<p>Callbacks are useful in informing you when something has happened or changed in your application.</p>
+
+<ol><li><p>To monitor when the recording limit is reached, register a callback function by using the <span style="font-family: Courier New,Courier,monospace">recorder_set_recording_limit_reached_cb()</span> function:</p>
+
+<pre class="prettyprint">ret = recorder_set_recording_limit_reached_cb(rec_data.recorder, _recorder_recording_limit_reached_cb, 0);
+</pre></li>
+
+<li><p>Define the callback function that prints a notification about reaching the recording limit:</p>
+
+<pre class="prettyprint">static void _recorder_recording_limit_reached_cb (recorder_recording_limit_type_e type, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, &quot;Video Recorder&quot; &quot;Recording limit reached: %d\n&quot;, type);
+}</pre></li>
+
+<li><p>To check whether the callback function works properly, use the <span style="font-family: Courier New,Courier,monospace">sleep()</span> function to reach the recording limit:</p>
+
+<pre class="prettyprint">ret = recorder_start(rec_data.recorder);
+
+sleep(RECORD_LIMIT+1); // Waits more than record limit
+ret = recorder_pause(rec_data.recorder);
+</pre></li>
+
+<li><p>To unregister the callback function, use the <span style="font-family: Courier New,Courier,monospace">recorder_unset_recording_limit_reached_cb()</span> function:</p>
+
+<pre class="prettyprint">ret = recorder_unset_recording_limit_reached_cb(rec_data.recorder);
+</pre></li></ol>
+
+<h3>Starting Recording</h3>
+
+<p>To start recording video, use the <span style="font-family: Courier New,Courier,monospace">recorder_start()</span> function.</p>
+
+<pre class="prettyprint">ret = recorder_start(rec_data.recorder);
+
+sleep(RECORD_TIME);</pre>
+
+<h3>Pausing Recording</h3>
+
+<p>To pause recording video, use the <span style="font-family: Courier New,Courier,monospace">recorder_pause()</span> function.</p>
+
+<p>The following example code pauses recording and then checks whether the video recorder state was changed:</p>
+
+<pre class="prettyprint">ret = recorder_pause(rec_data.recorder);
+
+ret = recorder_get_state(rec_data.recorder,&amp;state);
+
+while (state!=RECORDER_STATE_PAUSED)
+{
+&nbsp;&nbsp;&nbsp;error_code = recorder_get_state(rec_data.recorder,&amp;state);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+<h3>Canceling Recording</h3>
+
+<p>To cancel recording video, use the <span style="font-family: Courier New,Courier,monospace">recorder_cancel()</span> function. The canceled recording is discarded and no data is written to a file.</p>
+
+<pre class="prettyprint">ret = recorder_cancel(rec_data.recorder);
+</pre>
+
+<h3>Stopping Recording and Storing the Recorded Data</h3>
+
+<p>To stop recording video and save the recorded data to a file, use the <span style="font-family: Courier New,Courier,monospace">recorder_commit()</span> function. If the target file path has been set to an existing file, the existing file is replaced with the new audio file.</p>
+
+<pre class="prettyprint">ret = recorder_commit(rec_data.recorder);
+</pre>
+
+<h3>Releasing Camera and Video Recorder Resources</h3>
+
+<p>After you have finished recording, reset all attributes and destroy the handles:</p>
+
+<pre class="prettyprint">recorder_unprepare(rec_data.recorder);
+
+recorder_destroy(rec_data.recorder);
+
+camera_destroy(rec_data.camera);
+</pre>
+
+<h2 id="playing" name="playing">Playing Video</h2>
+
+<p>To play back a video file:</p>
+
+<ol>
+ <li>Create a video player.</li>
+ <li>Prepare the video player.</li>
+ <li>Register a callback function for playback.</li>
+ <li>Start, pause, and resume playback.</li>
+ <li>Implement functions for getting the video duration and for getting and setting the playback volume.</li>
+ <li>Stop playback.</li>
+ <li>Release all video player resources.</li>
+</ol>
+
+<h3>Creating a Video Player</h3>
+
+<p>Before you can play back video, you must create a video player and specify the video file to play:</p>
+
+<ol>
+
+<li>
+
+<p>To create a video player, use the <span style="font-family: Courier New,Courier,monospace">player_create()</span> function:</p>
+
+
+<pre class="prettyprint">ret = player_create(&amp;g_player);
+</pre>
+
+</li>
+
+<li>
+
+<p>To specify the video file to play, use the <span style="font-family: Courier New,Courier,monospace">player_set_uri()</span> function:</p>
+
+<pre class="prettyprint">ret = player_set_uri(g_player, g_video_path);
+</pre>
+
+</li>
+
+</ol>
+
+<h3>Preparing the Video Player</h3>
+
+<p>To prepare the video player:</p>
+
+<ol>
+
+<li>
+
+<p>To set the video display, use the <span style="font-family: Courier New,Courier,monospace">player_set_display()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html#ga6b83386e10a8febc7e5dfbff85b342ab">player_display_type_e</a> enumeration defines the available display types.</p>
+
+<pre class="prettyprint">ret = player_set_display(g_player, PLAYER_DISPLAY_OVERLAY, GET_DISPLAY(evas_obj));
+</pre>
+
+</li>
+
+<li>
+
+<p>To set the visibility of the x surface video display, use the <span style="font-family: Courier New,Courier,monospace">player_set_display_visible()</span> function:</p>
+
+<pre class="prettyprint">ret = player_set_display_visible (g_player, true);
+</pre>
+
+</li>
+
+<li>
+
+<p>To set the rotation setting of the x surface video display, use the <span style="font-family: Courier New,Courier,monospace">player_set_display_rotation()</span> function. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__DISPLAY__MODULE.html#gab8c4c170d4b2628a09831edc8d652302">player_display_rotation_e</a> enumeration defines the available rotation types.</p>
+
+<pre class="prettyprint">ret=player_set_display_rotation(g_player,PLAYER_DISPLAY_ROTATION_270);
+</pre>
+
+</li>
+
+<li>
+
+<p>To prepare the video player for playback, use the <span style="font-family: Courier New,Courier,monospace">player_prepare()</span> function:</p>
+
+<pre class="prettyprint">ret = player_prepare(g_player);
+</pre>
+
+<p>After calling the function, the state of the video player is set to <span style="font-family: Courier New,Courier,monospace">PLAYER_STATE_READY</span>.</p>
+
+</li>
+
+<li>
+
+<p>To check the video player state, use the <span style="font-family: Courier New,Courier,monospace">player_get_state()</span> function.</p>
+
+
+<p>To allow the system time to prepare the video player and set its state, implement the state check in a loop.</p>
+
+<pre class="prettyprint">player_state_e state;
+ret = player_get_state(g_player, &amp;state);
+
+while(state!=PLAYER_STATE_READY)
+{
+&nbsp;&nbsp;&nbsp;error_code = player_get_state(g_player, &amp;state);
+
+&nbsp;&nbsp;&nbsp;usleep(1000);
+}</pre>
+
+</li>
+
+</ol>
+
+<h3>Registering a Callback Function for Playback</h3>
+
+<ol><li><p>To monitor when playback is finished, register a callback function by using the <span style="font-family: Courier New,Courier,monospace">player_set_completed_cb()</span> function:</p>
+
+<pre class="prettyprint">ret = player_set_completed_cb(g_player,_player_completed_cb,&amp;playing);
+</pre></li>
+
+<li><p>Define a callback function that sets the user data flag to indicate that playback is finished:</p>
+
+<pre class="prettyprint">static void _player_completed_cb(void *user_data)
+{
+&nbsp;&nbsp;&nbsp;*((int*)user_data)=0;
+}</pre></li></ol>
+
+<h3>Starting and Pausing Playback</h3>
+
+<p>To start or resume playback, use the <span style="font-family: Courier New,Courier,monospace">player_start()</span> function:</p>
+
+<pre class="prettyprint">ret = player_start(g_player);
+
+playing = 1;</pre>
+
+<p>To pause playback, use the <span style="font-family: Courier New,Courier,monospace">player_pause()</span> function:</p>
+
+<pre class="prettyprint">ret = player_pause(g_player);
+</pre>
+
+<h3>Getting the Video Duration</h3>
+
+<p>To get the total running time of the associated video, use the <span style="font-family: Courier New,Courier,monospace">player_get_duration()</span> function:</p>
+
+<pre class="prettyprint">ret = player_get_duration(g_player,&amp;duration);
+
+fprintf(stderr,&quot;Play TIME:%d&quot;,duration);</pre>
+
+<h3>Getting and Setting the Playback Volume</h3>
+
+<p>To get the playback volume, use the <span style="font-family: Courier New,Courier,monospace">player_get_volume()</span> function, and to set the playback volume, use the <span style="font-family: Courier New,Courier,monospace">player_set_volume()</span> function.</p>
+
+<p>The following example code doubles the current volume:</p>
+
+<pre class="prettyprint">float left,right;
+ret = player_get_volume(g_player,&amp;left,&amp;right);
+
+fprintf(stderr,&quot;Volume get L:%f R:%f\n&quot;,left,right);
+if (left&gt;0) left*=2;
+else left=0.5;
+if (left&gt;1) left=1;
+if (right&gt;0) right*=2;
+else right=0.5;
+if (right&gt;1) right=1;
+ret = player_set_volume(g_player,left,right);
+
+fprintf(stderr,&quot;Volume set L:%f R:%f\n&quot;,left,right);</pre>
+
+<h3>Stopping Playback</h3>
+
+<p>To stop playback, use the <span style="font-family: Courier New,Courier,monospace">player_stop()</span> function.</p>
+
+<p>The following example code waits until the end of the video before stopping playback:</p>
+
+<pre class="prettyprint">while (playing)
+{
+&nbsp;&nbsp;&nbsp;usleep (1000);
+}
+ret = player_stop(g_player);
+</pre>
+
+<h3>Releasing Video Player Resources</h3>
+
+<p>After you have finished playback, reset all attributes and destroy the handles:</p>
+
+<pre class="prettyprint">ret = player_unprepare(g_player);
+
+ret = player_destroy(g_player);
+</pre>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/media.htm">Multimedia Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__CAMERA__MODULE.html">Camera API Reference</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__PLAYER__MODULE.html">Player API Reference</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__RECORDER__MODULE.html">Recorder API Reference</a></li>
+</ul>
+
+  <div id="footer">
+   <hr size="1" />
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font>
+  </div>
+  <!--start-->
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+  <!--end-->
+ </body>
+</html>

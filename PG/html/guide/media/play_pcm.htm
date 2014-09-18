@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>PCM Audio Output</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>PCM Audio Output</h1> 
+  <p>The Pulse Code Modulated (PCM) data contains non-compressed audio. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__AUDIO__OUT__MODULE.html">Audio Output</a> API enables your application to play such data using output devices.</p> 
+  <p>To play the audio PCM data, the application must call the <span style="font-family: Courier New,Courier,monospace">audio_out_create()</span> function to initialize the audio output handle.</p> 
+  <p>Before playing audio, your application must define the following PCM data settings:</p> 
+  <ul> 
+   <li>Audio channels: 
+    <ul class="indent"> 
+     <li>Mono (1 channel)</li> 
+     <li>Stereo (2 channels)</li> 
+    </ul> </li> 
+   <li>Audio sample type: 
+    <ul class="indent"> 
+     <li>Unsigned 8-bit PCM</li> 
+     <li>Signed 16-bit little endian PCM</li> 
+    </ul> </li> 
+   <li>Audio sample rate:</li> 
+   <ul class="indent"> 
+    <li>8000 ~ 48000 Hz</li> 
+   </ul> 
+  </ul> 
+  
+  <p>The following figures illustrate the general audio output states, and how the state changes when the audio output is interrupted by the system.</p> 
+  <p class="figure">Figure: Audio output states</p> 
+  <p style="text-align:center;"><img src="../../images/audio_output.png" alt="Audio output states" /></p> 
+  <p class="figure">Figure: Audio output states when interrupted by system</p> 
+  <p style="text-align:center;"><img src="../../images/audio_output_interrupt_state.png" alt="Audio output states when interrupted by system" /></p> 
+  <h2 id="use" name="use">Using Audio Output</h2> 
+  <p>For supporting various low-end Tizen devices, the application must follow certain guidelines:</p> 
+  <ul> 
+   <li>Do not use multiple instances of the <span style="font-family: Courier New,Courier,monospace">Audio_Out</span> excessively.</li> 
+   <p>Using excessive multiple instances of the <span style="font-family: Courier New,Courier,monospace">Audio_Out</span> has a negative effect on the application, because the audio data processing for re-sampling and mixing imposes a heavy burden on the system. </p> 
+   <li>Use device-preferred PCM format.</li> 
+   <ul> 
+    <li><p>To reduce the processing overhead, use the target device-preferred PCM format (for example, use 16-bit little endian, 44.1 kHz, stereo for Wave and Wave M).</p></li> 
+    <li><p>Using the preferred format reduces internal operations, such as converting audio samples from mono to stereo or re-sampling audio frequency to fit the target device&#39;s input sample rate.</p></li> 
+   </ul> 
+   <li>Do not call the <span style="font-family: Courier New,Courier,monospace">Audio_Out</span> functions too frequently.</li> 
+   <ul> 
+    <li><p>The <span style="font-family: Courier New,Courier,monospace">Audio_Out</span> functions require more processing time in the order of write &gt; prepare &gt; reset &gt; unprepare &gt; start &gt; stop. Therefore, keep the frequency of calling these functions to a minimum.</p></li> 
+   </ul> 
+   <li>Reduce event delay and remove glitches.</li> 
+   <ul> 
+    <li><p>The Audio Output API works recursively with events. The smaller the buffer size, the more often are events generated. If you use the Audio Output API with the smallest buffer and other resources (for example, a timer or sensor), the application is negatively influenced by the delay of the event. To prevent problems, set the write buffer size properly based on the other resources you need.</p></li> 
+    <li><p>To guarantee the working events of the Audio Output API independently, an instance of the Audio Output API needs to be created and worked on the event thread.</p></li> 
+   </ul> 
+   <li>Use double-buffering.</li> 
+   <ul> 
+    <li><p>Use the double buffering mechanism to reduce latency. The mechanism works by first writing data twice before starting. After starting, whenever the listener (event) is called, you can write additional data.</p></li> 
+   </ul> 
+  </ul> 
+
+<h2>Where to Go Next</h2>
+<ul><li><a href="media.htm">Multimedia Programming Guide</a></li>
+ <li><a href="../../tutorials/media_tutorial/pcmaudio_tutorial.htm">Audio IO Tutorial</a></li>
+ </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

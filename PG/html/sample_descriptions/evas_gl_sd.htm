@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" />
+<title>Evas_GL Sample Overview</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Evas_GL Sample Overview</h1> 
+  <p>The Evas_GL sample application demonstrates how to implement a rotatable cube on the screen using Evas_GL with the Tizen SDK. The sample shows how to handle polygon geometry, and how to write a simple vertex and fragment shader for the cube.</p>
+  
+  <p>Evas_GL is used to implement OpenGL rendering on Evas. Evas allows you to specially set up image objects, which act as render target surfaces.</p>
+  
+  <p>The following figure illustrates the main screen of the Evas_GL.</p>
+  
+    <p class="figure">Figure: Evas_GL screen</p> 
+  <p style="text-align:center;"><img alt="Evas_GL screen" src="../images/evas_gl_sd.png" /></p>   
+ 
+<p>The application has only one screen, where you can rotate the cube using your finger. To rotate the cube, drag your finger to the desirable direction.</p>   
+
+<h2>Source Files</h2>
+
+<p>You can create and view the sample application project including the source files in the IDE.</p>
+
+<table> 
+   <tbody> 
+    <tr> 
+     <th>File name</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">evasgl.c</span></td> 
+     <td>This file contains code to create and render the rotatable cube using Evas_GL.</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+    <h2>Where to Go Next</h2> 
+  <ul>
+   <li><a href="sample_descriptions.htm">Native Sample Applications</a></li> 
+  </ul>
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

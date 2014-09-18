@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Thread Chart</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1><a name="thread_chart" id="thread_chart">Thread Chart</a></h1> 
+  <p>The thread chart displays the thread and the related synchronization object in a tree format using a graph.</p> 
+  <p>You can select either thread or synchronization as a parent of the tree.</p> 
+  <p class="figure">Figure: Thread chart - thread parent</p> 
+  <p> <img alt="Thread chart - thread parent" src="../images/thread_parent.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  <p class="figure">Figure: Thread chart - synchronization parent </p> 
+  <p> <img alt="Thread chart - synchronization parent" src="../images/synchronization_parent.png" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  <p>The chart classifies thread and synchronization object states by color and shape:</p> 
+  <ul> 
+   <li><strong>Blue</strong> colored area of the thread line depicts the thread load of that time frame. A darker color means higher load.</li> 
+   <li><strong>Yellow</strong> vertical bar points the time when the API was called.</li> 
+   <li><strong>Violet</strong> arrow displays the interaction between threads. The number inside the arrow is the thread ID of the related thread.</li> 
+   <li><strong>Orange</strong> colored area of the synchronization object line displays the possession of that synchronization object (lock). </li> 
+   <li><strong>Grey</strong> colored area of the synchronization object line shows the waiting time for the acquiring that synchronization object.</li> 
+  </ul> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_thread.htm">Thread Analysis</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

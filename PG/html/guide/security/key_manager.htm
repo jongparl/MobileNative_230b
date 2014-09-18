@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Key Manager</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Key Manager</h1> 
+  
+<p>A key manager provides a secure repository for keys, certificates, and sensitive data related to users and their password-protected APPs. Additionally, it provides secure cryptographic operations for non-exportable keys without revealing the key values to clients.</p>
+
+   <p class="figure">Figure: Key Manager Block Diagram</p> 
+  <p style="text-align:center;"><img alt="Key Manager Block Diagram" src="../../images/key_manager.png" /></p> 
+
+<p> A key manager stores keys, certificates, and sensitive user data in a central secure repository. The central secure repository is protected by a password.</p>
+
+<h2>Data Store Policy</h2>
+<p>A client can specify simple access rules when storing data in the key manager:</p>
+<ul>
+<li>Restricted or non-restricted
+	<ul>
+	<li>Data stored in the key manager can be accessed only by its owner if the data is tagged as restricted.</li>
+	<li>For data tagged as non-restricted, all clients can access the data.</li></ul></li>
+<li>Extractable or non-extractable
+	<ul>
+	<li>Only for data tagged as extractable, the key manager returns the raw value of the data.</li>
+	<li>If data is tagged as non-extractable, the key manager does not return its raw value. In that case, the key manager provides secure cryptographic operations for non-exportable keys without revealing the key values to the clients.</li></ul></li>
+<li>Per key password
+	<ul>
+	<li>All data in the key manager is protected by a user password.</li>
+	<li>A client can encrypt its data using their own password additionally.</li>
+	<li>If a client provides a password when storing data, the data is encrypted with the password. This password must be provided when getting the data from the key manager.</li></ul></li>
+	</ul>
+
+<h2>User Login and Control API</h2>
+
+<p>The user login control is implemented as follows:</p>
+
+<ul>
+<li>A user&#39;s database file is encrypted by the user&#39;s DKEK (domain key encryption key). A DKEK of a user is randomly generated and stored as encrypted with a user password when a user logs in for the first time.</li>
+<li>When a user logs in, the key manager decrypts the user DKEK with a user password. During the login session, any client can access the data which is protected by a user password. When a user logs out, the key manager removes the user DKEK from the memory.</li>
+<li>When a user logs in, logs out, or changes their password, the key manager must be notified. Only privileged APPs, such as LockScreen APP or Setting APP, can notify the key manager using the control APIs.</li>
+<li>When a user changes their password, the key manager re-encrypts the user DKEK with the new password.</li>
+</ul>
+
+
+<p>The key manager provides 3 types of <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__KEY__MANAGER__MODULE.html">APIs</a>:</p>
+<ul>
+<li>Key Manager control APIs <p>These APIs control the key manager state (unlocked or locked). Only privileged APPs can use the control APIs to:</p>
+<ul>
+<li>Unlock or lock the user key</li>
+
+<li>Remove user data</li>
+
+<li>Change or reset the user password</li>
+</ul></li>
+<li>Secure repository APIs <p>All APPs can use the secure repository APIs to:</p>
+<ul>
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#savingkey">Save, get, or removing a key</a></li>
+
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#savingcert">Save, get, or remove a certificate</a></li>
+
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#savingdata">Save, get, or remove data</a></li>
+</ul></li>
+<li>Secure crypto APIs <p>The key manager provides the secure crypto APIs for the non-extractable keys and certificates to:</p>
+<ul>
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#creatingkey">Create key pairs</a></li>
+
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#creatingsignat">Create or verify signatures</a></li>
+
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#verifying">Verify or get a certificate chain</a></li>
+
+<li><a href="../../tutorials/security_tutorial/security_key_manager_tutorial.htm#pkcs">Load a certificate or a PKCS#12 file</a></li>
+</ul>
+</li>
+</ul>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="security.htm">Security Programming Guide</a></li> 
+	<li><a href="../../tutorials/security_tutorial/security_tutorial.htm">Security Tutorials</a></li>    
+  </ul>
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

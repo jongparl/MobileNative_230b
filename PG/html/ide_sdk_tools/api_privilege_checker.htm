@@ -1,0 +1,102 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+<title>API and Privilege Checker</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>API and Privilege Checker</h1> 
+  <p>The IDE provides the API and privilege checker tool to identify potential problems in the application code related to API and <a href="../../../org.tizen.gettingstarted/html/tizen_overview/security.htm">privilege usage</a>.</p> 
+  <p>You can enable the checks during <a href="../app_dev_process/building_app.htm">build process</a> or code editing in the <a href="../app_dev_process/setting_app_properties.htm">project properties</a>. You can also perform the checks manually in the IDE by selecting <strong>Project &gt; Check API and Privilege Violations</strong>.</p> 
+  <p>The results of the check are displayed in the <strong>Problems</strong> view. The following tables define the different alarms that the checks can generate.</p> 
+  <table id="API" border="1">
+<caption>
+     Table: API usage check alarms 
+   </caption> 
+   <colgroup>
+<col width="10%">
+<col width="25%">
+<col width="40%">
+<col width="25%">
+</colgroup>
+<tbody>
+<tr>
+<th style="text-align:center;margin-left:auto;margin-right:auto;">Alarm type</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Description</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Message format</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Required actions</th> 
+    </tr>
+<tr>
+<td>API version alarm</td> 
+     <td>The application contains a function, enumerator, or constant which is only provided in a later API version than the one the application is using.</td> 
+     <td>
+<span style="font-family: Courier New,Courier,monospace">{API name} – The API is not supported in API version {version identifier}.</span> <p>For example: <span style="font-family: Courier New,Courier,monospace">account_connect - The API is not supported in API version 2.1.0.</span></p> </td> 
+     <td>Either upgrade the API version in the manifest file accordingly, or stop using the reported API element.</td> 
+    </tr>
+<tr></tr>
+<tr>
+<td>Deprecated API alarm</td> 
+     <td>The application uses a function, enumerator, or constant which has been deprecated.</td> 
+     <td>
+<span style="font-family: Courier New,Courier,monospace">{API name} - The API is deprecated.</span> <p>For example: <span style="font-family: Courier New,Courier,monospace">account_connect - The API is deprecated.</span></p> </td> 
+     <td>Look at the cause of the deprecation and consider modifying the application source to use an alternative API (if one exists) as suggested by the platform. In most cases, an alternative is provided. However, if no alternative exists, you can still use the deprecated API in the current SDK version without exceptions. However, note that deprecated API can be removed from the platform in future without prior notice. </td> 
+    </tr>
+</tbody>
+</table>
+<table id="privilege" border="1">
+<caption>
+     Table: Privilege check alarms 
+   </caption> 
+   <colgroup>
+<col width="10%">
+<col width="25%">
+<col width="40%">
+<col width="25%">
+</colgroup>
+<tbody>
+<tr>
+<th style="text-align:center;margin-left:auto;margin-right:auto;">Alarm type</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Description</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Message format</th> 
+     <th style="text-align:center;margin-left:auto;margin-right:auto;">Required actions</th> 
+    </tr>
+<tr>
+<td>Undefined privilege alarm</td> 
+     <td>The application uses a function whose privilege is not specified in the manifest file.</td> 
+     <td>
+<span style="font-family: Courier New,Courier,monospace">The {Privilege name} privilege is required for {API name}.</span> <p>For example: <span style="font-family: Courier New,Courier,monospace">The http://tizen.org/privilege/alarm.set privilege is required for alarm_cancel.</span></p> </td> 
+     <td>Either assign the privilege in the manifest file in the IDE, or stop using the reported function. Privilege violation is a strong reason for the rejection of an application in the certification process.</td> 
+    </tr>
+<tr>
+<td>Unused privilege alarm</td> 
+     <td>The application does not use any function belonging to a reported privilege.</td> 
+     <td>
+<span style="font-family: Courier New,Courier,monospace">The {Privilege name} privilege is not used. </span> <p>For example: <span style="font-family: Courier New,Courier,monospace">The http://tizen.org/privilege/badge.admin privilege is not used.</span></p> </td> 
+     <td>Remove the privilege from the manifest file in the IDE, or ignore the alarm if you are planning to use the corresponding functions later. </td> 
+    </tr>
+</tbody>
+</table>
+<h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="native_ide.htm">Native IDE</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1">
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Alarm Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Alarm Tutorial</h1> 
+ 
+<p>This tutorial demonstrates how you can use an alarm to launch an application at a specific time.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;app.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__ALARM__MODULE.html">Alarm API</a>.</p>
+
+<p>To learn about the Alarm API features, see the <a href="../../guide/app/application.htm">Application Framework Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#schedule_single">Scheduling a Single Occurrence</a>
+  <p>Schedule a single-occurrence alarm.</p>
+ </li>
+ <li><a href="#schedule_recurrence">Scheduling a Recurring Alarm</a>
+  <p>Schedule a recurring alarm.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>The Alarm API uses the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__APP__CONTROL__MODULE.html">App Control API</a> for launching applications. Creating an alarm requires an <span style="font-family: Courier New,Courier,monospace">app_control_h</span>, which is created with the <span style="font-family: Courier New,Courier,monospace">app_control_create()</span> function from the <span style="font-family: Courier New,Courier,monospace">&lt;app.h&gt;</span> header file.</p>
+
+ <table class="note"> 
+   <tbody> 
+    <tr> 
+     <th class="note">Note</th> 
+    </tr> 
+    <tr> 
+     <td class="note">This tutorial does not describe the App Control API in detail. For more information, see the <a href="app_start_tutorial.htm">App Control Tutorial</a> and the App Control API.</td>
+    </tr> 
+   </tbody> 
+  </table>
+
+<p>The following code creates an <span style="font-family: Courier New,Courier,monospace">app_control_h</span>, which opens the clock application after being invoked.</p>
+
+<pre class="prettyprint">ret = app_control_create(&amp;app);
+...
+ret = app_control_set_operation(app,APP_CONTROL_OPERATION_DEFAULT);
+...
+// Get org.tizen.alarmtutorial app_handler
+ret = app_control_set_app_id (app, target app appid);				
+...</pre>
+
+
+<p>The <span style="font-family: Courier New,Courier,monospace">alarm_cancel_all()</span> function removes all scheduled alarms.</p>
+
+<h2 id="schedule_single" name="schedule_single">Scheduling a Single Occurrence</h2>
+
+<p>You can schedule a one-time application launch in the following ways:</p>
+<ul>
+ <li>Set a single-occurrence alarm to be triggered after a specific time delay based on the current time.</li>
+ <li>Set a single-occurrence alarm to be triggered at a specific time.</li>
+</ul>
+<p>This part of the tutorial schedules single-occurrence alarms based on a delay and a specific date. Before any alarm is invoked, all registered alarms are listed.</p>
+
+<ol>
+
+<li>
+<p>To schedule an alarm based on a delay, use the <span style="font-family: Courier New,Courier,monospace">alarm_schedule_after_delay()</span> function:</p>
+
+<pre class="prettyprint">ret = alarm_schedule_after_delay(app, DELAY, REMIND, &amp;tid);</pre>
+
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_control</span>: The destination <span style="font-family: Courier New,Courier,monospace">app_control</span> that performs the specific work when the alarm is triggered.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] delay</span>: The amount of time (in seconds) before the alarm is triggered for the first time.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] period</span>: The amount of time (in seconds) before a subsequent alarm. If set to 0, the alarm is triggered only once.</li> 
+ <li><span style="font-family: Courier New,Courier,monospace">[out] alarm_id</span>: The unique ID that identifies the alarm.</li>
+</ul>
+
+<p>The following code schedules an alarm occurrence after 2 seconds, and then a subsequent alarm after 1 second.</p>
+<pre class="prettyprint">static int DELAY = 2;
+static int REMIND = 1;
+
+int tid;
+
+ret = alarm_schedule_after_delay(app_control1, DELAY, REMIND, &amp;tid);</pre>
+</li>
+
+<li>
+<p>To schedule an alarm on a specific date, use the <span style="font-family: Courier New,Courier,monospace">alarm_schedule_at_date()</span> function:</p>
+
+<pre class="prettyprint">int alarm_schedule_at_date(app_control_h app_control, struct tm * date,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int period, int * alarm_id)</pre> 
+
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_control</span>: The destination <span style="font-family: Courier New,Courier,monospace">app_control</span> that performs the specific work when the alarm is triggered.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] date</span>: The date on which the alarm is triggered for the first time.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] period</span>: The amount of time (in seconds) before a subsequent alarm. If set to 0, the alarm is triggered only once.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[out] alarm_id</span>: The unique ID that identifies the alarm.</li>
+</ul>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">tm</span> struct is included in the <span style="font-family: Courier New,Courier,monospace">&lt;time.h&gt;</span> header file. The following table lists selected <span style="font-family: Courier New,Courier,monospace">tm</span> fields.</p>
+
+<table> 
+   <caption>
+     Table: tm fields 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Member</th> 
+     <th>Type</th> 
+	 <th>Meaning</th>
+	 <th>Range</th>
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_sec</span></td> 
+     <td>int</td> 
+	 <td>Seconds after the minute</td> 
+	 <td>0-61*</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_min</span></td> 
+     <td>int</td> 
+	 <td>Minutes after the hour</td> 
+	 <td>0-59</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_hour</span></td> 
+     <td>int</td> 
+	 <td>Hours since midnight</td> 
+	 <td>0-23</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_mday</span></td> 
+     <td>int</td> 
+	 <td>Day of the month</td> 
+	 <td>1-31</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_mon</span></td> 
+     <td>int</td> 
+	 <td>Months since January</td> 
+	 <td>0-11</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">tm_year</span></td> 
+     <td>int</td> 
+	 <td>Years since 1900</td> 
+	 <td></td> 
+    </tr> 	
+   </tbody> 
+  </table> 
+			
+<p>The following code schedules the <span style="font-family: Courier New,Courier,monospace">app_control</span> to invoke after 4 seconds. Modifying, for example, <span style="font-family: Courier New,Courier,monospace">date.tm_mday</span>, sets the alarm to another day of the month.</p>
+<pre class="prettyprint">struct tm date;
+...
+ret = alarm_get_current_time(&amp;date);
+...
+date.tm_sec += 4;
+ret = alarm_schedule_at_date(app_control2,&amp;date, 0, &amp;tid);
+...</pre>
+</li>
+
+<li>
+<p>After scheduling the alarms, call the <span style="font-family: Courier New,Courier,monospace">alarm_foreach_registered_alarm()</span> function to print the alarm IDs and the trigger time of each registered alarm:</p>
+<pre class="prettyprint">int alarm_foreach_registered_alarm(alarm_registered_alarm_cb callback,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void * user_data)</pre>
+
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">callback</span>: The callback to be invoked</li>
+ <li><span style="font-family: Courier New,Courier,monospace">user_data</span>: User data passed to the callback</li>
+</ul>	
+
+</li>
+</ol>
+
+<h2 id="schedule_recurrence" name="schedule_recurrence">Scheduling a Recurring Alarm</h2>
+<p>This part of the tutorial schedules an alarm to recur on a specific day of the week, and retrieves the alarm data. The alarms are scheduled for 1, 2, 3, and more days.</p>
+
+<ol>
+<li>
+<p>To schedule an alarm on a specific time of the day with a recurrence, use the <span style="font-family: Courier New,Courier,monospace">alarm_schedule_with_recurrence_week_flag()</span> function:</p>
+<pre class="prettyprint">int alarm_schedule_with_recurrence_week_flag(app_control_h app_control,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;struct tm * date, int week_flag, int * alarm_id)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_control</span>: The destination <span style="font-family: Courier New,Courier,monospace">app_control</span> that performs the specific work when the alarm is triggered.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] date</span>: The date on which the alarm is triggered for the first time.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] week_flag</span>: The day of the week on which the alarm recurs. The value can be a combination of days, for example <span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_TUESDAY | ALARM_WEEK_FLAG_FRIDAY</span>.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[out] alarm_id</span>: The unique ID that identifies the alarm.</li>
+</ul>
+
+<p>Alarms are scheduled in a loop for all days of the week at a time specified by the <span style="font-family: Courier New,Courier,monospace">date.tm_</span> variables. You can schedule an alarm for multiple days by using, for example, <span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_TUESDAY | ALARM_WEEK_FLAG_FRIDAY</span>. In this example, the binary operation is performed on the variable <span style="font-family: Courier New,Courier,monospace">a</span> with the <span style="font-family: Courier New,Courier,monospace">|=</span> operator.</p>
+<p>The <span style="font-family: Courier New,Courier,monospace">alarm_foreach_registered_alarm()</span> function registers a callback which is invoked for each alarm. The <span style="font-family: Courier New,Courier,monospace">i</span> variable represents both a loop counter and a counter of the callback occurrences.</p>
+
+<pre class="prettyprint">int tid;
+int i = 0;
+int a = 0;
+struct tm date;
+
+ret = alarm_get_current_time(&amp;date);
+...
+for (i=0; i&lt;7; i++)
+{
+&nbsp;&nbsp;&nbsp;a |= 1&lt;i;
+&nbsp;&nbsp;&nbsp;date.tm_sec = 0+5*i;
+&nbsp;&nbsp;&nbsp;date.tm_min = 0+9*i;
+&nbsp;&nbsp;&nbsp;date.tm_hour = 10+i;
+
+&nbsp;&nbsp;&nbsp;ret = alarm_schedule_with_recurrence_week_flag(app_control2, &amp;date, a, &amp;tid);
+&nbsp;&nbsp;&nbsp;...
+}
+...
+i = 0;
+ret = alarm_foreach_registered_alarm(on_foreach_registered_alarm_recurrence, &amp;i);
+...
+return 0;</pre>
+</li>
+
+<li>
+<p>Retrieve the alarm data.</p>
+<p>The Alarm Week Flag is translated to text with the <span style="font-family: Courier New,Courier,monospace">char *day[]</span> table.</p>
+<p>The <span style="font-family: Courier New,Courier,monospace">alarm_get_scheduled_recurrence_week_flag()</span> function returns <span style="font-family: Courier New,Courier,monospace">ALARM_ERROR_NONE</span> if the alarm with the given ID has a recurrence flag set. The flag is written to the <span style="font-family: Courier New,Courier,monospace">flag</span> variable. The variable may represent a few days at the same time. This is checked by a binary and the <span style="font-family: Courier New,Courier,monospace">&amp;</span> operation.</p>
+<p>Alarms are canceled by ID with the <span style="font-family: Courier New,Courier,monospace">alarm_cancel()</span> function.</p>
+<p>The <span style="font-family: Courier New,Courier,monospace">void *user_data</span> variable must be cast to a proper type. The variable is incremented to count the function calls.</p>
+<p>The callback must return <span style="font-family: Courier New,Courier,monospace">TRUE</span> on success, otherwise the <span style="font-family: Courier New,Courier,monospace">foreach</span> loop is broken.</p>
+
+<pre class="prettyprint">char *day[] = {&quot;Mon&quot;,&quot;Tue&quot;,&quot;Wed&quot;,&quot;Thu&quot;,&quot;Fri&quot;,&quot;Sun&quot;,&quot;Sat&quot;};
+static bool on_foreach_registered_alarm_recurrence(int alarm_id, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int flag;
+&nbsp;&nbsp;&nbsp;int ret = 0;
+&nbsp;&nbsp;&nbsp;struct tm date;
+&nbsp;&nbsp;&nbsp;time_t time_current;
+
+&nbsp;&nbsp;&nbsp;int pos = 0;
+&nbsp;&nbsp;&nbsp;char buffer[50] = &quot;&quot;;
+
+&nbsp;&nbsp;&nbsp;ret = alarm_get_scheduled_date(alarm_id,&amp;date);
+&nbsp;&nbsp;&nbsp;if (found_error(SERVICE_ERROR_NONE, &quot;alarm_get_scheduled&quot;, ret))return 0;
+
+&nbsp;&nbsp;&nbsp;time_current = mktime(&amp;date);
+&nbsp;&nbsp;&nbsp;fprintf (stderr,&quot;%d- Registered alarm:%d on date:%s &quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(int*)user_data,alarm_id,ctime(&amp;time_current));
+
+&nbsp;&nbsp;&nbsp;ret = alarm_get_scheduled_recurrence_week_flag(alarm_id,&amp;flag);
+&nbsp;&nbsp;&nbsp;if (ret==0)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_SUNDAY) _printday(buffer,0,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_MONDAY) _printday(buffer,1,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_TUESDAY) _printday(buffer,2,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_WEDNESDAY) _printday(buffer,3,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_THURSDAY) _printday(buffer,4,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_FRIDAY) _printday(buffer,5,&amp;pos);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (flag &amp; ALARM_WEEK_FLAG_SATURDAY _printday(buffer,6,&amp;pos);
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%d- Alarm: %d Recurrence flag: %s\n&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(int*)user_data,alarm_id,buffer);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;ret = alarm_cancel (alarm_id);
+&nbsp;&nbsp;&nbsp;...
+&nbsp;&nbsp;&nbsp;(*(int*)user_data)++;
+&nbsp;&nbsp;&nbsp;return 1;
+}</pre>
+
+<p>The enumeration for the Alarm Week Flag (<span style="font-family: Courier New,Courier,monospace">enum alarm_week_flag_e</span>) includes the days of the week.</p>
+
+<table> 
+   <caption>
+     Table: Enumeration for Alarm Week Flag
+   </caption>
+   <tbody>
+    <tr>
+     <th>Flag name</th>
+     <th>Value</th>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_SUNDAY</span></td>
+     <td>0x01</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_MONDAY</span></td>
+     <td>0x02</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_TUESDAY</span></td>
+     <td>0x04</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_WEDNESDAY</span></td>
+     <td>0x08</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_THURSDAY</span></td>
+     <td>0x10</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_FRIDAY</span></td>
+     <td>0x20</td>
+    </tr>
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">ALARM_WEEK_FLAG_SATURDAY</span></td>
+     <td>0x40</td>
+    </tr>
+   </tbody>
+  </table>
+</li>
+</ol>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/application.htm">Application Framework Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__ALARM__MODULE.html">Alarm API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

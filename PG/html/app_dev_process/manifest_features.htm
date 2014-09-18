@@ -1,0 +1,310 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../styles.css" rel="StyleSheet" type="text/css" />
+<link href="../snippet.css" rel="StyleSheet" type="text/css" />
+<title>Application Features</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>Application Features</h1> 
+  <p>To enable filtering for your application:</p> 
+  <ol>
+<li>In the <strong>Features</strong> tab, click <strong>Add</strong> and set the mandatory features for the application package. <p>The manifest file is updated automatically.</p>
+</li> 
+   <li>Upload and publish the application package on the Tizen Store.</li> 
+   <li>If a Tizen-powered device requests applications, the store displays a list containing only applications compatible with the user's device.</li> 
+  </ol>
+<p>The following table shows the available requirements for an application package. If you want to check which features are necessary for using a specific API, see <strong>Required Feature</strong> in the native API Reference.</p> 
+  <table border="1">
+<caption>
+     Table: Available requirements 
+   </caption> 
+   <tbody>
+<tr>
+<th>Feature key</th> 
+     <th>Description</th> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/camera</span></td> 
+     <td>Specify this key, if the application requires any kind of a camera.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/camera.back</span></td> 
+     <td>Specify this key, if the application requires a back-facing camera.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/camera.back.flash</span></td> 
+     <td>Specify this key, if the application requires a back-facing camera with a flash.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/camera.front</span></td> 
+     <td>Specify this key, if the application requires a front-facing camera.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/camera.front.flash</span></td> 
+     <td>Specify this key, if the application requires a front-facing camera with a flash.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/database.encryption</span></td> 
+     <td>Specify this key, if the application requires the database encryption feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/fmradio</span></td> 
+     <td>Specify this key, if the application requires an FM radio.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/graphics.acceleration</span></td> 
+     <td>Specify this key, if the application requires hardware acceleration for both 2D and 3D graphics.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/input.keyboard</span></td> 
+     <td>Specify this key, if the application requires a built-in physical keyboard.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/input.keyboard.layout</span></td> 
+     <td>Specify this key with a specific keyboard layout (<span style="font-family: Courier New,Courier,monospace">string</span> type), if the application requires a built-in physical keyboard supporting the specified keyboard layout.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/location</span></td> 
+     <td>Specify this key, if the application requires any location positioning features.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/location.gps</span></td> 
+     <td>Specify this key, if the application requires the Global Positioning System (GPS) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/location.wps</span></td> 
+     <td>Specify this key, if the application requires the Wi-Fi-based Positioning System (WPS) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/microphone</span></td> 
+     <td>Specify this key, if the application requires a microphone.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/multi_point_touch.point_count</span></td> 
+     <td>Specify this key with a specific number (<span style="font-family: Courier New,Courier,monospace">int</span> type), if the application requires the minimum of specified number of simultaneous touches in a multi-point touch.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/multi_point_touch.pinch_zoom</span></td> 
+     <td>Specify this key, if the application requires a pinch-zoom gesture feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.bluetooth</span></td> 
+     <td>Specify this key, if the application requires the Bluetooth feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.nfc</span></td> 
+     <td>Specify this key, if the application requires the use of any API that, in turn, requires the Near Field Communication (NFC) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.nfc.reserved_push</span></td> 
+     <td>Specify this key, if the application requires the NFC reserved push feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.push</span></td> 
+     <td>Specify this key, if the application requires the network-based push service.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.secure_element</span></td> 
+     <td>Specify this key, if the application requires the secure element feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.telephony</span></td> 
+     <td>Specify this key, if the application requires the use of any API that, in turn, requires the telephony feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.telephony.mms</span></td> 
+     <td>Specify this key, if the application requires the MMS feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.telephony.sms.cbs</span></td> 
+     <td>Specify this key, if the application requires the SMS Cell Broadcast Service (CBS) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.wifi</span></td> 
+     <td>Specify this key, if the application requires the use of any API that, in turn, requires the Wi-Fi feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/network.wifi.direct</span></td> 
+     <td>Specify this key, if the application requires the Wi-Fi Direct&trade; feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.3dc</span></td> 
+     <td>Specify this key, if the application requires the 3DC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.atc</span></td> 
+     <td>Specify this key, if the application requires the ATC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.etc</span></td> 
+     <td>Specify this key, if the application requires the ETC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.ptc</span></td> 
+     <td>Specify this key, if the application requires the PTC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.pvrtc</span></td> 
+     <td>Specify this key, if the application requires the PVRTC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.texture_format.utc</span></td> 
+     <td>Specify this key, if the application requires the UTC texture format for OpenGL&reg; ES.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.version.1_1</span></td> 
+     <td>Specify this key, if the application requires OpenGL&reg; ES version 1.1 at minimum.
+	 <p>You can specify at most 1 openGL&reg; ES version. If you specify multiple versions, only the highest one is considered.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/opengles.version.2_0</span></td> 
+     <td>Specify this key, if the application requires OpenGL&reg; ES version 2.0.
+	 <p>You can specify at most 1 openGL&reg; ES version. If you specify multiple versions, only the highest one is considered.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.cpu.arch.armv7</span></td> 
+     <td>Specify this key, if the application requires the ARMv7 CPU architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.fpu.arch.sse2</span></td> 
+     <td>Specify this key, if the application requires the SSE2 Floating Point Unit (FPU) architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.fpu.arch.sse3</span></td> 
+     <td>Specify this key, if the application requires the SSE3 FPU architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.fpu.arch.ssse3</span></td> 
+     <td>Specify this key, if the application requires the SSSE3 FPU architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.fpu.arch.vfpv3</span></td> 
+     <td>Specify this key, if the application requires the VFPv3 FPU architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.core.cpu.arch.x86</span></td> 
+     <td>Specify this key, if the application requires the x86 CPU architecture.<p>The key is automatically added by the Tizen IDE during application compilation.</p>
+</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/platform.native.osp_compatible</span></td> 
+     <td>Specify this key, if the application requires OSP compatibility (the bada compatibility mode).</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/screen.auto_rotation</span></td> 
+     <td>Specify this key, if the application requires the automatic screen rotation feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.accelerometer</span></td> 
+     <td>Specify this key, if the application requires an acceleration sensor.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.accelerometer.wakeup</span></td> 
+     <td>Specify this key, if the application requires the acceleration sensor wake-up feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.gyroscope</span></td> 
+     <td>Specify this key, if the application requires a gyro sensor.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.gyroscope.wakeup</span></td> 
+     <td>Specify this key, if the application requires the gyro sensor wake-up feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.magnetometer</span></td> 
+     <td>Specify this key, if the application requires a magnetic sensor.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.magnetometer.wakeup</span></td> 
+     <td>Specify this key, if the application requires the magnetic sensor wake-up feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.proximity</span></td> 
+     <td>Specify this key, if the application requires a proximity sensor.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.proximity.wakeup</span></td> 
+     <td>Specify this key, if the application requires the proximity sensor wake-up feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.tiltmeter</span></td> 
+     <td>Specify this key, if the application requires a tilt sensor.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sensor.tiltmeter.wakeup</span></td> 
+     <td>Specify this key, if the application requires the tilt sensor wake-up feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/shell.appwidget</span></td> 
+     <td>Specify this key, if the application requires the AppWidget (Dynamic Box) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/sip.voip</span></td> 
+     <td>Specify this key, if the application requires the Voice Over Internet Protocol (VOIP) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/speech.recognition</span></td> 
+     <td>Specify this key, if the application requires the speech recognition (STT) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/speech.synthesis</span></td> 
+     <td>Specify this key, if the application requires the speech synthesis (text to speech, TTS) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/usb.accessory</span></td> 
+     <td>Specify this key, if the application requires the USB client (or accessory) feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/usb.host</span></td> 
+     <td>Specify this key, if the application requires the USB host feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/vision.face_recognition</span></td> 
+     <td>Specify this key, if the application requires the face recognition feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/vision.image_recognition</span></td> 
+     <td>Specify this key, if the application requires the image recognition feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/vision.qrcode_generation</span></td> 
+     <td>Specify this key, if the application requires the QR code generation feature.</td> 
+    </tr>
+<tr>
+<td><span style="font-family: Courier New,Courier,monospace">http://tizen.org/feature/vision.qrcode_recognition</span></td> 
+     <td>Specify this key, if the application requires the QR code recognition feature.</td> 
+    </tr>
+</tbody>
+</table>
+<h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="setting_app_manifest.htm">Setting Application Manifest</a></li> 
+  </ul>
+<div id="footer"> 
+   <hr size="1" />
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

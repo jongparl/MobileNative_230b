@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Running Dynamic Analyzer</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Running Dynamic Analyzer</h1> 
+  <p>You can launch the dynamic analyzer in the IDE or as a standalone application from the Tizen SDK submenu.</p> 
+  <p>To launch the dynamic analyzer in the IDE:</p> 
+  <ol> 
+   <li>Right-click your project in the Tizen IDE <strong>Project Explorer</strong> view.</li> 
+   <li>Select <strong>Profile As &gt; Profile with Dynamic Analyzer</strong>. <p>The selected project is built, packaged, and installed on the target device. The dynamic analyzer is launched and the profiling starts automatically.</p></li> 
+  </ol> 
+  <p>To run the dynamic analyzer as a standalone from the Tizen SDK menu:</p> 
+  <ol> 
+   <li>Launch the dynamic analyzer from the SDK submenu.</li> 
+   <li>Select the target device and the application to be traced from the combo box in the dynamic analyzer toolbar.</li> 
+   <li>Click the <strong>Trace Start</strong> button.</li> 
+  </ol> 
+  <p>The performance details of your application retrieved during tracing are stored in trace files. You can manage the trace files through the <strong>Toolbar</strong>.</p> 
+  <p>The following figure illustrates the components of the <strong>Toolbar</strong> used for running the dynamic analyzer.</p> 
+  <p class="figure">Figure: Toolbar</p> 
+  <p style="text-align: center;"> <img alt="Toolbar" src="../images/coolbar.png" /> </p> 
+  <ol> 
+   <li><strong>Target</strong></li> 
+   <p>The <strong>Target</strong> combo box shows a serial number (if the target is a device), or the Emulator name (if the target is the Emulator).</p> 
+   <li><strong>Application</strong></li> 
+   <p>The <strong>Application</strong> combo box contains a list of applications in the selected target.</p> 
+   <p>If the <strong>Target</strong> combo box is empty or disabled, the <strong>Application</strong> combo box is disabled.</p> 
+   <li><strong>Start/Stop</strong></li> 
+   <p>The <strong>Start/Stop</strong> button starts or stops the tracing of the selected application. While tracing, the trace result and UI sequence is automatically recorded and temporarily saved. To store the record permanently, click <strong>Save Trace</strong>.</p> 
+   <li><strong>Timer</strong></li> 
+   <p>The timer starts when you click the <strong>Start</strong> button and updates every second. It shows the current running time of the dynamic analyzer. If you click <strong>Stop</strong>, the timer stops when the analysis processing is complete.</p> 
+   <li><strong>Save Trace</strong></li> 
+   <p>Clicking the <strong>Save Trace</strong> button saves the trace data permanently.</p> 
+   <li><strong>Open Trace</strong></li> 
+   <p>Clicking the <strong>Open Trace</strong> button loads and displays the saved trace data.</p> 
+   <p style="text-align: center;"> <img alt="Open Trace window" src="../images/open_trace.png" /> </p> 
+   <p>The <strong>Open Trace</strong> window consists of the following panels:</p> 
+   <ul> 
+    <li><strong>Saved file</strong></li> 
+    <p>Shows the trace saved by clicking the <strong>Save Trace</strong> button.</p> 
+    <p>An invalid save version trace is shown in orange color and cannot be opened. A valid trace is shown in black color. The currently opened trace is shown in blue color.</p> 
+    <li><strong>Temporary file</strong></li> 
+    <p>Shows the temporary traces. A temporary trace refers to a trace that has not been saved and is deleted when the program exits.</p> 
+    <li><strong>Trace details</strong></li> 
+    <p>Shows trace information of the saved traces from the <strong>Saved file</strong> and <strong>Temporary file</strong> panels.</p> 
+   </ul> 
+   <p>To open a trace, double-click the trace or select the trace and click <strong>Open</strong>.</p> 
+   <p>To delete a trace, select the trace and click the delete key on your keyboard.</p> 
+   <li><strong>Replay</strong></li> 
+   <p>Clicking <strong>Replay</strong> repeats a previous analysis. You can use data from a previous dynamic analyzer instance or a saved trace data file. If the target or application do not match, the button is disabled.</p> 
+    <li><strong>View Source</strong></li> 
+   <p>The <strong>View Source</strong> button displays the source code. If you click the button and the mouse is on the method name in any table-like view, the source code is displayed as a tooltip. By double-clicking the tooltip you can see the source code in the IDE. Apart from the Callstack view, the source code displayed is the caller part of the selected API, not the API definition.</p>
+
+ <p>If an API is called from a shared library, the source code is not displayed as the source code of the shared library is not available.</p> <br />
+
+  <p>In the <strong>Callstack</strong> view, the source code corresponding to the address of the selected callstack unit is displayed.</p> <br />
+
+        <table class="note"> 
+         <tbody> 
+          <tr> 
+           <th class="note">Note</th> 
+          </tr> 
+          <tr> 
+           <td class="note"> <p>If the source code exists outside Tizen IDE, for example, in a built-in application on a device, the <strong>View Source</strong> button is disabled. The source view is available only for applications which are built as normal native projects in the IDE on the local machine.</p></td> 
+          </tr> 
+         </tbody> 
+        </table>
+   <li><strong>Settings</strong></li>
+   <p>The <strong>Settings</strong> button opens the <strong>Settings</strong> window. It supports the runtime configuration feature and other settings.</p>
+   <li><strong>About</strong></li> 
+   <p>The <strong>About</strong> button opens the <strong>About</strong> window, which displays the dynamic analyzer version, build time, and license.</p> 
+  </ol> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_analysis_core.htm">Dynamic Analysis of Native Applications</a></li> 
+   <li><a href="../ide_sdk_tools/da_overview.htm">Dynamic Analyzer</a></li>   
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>  
+ </body>
+</html>

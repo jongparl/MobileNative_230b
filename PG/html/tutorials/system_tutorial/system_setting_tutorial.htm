@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>System Setting Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>System Setting Tutorial</h1> 
+ 
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SYSTEM__SETTINGS__MODULE.html">System Settings API</a> to access system settings.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">system_settings.h</span> header file. This header file must be included in all the applications that use the System Settings API.</p>
+
+<p>To learn about the System Settings API features, see the <a href="../../guide/system/system.htm">System Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+
+<ul>
+<li><a href="#init">Initialization and Prerequisites</a></li>
+<li><a href="#settings">Managing System Settings</a>
+<p>Obtaining, setting, and tracking system settings</p></li>
+</ul>
+
+<h2 name="init" id="init">Initialization and Prerequisites</h2>
+<p>There are no special requirements to use the System Settings API. Only the proper <span style="font-family: Courier New,Courier,monospace">#include &lt;system_settings.h&gt;</span> header has to be added.</p>
+
+
+<h2 name="settings" id="settings">Managing System Settings</h2>
+<p>System settings provide access to system variables. Most of them can be changed with the System Settings API. The API also provides functionality for monitoring changes in settings.</p>
+
+<ol>
+<li><p>Define auxiliary structures:</p>
+
+<pre class="prettyprint">
+struct _ret_type_define
+{
+&nbsp;&nbsp;&nbsp;system_settings_key_e key;
+&nbsp;&nbsp;&nbsp;int returns;
+};
+
+struct _ret_type_define _ret_type[] =
+{
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_INCOMING_CALL_RINGTONE, _RET_STRING
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_WALLPAPER_HOME_SCREEN, _RET_STRING
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_WALLPAPER_LOCK_SCREEN, _RET_STRING
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_FONT_SIZE, _RET_INT
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_FONT_TYPE, _RET_STRING
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SYSTEM_SETTINGS_KEY_MOTION_ACTIVATION, _RET_BOOL
+&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Others
+&nbsp;&nbsp;&nbsp;}
+};
+</pre>
+
+<pre class="prettyprint">
+static const char *_info_key[SYS_INFO_COUNT]=
+{
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_INCOMING_CALL_RINGTONE&quot;,
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_WALLPAPER_HOME_SCREEN&quot;,
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_WALLPAPER_LOCK_SCREEN&quot;,
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_FONT_SIZE&quot;,
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_FONT_TYPE&quot;,
+&nbsp;&nbsp;&nbsp;&quot;SYSTEM_SETTINGS_KEY_MOTION_ACTIVATION&quot;,
+&nbsp;&nbsp;&nbsp;// Others
+};
+</pre>
+</li>
+
+<li><p>Get the setting data.</p>
+<p>The available settings are defined in the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SYSTEM__SETTINGS__MODULE.html#ga56c8fa435516884c5648efecdd871eaa">system_settings_key_e</a> enumerator.</p>
+ 	 
+<p>Read the data using the following functions, according to the data type of the value you want to read:</p>
+
+<ul><li><span style="font-family: Courier New,Courier,monospace">int system_settings_get_value_int (system_settings_key_e key, int *value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_get_value_bool (system_settings_key_e key, bool *value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_get_value_double (system_settings_key_e key, double *value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_get_value_string (system_settings_key_e key, char **value)</span></li>
+</ul>
+
+<pre class="prettyprint">
+#define  SYS_INFO_COUNT 12
+
+for (i=0; i&lt;SYS_INFO_COUNT; i++)
+{
+&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%d- System_settings: %s : &quot;,i, _info_key[_ret_type[i].key]);
+
+&nbsp;&nbsp;&nbsp;if (_ret_type[i].returns==_RET_BOOL)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_settings_get_value_bool(_ret_type[i].key,&amp;_bool_ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%d&quot;,_bool_ret);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else if (_ret_type[i].returns==_RET_INT)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_settings_get_value_int (_ret_type[i].key,&amp;_int_ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%d&quot;,_int_ret);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else if (_ret_type[i].returns==_RET_STRING)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_settings_get_value_string(_ret_type[i].key,&amp;_string_ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%s&quot;,_string_ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(_string_ret);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else if (_ret_type[i].returns==_RET_DOUBLE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_settings_get_value_double(_ret_type[i].key,&amp;_double_ret);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;%f&quot;,_double_ret);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else fprintf(stderr,&quot;Undefined return type&quot;);
+}
+</pre>
+</li>
+
+<li><p>Track changes in the settings.</p>
+<ol><li><p>To track changes in the value of any system setting, set a callback function with the proper key.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">SYSTEM_SETTINGS_KEY_DEFAULT_FONT_TYPE</span> setting does not support the callback function, so you must iterate through the <span style="font-family: Courier New,Courier,monospace">SYS_INFO_COUNT-1</span> records.</p>
+
+<pre class="prettyprint">
+for (i=0; i&lt;SYS_INFO_COUNT-1; i++)
+{
+&nbsp;&nbsp;&nbsp;system_settings_set_changed_cb (i, _system_settings_changed_cb, 0);
+}
+</pre></li>
+
+<li><p>Define the callback which is invoked after each change. The <span style="font-family: Courier New,Courier,monospace">system_settings_key_e</span> key refers to the key which has changed.</p>
+
+<pre class="prettyprint">
+static void _system_settings_changed_cb (system_settings_key_e key, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;Runtime Info changed: %s&quot;,_info_key[key]);
+&nbsp;&nbsp;&nbsp;...
+}
+</pre></li>
+
+<li><p>When they are no longer needed, unregister the callbacks:</p>
+
+<pre class="prettyprint">
+for (i=0; i&lt;SYS_INFO_COUNT-1; i++)
+{
+&nbsp;&nbsp;&nbsp;system_settings_unset_changed_cb(i,_system_settings_changed_cb, 0);
+}
+</pre></li></ol>
+</li>
+
+<li><p>Change settings.</p>
+<p>To set a new value, use the applicable function related to the data type.</p>
+
+<ul><li><span style="font-family: Courier New,Courier,monospace">int system_settings_set_value_int (system_settings_key_e key, int value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_set_value_bool (system_settings_key_e key, bool value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_set_value_double (system_settings_key_e key, double value)</span></li>
+<li><span style="font-family: Courier New,Courier,monospace">int system_settings_set_value_string (system_settings_key_e key, const char *value)</span></li>
+</ul>
+
+<pre class="prettyprint">
+system_settings_set_value_bool(SYSTEM_SETTINGS_KEY_3G_DATA_NETWORK_ENABLED,!_bool_ret);
+</pre>
+</li>
+</ol>
+
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="system_tutorial.htm">System Tutorials</a></li>
+	<li><a href="../../guide/system/system.htm">System Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__SYSTEM__SETTINGS__MODULE.html">System Settings API Reference</a></li>
+  </ul> 
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+
+ </body>
+</html>

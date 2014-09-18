@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Evas Rendering</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Evas Rendering</h1> 
+  
+<p>Evas is a part of the Enlightenment Foundation Libraries (EFL), which form the Native UI framework in Tizen. Evas is a clean display canvas API for several target display systems that can, for example, draw anti-aliased text, smooth super and sub-sampled scaled images, and alpha-blend objects.</p>
+
+<p>Evas is designed to:</p>
+<ul>
+<li><p>Work on an object level, so you can create and manipulate objects in a canvas and set their properties without having to know about the characteristics of the display system.</p></li>
+
+<li><p>Optimize the rendering pipeline to minimize the effort made in redrawing changes made to the canvas, saving time and energy.</p></lI>
+
+<li><p>Work on embedded systems as well as large and powerful multi-CPU workstations. It can be compiled to only have the features you need for your target platform. It has several display back-ends, letting it display on several display systems, and making it portable for cross-device and cross-platform development.</p></li>
+</ul>
+
+<p>Evas is not:</p>
+<ul>
+<li><p>A widget set or toolkit. See the <a href="http://docs.enlightenment.org/auto/elementary/" target="_blank">Elementary Web site</a> for a toolkit based on Evas, Edje, Ecore, or other Enlightenment technologies.</p></li>
+
+<li><p>Dependent or aware of main loops, or input or output systems. Input should be polled from various sources and fed to Evas. Similarly, it does not create windows or report windows updates to your system. Evas just draws the pixels and reports the changed areas to the user. However, these operations are ready to use in Ecore, particularly in the Ecore_Evas wrapper/helper set of functions.</p></li>
+</ul>
+
+<h2>Rendering</h2>
+
+<p>Evas is a canvas display library. This is markedly different from most display and windowing systems, as a canvas is structural, and is also a state engine, whereas most display and windowing systems are immediate mode display targets. Evas handles the logic between a structural display through its state engine and controls the target windowing system to produce rendered results of the current canvas state on the display.</p>
+
+<p>Immediate mode display systems retain very little or no state. A program executes a series of commands, as in the following example:</p>
+
+<pre class="prettyprint">
+draw line from position (0, 0) to position (100, 200);
+
+draw rectangle from position (10, 30) to position (50, 500);
+
+bitmap_handle = create_bitmap();
+scale bitmap_handle to size 100 x 100;
+draw image bitmap_handle at position (10, 30);
+</pre>
+
+<p>The series of commands is executed by the windowing system, and the results are normally displayed on the screen. Once the commands are executed, the display system cannot reproduce this image again, and must be instructed by the application on how to redraw sections of the screen when needed. Each successive command is executed as instructed by the application and either emulated by software, or sent to the graphics hardware on the device to be performed.</p>
+
+<p>This gives the program a tight control over how an item is displayed. Given the increasing complexity of displays and demands by users to have better-looking interfaces, more work needs to be done at this level by the internals of widget sets, custom display widgets, and other programs. This means more logic and display rendering code needs to be written and executed each time.</p>
+
+<p>In the following example, the windowing system requires the application to redraw the area from 0, 0 to 50, 50 (also called an &quot;expose event&quot;), and the programmer must calculate manually the updates and repaint it again:</p>
+
+<pre class="prettyprint">
+Redraw from position (0, 0) to position (50, 50):
+
+// What was in the area (0, 0, 50, 50)?
+
+// Intersection part of a line (0, 0) to (100, 200)?
+draw line from position (0, 0) to position (25, 50);
+
+// Intersection part of a rectangle (10, 30) to (50, 500)?
+draw rectangle from position (10, 30) to position (50, 50)
+
+// Intersection part of an image at (10, 30), size 100 x 100?
+bitmap_subimage = subregion from position (0, 0) to position (40, 20)
+draw image bitmap_subimage at position (10, 30);
+</pre>
+
+<p>If all elements in the above example are opaque, then the system is doing unnecessary paints. A part of the line is behind the rectangle and part of the rectangle behind the image. As pixels tend to be 4 bytes in size, creating an overlapping region of 100 x 100 pixels, causing around 40000 unnecessary paints.</p>
+
+<p>Evas is a structural system, in which the programmer creates and manages display objects and their properties, and as a result of this higher level state management, the canvas is able to redraw the set of objects when needed to represent the current canvas state, as in the following example:</p>
+
+<pre class="prettyprint">
+line_handle = create_line();
+set line_handle from position (0, 0) to position (100, 200);
+show line_handle;
+
+rectangle_handle = create_rectangle();
+move rectangle_handle to position (10, 30);
+resize rectangle_handle to size 40 x 470;
+show rectangle_handle;
+
+bitmap_handle = create_bitmap();
+scale bitmap_handle to size 100 x 100;
+move bitmap_handle to position (10, 30);
+show bitmap_handle;
+
+render scene;
+</pre>
+
+<p>When the display must be refreshed or updated, you can just move, resize, show, and hide the objects to be changed. You only work at the object logic level, while the canvas software figures out what actually changed in the canvas, and how to redraw the canvas and its contents most efficiently to reflect the current state.</p>
+
+<p>This saves time and effort when working out how to load and display images and render the current display system. Because Evas is portable across different display systems, the code can also be ported and displayed on different systems with very little alterations.</p>
+
+<p>Evas stands somewhere between a widget set and an immediate mode display system. It retains the basic display logic, but does very little high-level logic, such as scrollbars, sliders, and push buttons. To create graphics, you must use an external library, such as <a href="evas_cairo_guide.htm">Cairo</a>.</p>
+
+<p>For more information about the UI rendering modes (immediate and retained), see <a href="ui_rendering.htm">UI Rendering Mode</a>.</p>
+
+<h2 id="object" name="object">Objects</h2>
+
+<h3>Renderable Objects</h3>
+
+<p>Evas supports the rendering of the following objects:</p>
+
+<ul>
+<li>Rectangle
+<p>There is only 1 function available for dealing with rectangle objects. There are no functions to manipulate the created rectangle, but it can be manipulated using the generic Evas object functions.</p>
+
+<p>The Evas rectangle serves the following key functions when working on Evas programs:</p>
+
+<ul>
+<li>Background
+<p>One common requirement of Evas programs is to have a solid color background, which can be accomplished with the following code:</p>
+
+<pre class="prettyprint">
+Evas_Object *bg = evas_object_rectangle_add(evas_canvas);
+// Set the red, green, blue, and opacity levels of the rectangle
+evas_object_color_set(bg, 255, 255, 255, 255); // Opaque white background
+evas_object_resize(bg, WIDTH, HEIGHT); // Covers full canvas
+evas_object_show(bg);
+</pre>
+
+<p>This can cause issues if the <span style="font-family: Courier New,Courier,monospace;">evas_canvas</span> is resized. However, most windows are created using Ecore Evas, which has a solution for using the rectangle as a background:</p>
+
+<pre class="prettyprint">
+Evas_Object *bg = evas_object_rectangle_add(ecore_evas_get(ee));
+// Set the red, green, blue, and opacity levels of the rectangle
+evas_object_color_set(bg, 255, 255, 255, 255); // Opaque white background
+evas_object_resize(bg, WIDTH, HEIGHT); // Covers full canvas
+evas_object_show(bg);
+ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
+</pre>
+
+<p>This creates a white background to the window that is resized together with it.</p>
+</li>
+<li>Debugging
+<p>When debugging visual issues with Evas programs, the rectangle can be used to pinpoint issues. If you are not getting the desired visual result, replace the problematic object with a solid color rectangle to see how it interacts with the other elements. This often makes it easier to notice issues with clipping, parenting, or positioning. Once the issues have been identified and corrected, the rectangle can be replaced with the original element, with any remaining issues likely being be specific to that object&#39;s type.</p>
+</li>
+<li>Clipping
+<p>Clipping serves the following main functions:</p>
+<ul>
+<li>Limiting visibility</li>
+<li>Applying a layer of color to an object</li>
+</ul>
+<p>For more information, see <a href="evas_guide_clipping.htm">Clipping Objects</a>.</p>
+</li>
+</ul>
+</li>
+<li>Textblock
+
+<p>For more information, see <a href="evas_guide_textblock.htm">Textblock Objects</a>.</p>
+</li>
+
+<li>Text
+<p>An Evas text object shows a basic single-line single-style text.</p>
+</li>
+
+<li>Image
+<p>For more information, see <a href="evas_guide_image.htm">Image Objects</a>.</p>
+</li>
+</ul>
+
+<h3>Smart Objects</h3>
+<p>A smart object is a special Evas object, which provides custom functions to handle, for example, clipping, hiding, moving, resizing, and color setting on child elements automatically.</p> 
+<p>The child elements can be as simple as a group of objects that move together, or implementations of whole complex UI widgets, providing some intelligence and extension to simple Evas objects.</p>
+<p>For more information, see <a href="events_guide_evas_smart_objects.htm">Smart Object Events</a>.</p>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="ui.htm">UI Programming Guide</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Contact Setting and SIM Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Contact Setting and SIM Tutorial</h1> 
+<p>This tutorial demonstrates how you can manage the contact display and the contacts stored on the SIM card.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;contacts.h&gt;</span> header file, which has to be included in all applications using the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts</a> API.</p>
+
+<p>To learn about the Contacts API features, see the <a href="../../guide/social/contact.htm">Contacts Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#settings">Managing Contact Settings</a>
+		<p>Change the display settings of contacts.</p></li>
+		<li><a href="#sim">Managing Contacts on the SIM Card</a>
+		<p>Check that the SIM card is initialized and import contacts from the SIM card.</p></li>
+   </ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+
+<p>To write and read records from the Contact database, connect with it using the <span style="font-family: Courier New,Courier,monospace;">contacts_connect()</span> function:</p>
+
+<pre class="prettyprint">
+int err = contacts_connect();
+</pre>
+
+<p>When the database connection is no longer needed, disconnect it:</p>
+
+<pre class="prettyprint">
+int err = contacts_disconnect();
+</pre>
+
+<h2 id="settings" name="settings">Managing Contact Settings</h2>
+<p>To manage the display settings of contacts:</p>
+
+<ol>
+<li>Get the display and sorting order.
+<p>Check the current display order (the order in which the names are displayed) using the <span style="font-family: Courier New,Courier,monospace;">contacts_setting_get_name_display_order()</span> function, and the sorting order using the <span style="font-family: Courier New,Courier,monospace;">contacts_setting_get_name_sorting_order()</span> function:</p> 
+
+<pre class="prettyprint">
+contacts_name_display_order_e display_order;
+contacts_setting_get_name_display_order (&amp;display_order);
+// Now you have display order
+sprintf(&quot;Display order: %s&quot;, display_order==CONTACTS_NAME_DISPLAY_ORDER_FIRSTLAST?&quot;CONTACTS_NAME_DISPLAY_ORDER_FIRSTLAST&quot;:&quot;CONTACTS_NAME_DISPLAY_ORDER_LASTFIRST&quot;); 
+
+contacts_name_sorting_order_e sorting_order;
+contacts_setting_get_name_sorting_order (&amp;sorting_order);
+// Now you have sorting order
+sprintf(&quot;Sorting order: %s&quot;, sorting_order==CONTACTS_NAME_SORTING_ORDER_FIRSTLAST?&quot;CONTACTS_NAME_SORTING_ORDER_FIRSTLAST&quot;:&quot;CONTACTS_NAME_SORTING_ORDER_LASTFIRST&quot;); 
+</pre>
+</li>
+
+<li>Change the display and sorting order.
+<p>To change the display and sorting orders, use the <span style="font-family: Courier New,Courier,monospace;">contacts_setting_set_name_display_order()</span> and <span style="font-family: Courier New,Courier,monospace;">contacts_setting_set_name_sorting_order()</span> functions:</p>
+
+<pre class="prettyprint">
+contacts_setting_set_name_display_order (CONTACTS_NAME_DISPLAY_ORDER_FIRSTLAST); 
+
+contacts_setting_set_name_sorting_order (CONTACTS_NAME_SORTING_ORDER_FIRSTLAST);
+</pre>
+</li>
+
+<li>Track the order changes with callbacks.
+<p>To track display and sorting order changes:</p>
+<ol><li>Register callbacks with the <span style="font-family: Courier New,Courier,monospace;">contacts_setting_add_name_display_order_changed_cb()</span> and <span style="font-family: Courier New,Courier,monospace;">contacts_setting_add_name_sorting_order_changed_cb()</span> functions. </li>
+<li>Define the callbacks themselves:
+<pre class="prettyprint">
+static void display_changed_cb(contacts_name_display_order_e name_display_order, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;changed display order: %s\n&quot;, name_display_order==CONTACTS_NAME_DISPLAY_ORDER_FIRSTLAST?&quot;CONTACTS_NAME_DISPLAY_ORDER_FIRSTLAST&quot;:&quot;CONTACTS_NAME_DISPLAY_ORDER_LASTFIRST&quot;);
+}
+
+static void sorting_changed_cb(contacts_name_sorting_order_e name_display_order, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;changed sorting order: %s\n&quot;, name_display_order==CONTACTS_NAME_SORTING_ORDER_FIRSTLAST?"CONTACTS_NAME_SORTING_ORDER_FIRSTLAST&quot;:&quot;CONTACTS_NAME_SORTING_ORDER_LASTFIRST&quot;);
+}
+</pre>
+<p>The above examples cause a message to be printed when the order changes. To track the changes, write a timeout function after setting the callback.</p></li>
+<li>Unregister the callbacks when they are no longer needed using the <span style="font-family: Courier New,Courier,monospace;">contacts_setting_remove_name_display_order_changed_cb()</span> and <span style="font-family: Courier New,Courier,monospace;">contacts_setting_remove_name_sorting_order_changed_cb()</span> functions.</li></ol>
+
+</li>
+</ol>
+
+<h2 id="sim" name="sim">Managing Contacts on the SIM Card</h2>
+<p>To check whether the SIM card is initialized and then import contacts from the SIM card:</p>
+
+<ol>
+<li>Check whether the SIM card is initialized.
+<p>Before using any SIM card methods, ensure that the SIM card initialization is complete:</p>
+
+<pre class="prettyprint">
+bool completed = false;
+contacts_sim_get_initialization_status(&amp;completed);
+printf(&quot;SIM %s completed&quot;, completed?&quot;&quot;:&quot;not &quot;);
+</pre></li>
+
+<li>Import all contacts from the SIM card.
+<p>When the contacts from the SIM card are available, import them:</p>
+
+<pre class="prettyprint">
+int err = contacts_sim_import_all_contacts();
+</pre>
+</li>
+
+</ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorial</a></li>
+	<li><a href="../../guide/social/contact.htm">Contacts Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SOCIAL__CONTACTS__SVC__MODULE.html">Contacts API Reference</a></li>   
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

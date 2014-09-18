@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Album Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Album Tutorial</h1> 
+ 
+
+<p>This tutorial demonstrates how to use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__ALBUM__MODULE.html">Media Album API</a>. Functions in this module allow browsing a media album and provide additional information about the album.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;media_content.h&gt;</span> header. This header file has to be included in all applications that use the Media Album API.</p>
+
+<p>To learn about the Media Album API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.</p>
+
+<ul><li><a href="#init">Initialization and Prerequisites</a>
+<p>Open a connection to the Content Service, and close it when no longer needed.</p></li>
+
+<li><a href="#findingall">Finding All Albums</a>
+<p>Find information about albums available in the system.</p></li>
+
+<li><a href="#findingalbums">Finding Albums Using a Filter</a>
+<p>Find albums that satisfy a specific condition.</p></li>
+
+<li><a href="#findinginfo">Retrieve Album Content Information</a>
+<p>Retrieve information about the media items in an album.</p></li></ul>
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+
+<p>Before using the Album module, open a connection to the Content Service by calling <span style="font-family: Courier New,Courier,monospace;">media_content_connect()</span>:</p>
+	
+<pre class="prettyprint">media_content_connect();</pre>
+
+<p>When the module is no longer needed, close the connection:</p>
+
+<pre class="prettyprint">media_content_disconnect();</pre>
+
+<h2 id="findingall" name="findall">Finding All Albums</h2>
+<p>To find all albums in the system and access information about the album content:</p>
+<ol><li>Find all albums.
+<p>Call the <span style="font-family: Courier New,Courier,monospace">media_album_get_album_count_from_db()</span> and <span style="font-family: Courier New,Courier,monospace">media_album_foreach_album_from_db()</span> functions to receive information about albums. Set the first parameter to <span style="font-family: Courier New,Courier,monospace">NULL</span> to retrieve all albums and perform no filtering.</p>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">media_album_list_cb()</span>callback is called for each found album. </p>
+
+<pre class="prettyprint">media_album_foreach_album_from_db(NULL, media_album_list_cb, NULL);</pre>
+
+<p>Note that the function is synchronous. The call blocks until the callback is called for all albums or the callback returns <span style="font-family: Courier New,Courier,monospace">false</span>.</p></li>
+
+<li>Retrieve album information.
+
+<p>Define the callback and retrieve the basic album information (album id, name, the artist name, and the number of media items in the album) in it.</p>
+<p>If the callback returns <span style="font-family: Courier New,Courier,monospace">true</span>, the iteration continues and the callback is called for the next album, if available. If the value is <span style="font-family: Courier New,Courier,monospace">false</span>, the iteration stops.</p>
+
+<pre class="prettyprint">bool media_album_list_cb(media_album_h album, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_content_error_e ret = MEDIA_CONTENT_ERROR_NONE;
+
+&nbsp;&nbsp;&nbsp;int id = -1; 
+&nbsp;&nbsp;&nbsp;char *name = NULL, *artist = NULL;
+&nbsp;&nbsp;&nbsp;int count = -1;
+
+&nbsp;&nbsp;&nbsp;// Get the ID of the album
+&nbsp;&nbsp;&nbsp;ret = media_album_get_album_id(album, &amp;id);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling	
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Album id: %d\n&quot;, id);
+&nbsp;&nbsp;&nbsp;}   
+
+&nbsp;&nbsp;&nbsp;// Get name of the album
+&nbsp;&nbsp;&nbsp;ret = media_album_get_name(album, &amp;name);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf(&quot;Album name: %s\n&quot;, name);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(name);
+&nbsp;&nbsp;&nbsp;}   
+
+&nbsp;&nbsp;&nbsp;// Get the artist name
+&nbsp;&nbsp;&nbsp;ret = media_album_get_artist(album, &amp;artist);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Artist: %s\n&quot;, artist);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(artist);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;// Get media count in the album
+&nbsp;&nbsp;&nbsp;// Filter is NULL - all media is counted
+&nbsp;&nbsp;&nbsp;ret = media_album_get_media_count_from_db(id, NULL, &amp;count);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Media count in this album: %d\n&quot;, count);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return true;
+}</pre>
+
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Free <span style="font-family: Courier New,Courier,monospace">album_name</span> and <span style="font-family: Courier New,Courier,monospace">artist</span> after use.</td>
+</tr>
+</tbody>
+</table> </li></ol>
+
+
+<h2 id="findingalbums" name="findingalbums">Finding Albums Using a Filter</h2>
+<p>Use a filter to find the albums that meet a certain criteria. If an album does not meet the conditions, it is not in the results.</p>
+
+<p>Before searching for the albums, create the filter, and set its conditions and sort order:</p>
+
+<pre class="prettyprint">#define BUFLEN 200
+
+filter_h filter = NULL;
+char buf[BUFLEN] = {&#39;\0&#39;};
+
+media_filter_create(&amp;filter);
+
+snprintf(buf, BUFLEN, &quot;%s = &#39;Samsung&#39;&quot;, MEDIA_ARTIST);
+media_filter_set_condition(filter, buf, MEDIA_CONTENT_COLLATE_NOCASE);
+
+media_filter_set_order(filter, MEDIA_CONTENT_ORDER_DESC, MEDIA_DISPLAY_NAME, MEDIA_CONTENT_COLLATE_NOCASE);
+
+media_album_foreach_album_from_db(filter, media_album_list_cb, NULL);
+
+media_filter_destroy(filter);</pre>
+
+
+<h2 id="findinginfo" name="findinginfo">Retrieve Album Content Information</h2>
+<p>To access information about the media items in a given album:</p>
+
+<ol><li>Request album content.
+
+<ol><li><p>Before you can read the album content information, acquire the album ID. If you have the album handle (<span style="font-family: Courier New,Courier,monospace">media_album_h</span>), you can call <span style="font-family: Courier New,Courier,monospace">media_album_get_album_id()</span>:</p>
+
+<pre class="prettyprint">int id = -1;
+
+media_album_get_album_id(album, &amp;id);</pre>
+
+<p>To obtain the handle, call <span style="font-family: Courier New,Courier,monospace">media_album_foreach_album_from_db()</span>. The handle is provided in the callback.</p></li>
+
+<li><p>Request the album content and media item count with the <span style="font-family: Courier New,Courier,monospace">media_album_foreach_media_from_db()</span> and <span style="font-family: Courier New,Courier,monospace">media_album_get_media_count_from_db()</span> functions using the album ID as the first parameter.</p>
+
+<p>The following call finds all the media items in the album (NULL filter). The <span style="font-family: Courier New,Courier,monospace">album_contents_info_cb()</span> callback is called for each item.</p>
+
+<pre class="prettyprint">media_album_foreach_media_from_db(id, NULL, album_contents_info_cb, NULL);</pre>
+
+
+<p>This function is synchronous. The call blocks until the callback is called for all the albums or the callback returns <span style="font-family: Courier New,Courier,monospace">false</span>.</p></li></ol></li>
+
+<li id="receive" name="receive">Receive album content.
+<p>Define the callback in which you can receive and handle the album content.</p>
+<p>As long as the callback returns <span style="font-family: Courier New,Courier,monospace">true</span>, the callback is called for the next item if available. The iteration stops when the return value is <span style="font-family: Courier New,Courier,monospace">false</span>.</p>
+ 
+<pre class="prettyprint">bool album_contents_info_cb(media_info_h media, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;media_content_error_e ret = MEDIA_CONTENT_ERROR_NONE;
+
+&nbsp;&nbsp;&nbsp;char *title = NULL, *mime_type = NULL;
+&nbsp;&nbsp;&nbsp;unsigned long long size = -1;
+
+&nbsp;&nbsp;&nbsp;// Read the item title
+&nbsp;&nbsp;&nbsp;ret = media_info_get_title(media, &amp;title);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Title: %s\n&quot;, title);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(title);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;// Read the item MIME type
+&nbsp;&nbsp;&nbsp;ret = media_info_get_mime_type(media, &amp;mime_type);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;MIME type: %s\n&quot;, mime_type);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(mime_type);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;// Read the item size
+&nbsp;&nbsp;&nbsp;ret = media_info_get_size(media, &amp;size);
+&nbsp;&nbsp;&nbsp;if (ret != MEDIA_CONTENT_ERROR_NONE) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Error handling
+&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;else 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Size: %llu\n&quot;, size);
+&nbsp;&nbsp;&nbsp;}
+
+&nbsp;&nbsp;&nbsp;return true;
+}</pre>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Free <span style="font-family: Courier New,Courier,monospace">title</span> and <span style="font-family: Courier New,Courier,monospace">mime_type</span> after use.</td>
+</tr>
+</tbody>
+</table></li></ol>
+
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="content_tutorial.htm">Content Tutorials</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MEDIA__ALBUM__MODULE.html">Media Album API Reference</a></li>    
+  </ul>
+
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

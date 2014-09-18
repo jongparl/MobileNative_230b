@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Developing Multiple Projects as a Package</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Developing Multiple Projects as a Package</h1> 
+  <p>Tizen supports multi-project applications that combine different types of application templates.</p> 
+  <h2>Developing Multi-project Native Applications</h2> 
+  <p>You can develop a UI project and a service project as a package.</p> 
+  <p>To develop a multi-project native application:</p> 
+  <ol> 
+   <li><a href="creating_app_project.htm">Create a form-based or tab-based UI application</a>.</li> 
+   <li>Create a service application.</li> 
+   <li>To establish a project reference between the UI and service application: 
+    <ol> 
+     <li>In the <strong>Project Explorer</strong> view, right-click the UI application.</li> 
+     <li>Select <strong>Properties &gt; Project References</strong>.</li> 
+     <li>Select the check box for service application, and click <strong>OK</strong>.</li> 
+    </ol> <p>In the <strong>Project Explorer</strong> view, a message appears next to the name of the service application project for all the applications you have added to the package.</p> </li> 
+   <li><a href="building_app.htm">Build</a> and <a href="debugging_app.htm">run</a> the UI application. <p>The service application is built and run automatically while the UI application is built and run.</p> </li> 
+  </ol> 
+  
+    <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="overview_of_app_dev.htm">Native Application Development Process</a></li> 
+  </ul> 
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

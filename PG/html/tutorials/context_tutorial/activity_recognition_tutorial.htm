@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Context Manager Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Activity Recognition Tutorial</h1> 
+
+<p>This tutorial demonstrates how you can use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTEXT__ACTIVITY__MODULE.html">Activity Recognition API</a>. Functions contained in this module detect user activities.</p>
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;activity_recognition.h&gt;</span> header file, which has to be included in all applications that use the Activity Recognition API.</p>
+
+<p>To learn about the Activity Recognition API features, see the <a href="../../guide/context/context.htm">Context Programming Guide</a>.</p>
+
+ <p>This tutorial consists of the following parts:</p>
+  
+  <ul>
+
+   <li><a href="#activity">Detecting Activities</a>
+    <p>Detect user activities.</p>
+   </li></ul>
+
+
+<h2 id="activity" name="activity">Detecting Activities</h2>
+
+<p>The Activity Recognition API provides functions for setting and unsetting callback functions for the activity monitor, and retrieving details from the activity data received:</p>
+<ol><li>Create a handle for activity monitoring using the <span style="font-family: Courier New,Courier,monospace;">activity_create()</span> function:
+<pre class="prettyprint">
+int result;
+activity_h handle;
+result = activity_create(&amp;handle);
+</pre>
+</li>
+
+<li>To subscribe to notifications about specific activity state changes, invoke the <span style="font-family: Courier New,Courier,monospace;">activity_start_recognition()</span> function to register a callback function. 
+<p>When specific activity data is received, the <span style="font-family: Courier New,Courier,monospace;">activity_recognition_cb</span> callback is invoked.</p>
+
+<p>The following example starts the activity monitor to receive notifications when the <span style="font-family: Courier New,Courier,monospace;">ACTIVITY_WALK</span> activity is detected. Instead of them, the application can use any of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTEXT__ACTIVITY__MODULE.html#gae17e97a1a51a9d5d5d8330f29f4a895d">activity_type_e</a> enumerators.</p>
+<pre class="prettyprint">
+result = activity_start_recognition(handle, ACTIVITY_WALK, activity_cb, NULL);
+</pre>
+</li>
+
+<li>When the <span style="font-family: Courier New,Courier,monospace;">activity_cb</span> callback is invoked, the current activity is delivered as a parameter, and you can extract the accuracy of the recognized activity:
+<pre class="prettyprint">void activity_cb(activity_type_e activity, const activity_data_h data, double timestamp, activity_error_e error, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;int result;
+
+&nbsp;&nbsp;&nbsp;activity_accuracy_e accuracy;
+&nbsp;&nbsp;&nbsp;result = activity_get_accuracy(data, &amp;accuracy);
+}</pre></li>
+<li>When activity monitoring is no longer used, unset the callback function and destroy the handle: 
+<pre class="prettyprint">result = activity_stop_recognition(handle);
+result = activity_release(handle);</pre></li></ol>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="context_tutorial.htm">Context Tutorials</a></li>
+	<li><a href="../../guide/context/context.htm">Context Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTEXT__ACTIVITY__MODULE.html">Activity Recognition API Reference</a></li>    
+  </ul> 
+
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

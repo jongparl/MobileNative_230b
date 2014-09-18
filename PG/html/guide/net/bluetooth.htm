@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Bluetooth</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Bluetooth</h1> 
+  
+<p>The Tizen <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__NETWORK__BLUETOOTH__MODULE.html">Bluetooth</a> API enables you to use Bluetooth functionalities, such as managing the local Bluetooth adapter, bonding, and exchanging data between Bluetooth-enabled devices. The Bluetooth standard provides a peer-to-peer (P2P) data exchange functionality over short distance between compliant devices.</p>
+<p>The main features of the Bluetooth API include:</p>
+
+<ul>
+	<li>Managing the local <a href="#adapter">Bluetooth adapter</a> 
+	<p>To use the Bluetooth functionality of the device, you must switch the adapter on.</p>
+	</li>
+	<li>Discovering devices 
+	<p>You can discover other <a href="#device">Bluetooth devices</a>. The device discovery process can retrieve multiple types of Bluetooth devices, such as printers, mobile phones, and headphones.</p>
+	</li>
+	<li>Creating a bonding with a Bluetooth device 
+	<p>You can create a bonding with another device. The bonding allows the 2 devices to establish a connection.</p>
+	</li>
+	<li>Connecting to and exchanging data with a Bluetooth device using a <a href="#socket">Bluetooth socket</a>
+	<p>You can connect to and exchange data with a remote Bluetooth device. When you attempt to open a connection to another device, a Service Discovery Protocol (SDP) look-up is performed on the device, and the protocol and channel to be used for the connection are determined. If a connection is established and the socket is opened successfully, a <span style="font-family: Courier New,Courier,monospace">BluetoothSocket</span> instance with an open state is returned. The socket is subsequently used for exchanging data between the connected devices.</p>
+	<p>If a device allows other devices to use its functionalities through this kind of connection, it is said to provide a service.</p>
+	</li>
+</ul>
+
+<p>Bluetooth use is based on profiles. Tizen Bluetooth features support the Audio, GATT, HDP, HID, and OPP client and server profiles.</p>
+
+<h2 id="adapter" name="adapter">Bluetooth Adapter</h2>
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__NETWORK__BLUETOOTH__ADAPTER__MODULE.html">Bluetooth Adapter</a> API provides functions for setting up Bluetooth and discovering other devices. The API is used to control the Bluetooth adapter: you must enable the adapter before any other BLuetooth actions, and when you no longer need it, disable it to save device power.</p>
+<p>You can control the visibility of the device, meaning whether its name appears to others searching for Bluetooth devices. In addition, you  discover neighboring Bluetooth devices. This process is asynchronous, so you must build and hold the list of devices in the neighborhood.</p>
+
+<h2 id="device" name="device">Bluetooth Device</h2>
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__NETWORK__BLUETOOTH__DEVICE__MODULE.html">Bluetooth Device</a> API provides functions for managing bonds with other devices and searching for supported services. The API is used to handle the connection with other devices.</p>
+<p>Connected devices exchange keys needed for encrypted communication, but each connection has to be approved by the latest application user. You can also set authorization of other devices. Authorized devices are connected automatically without the latest user being asked for authorization.</p>
+<p>The Bluetooth Device API is also used to search for services available on remote devices. </p>
+  
+<h2 id="socket" name="socket">Bluetooth Socket</h2>
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__NETWORK__BLUETOOTH__SOCKET__MODULE.html">Bluetooth Socket</a> API provides functions for managing connections to other devices and exchanging data. The API is used for exchanging data between 2 Bluetooth devices, where your device can have the role both of a server (service provider) and client (service user). The connection creation process differs based on the role. After the connection is established, the processes for exchanging data and disconnecting are the same for both roles.</p>
+
+
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="network.htm">Network Programming Guide</a></li>
+<li><a href="../../tutorials/net_tutorial/bluetooth_tutorial.htm">Bluetooth Tutorial</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

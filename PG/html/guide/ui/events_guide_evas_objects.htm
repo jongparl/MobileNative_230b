@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Evas Object Events</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Evas Object Events</h1> 
+
+<p>Each Evas object on a given Evas canvas can be manipulated independently and can send events. Callbacks can be attached to them using the <span style="font-family: Courier New,Courier,monospace;">evas_object_event_callback_add()</span> function and removed using the <span style="font-family: Courier New,Courier,monospace;">evas_object_event_callback_del()</span> function. These events all relate to single objects and not to the whole canvas.</p>  
+
+<p>Use the second parameter of the <span style="font-family: Courier New,Courier,monospace;">evas_object_event_callback_add()</span> function to define the event type using the <span style="font-family: Courier New,Courier,monospace;">Evas_Callback_Type</span> enumerator values, and the third parameter to define the callback function.</p>
+
+<p>The following example shows how to track a text object in a rectangle in a window with mouse in and out and button up and down callbacks:</p>
+ 
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;Evas.h&gt;
+#include &lt;Ecore.h&gt;
+#include &lt;Ecore_Evas.h&gt;
+static void
+_mouse_in_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Evas_Event_Mouse_In *ev = event_info;
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Mouse in at (%d, %d).\n&quot;, ev-&gt;output.x, ev-&gt;output.y);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+}
+static void
+_mouse_out_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Evas_Event_Mouse_Out *ev = event_info;
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Mouse out at (%d, %d).\n&quot;, ev-&gt;output.x, ev-&gt;output.y);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+}
+static void
+_mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Evas_Event_Mouse_Up *ev = event_info;
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Button %d up at (%d, %d).\n&quot;, ev-&gt;button, ev-&gt;output.x, ev-&gt;output.y);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+}
+static void
+_mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+&nbsp;&nbsp;&nbsp;Evas_Event_Mouse_Down *ev = event_info;
+&nbsp;&nbsp;&nbsp;fprintf(stdout, &quot;Button %d down at (%d, %d).\n&quot;, ev-&gt;button, ev-&gt;output.x, ev-&gt;output.y);
+&nbsp;&nbsp;&nbsp;fflush(stdout);
+}
+static void
+_delete_cb(Ecore_Evas *ee)
+{
+&nbsp;&nbsp;&nbsp;printf (&quot;Exiting...\n&quot;);
+&nbsp;&nbsp;&nbsp;ecore_main_loop_quit();
+}
+int
+main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;Ecore_Evas *ee;
+&nbsp;&nbsp;&nbsp;Evas *evas;
+&nbsp;&nbsp;&nbsp;Evas_Object *rectangle, *text;
+&nbsp;&nbsp;&nbsp;if (!ecore_evas_init())
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1;
+&nbsp;&nbsp;&nbsp;ee = ecore_evas_new(NULL, 10, 10, 240, 240, NULL);
+&nbsp;&nbsp;&nbsp;if (!ee) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ecore_evas_shutdown();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;ecore_evas_callback_delete_request_set(ee, _delete_cb);
+&nbsp;&nbsp;&nbsp;ecore_evas_title_set(ee, &quot;Evas object mouse buttons&quot;);
+&nbsp;&nbsp;&nbsp;evas = ecore_evas_get(ee);
+&nbsp;&nbsp;&nbsp;// White background
+&nbsp;&nbsp;&nbsp;rectangle = evas_object_rectangle_add(evas);
+&nbsp;&nbsp;&nbsp;evas_object_color_set(rectangle, 255, 255, 255, 255);
+&nbsp;&nbsp;&nbsp;evas_object_move(rectangle, 20, 20);
+&nbsp;&nbsp;&nbsp;evas_object_resize(rectangle, 200, 200);
+&nbsp;&nbsp;&nbsp;evas_object_show(rectangle);
+&nbsp;&nbsp;&nbsp;// Text
+&nbsp;&nbsp;&nbsp;text = evas_object_text_add(evas);
+&nbsp;&nbsp;&nbsp;evas_object_text_font_set(text, &quot;Vera&quot;, 12);
+&nbsp;&nbsp;&nbsp;evas_object_color_set(text, 100, 100, 100, 255);
+&nbsp;&nbsp;&nbsp;evas_object_text_text_set(text, &quot;Hello World&quot;);
+&nbsp;&nbsp;&nbsp;evas_object_move(text, 80, 90);
+&nbsp;&nbsp;&nbsp;evas_object_show(text);
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rectangle, EVAS_CALLBACK_MOUSE_IN, _mouse_in_cb, NULL);
+&nbsp;&nbsp;&nbsp;evas_object_event_callback_add(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rectangle, EVAS_CALLBACK_MOUSE_OUT, _mouse_out_cb, NULL);
+&nbsp;&nbsp;&nbsp;ecore_evas_show(ee);
+&nbsp;&nbsp;&nbsp;ecore_main_loop_begin();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="events_guide.htm">Event Handling</a></li>   
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

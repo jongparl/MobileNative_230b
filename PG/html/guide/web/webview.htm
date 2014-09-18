@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>WebView</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>WebView</h1> 
+  <p>A significant amount of user-controlled online interaction is done with a Web browser instead of direct interfaces to Web resources. This makes the Web browser an important part of applications that have online functions.</p>
+  
+  <p>EFL WebKit (EWK) is an API set for building Web client applications, such as a Web browser. EWK provides various features for Web browsing, including loading and displaying Web pages, and navigating through the browsing history.</p>
+  
+  <p>With the <a href="../../../../org.tizen.mobile.native.apireference/group__WEBVIEW.html">WebView</a> API, you can create a simple Web browser with minimal functionality. The EWK <span style="font-family: Courier New,Courier,monospace">Browser_window</span> structure allows the user to create and initialize windows, display Web pages, and navigate through the browsing history.</p>
+ 
+<p>The following figure illustrates the EWK <span style="font-family: Courier New,Courier,monospace">Browser_window</span> structure.</p>
+   <p class="figure">Figure: EWK Browser_window structure</p> 
+  <p style="text-align:center;"><img alt="EWK Browser_window structure" src="../../images/browser_window.png" /></p> 
+ 
+ <p>The structure has the following elements: 
+<ul><li><span style="font-family: Courier New,Courier,monospace">evas</span> object
+<p>This object is a basic, clean display canvas API for several target display systems, and it can draw, for example, smooth super and sub-sampled images, and anti-aliased text. It is used to create areas or windows that the application can draw on with an X Window System.</p>
+<p>A smart <span style="font-family: Courier New,Courier,monospace">evas</span> object provides custom functions to handle, for example, clipping, hiding, moving, and resizing of child elements automatically. Smart objects are defined by smart classes, which are structs defining their interfaces or smart functions. The base class for any smart object is <span style="font-family: Courier New,Courier,monospace">Evas_Smart_Class</span>.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace">Ewk_Context</span>
+<p>This object encapsulates all pages related to a specific use of WebKit. The context can be the default one or created by the application.</p> </li>
+<li>Smart event
+<p>This object is an event elected by a smart object and occurring inside it. Smart events report back.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace">Ewk_view</span>
+<p>This object is the high level access to WebKit-EFL browser component. It manages the main frame and other critical resources.</p></li></ul>
+
+ 
+ <h2>User Scenario</h2>
+ 
+<p>The following figures illustrate the user scenario for browsing.</p>
+ 
+
+  <p class="figure">Figure: Starting browsing</p> 
+  <p style="text-align:center;"><img alt="Starting browsing" src="../../images/browse_start.png" /></p> 
+
+    <p class="figure">Figure: Clicking a link</p> 
+  <p style="text-align:center;"><img alt="Clicking a link" src="../../images/browse_link.png" /></p> 
+  
+   <p class="figure">Figure: Moving back</p> 
+  <p style="text-align:center;"><img alt="Moving back" src="../../images/browse_back.png" /></p> 
+
+  <p class="figure">Figure: Moving forward</p> 
+  <p style="text-align:center;"><img alt="Moving forward" src="../../images/browse_forward.png" /></p> 
+
+  <p class="figure">Figure: Reloading a page</p> 
+  <p style="text-align:center;"><img alt="Reloading a page" src="../../images/browse_reload.png" /></p> 
+
+  <p class="figure">Figure: Stopping loading</p> 
+  <p style="text-align:center;"><img alt="Stopping loading" src="../../images/browse_stop.png" /></p> 
+
+  <p class="figure">Figure: Zooming on a page</p> 
+  <p style="text-align:center;"><img alt="Zooming on a page" src="../../images/browse_zoom.png" /></p>
+ 
+ 
+ <h2>Where to Go Next</h2> 
+  <ul> 
+  <li><a href="web.htm">Web Programming Guide</a></li>
+   <li><a href="../../tutorials/web_tutorial/webview_tutorial.htm">WebView Tutorial</a></li>  
+  </ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

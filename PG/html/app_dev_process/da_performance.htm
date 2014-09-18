@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Performance Analysis</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Performance Analysis</h1> 
+  <p>You can use the dynamic analyzer to analyze application performance and identify bottlenecks. After identifying bottlenecks, you can modify the code to eliminate them, which increases application performance significantly, and extends the battery life of the device running the application.</p> 
+ 
+  <p>To analyze performance of the application with the dynamic analyzer, use the following features:</p> 
+  <ul> 
+   <li><a href="da_user_function_profiling.htm">User Function Profiling</a> <p>Profiling can help to identify unexpected bottleneck locations.</p></li> 
+   <li><a href="da_timeline_cpu_chart.htm">Timeline CPU Chart</a> <p>CPU load is one of the most significant factors in performance analysis.</p></li> 
+   <li><a href="da_thread_load.htm">Thread Load</a> <p>Viewing the thread load enables you to distribute it more evenly.</p></li> 
+  </ul> 
+  <p>When modifying the application code to improve its performance, consider the following:</p> 
+  <ul> 
+   <li>Select the right algorithm and data structures.</li> 
+   <li>High-level optimization is important because it can change the order of complexity. If your code includes <span style="font-family: Courier New,Courier,monospace">sort</span>, <span style="font-family: Courier New,Courier,monospace">search</span>, or <span style="font-family: Courier New,Courier,monospace">compare</span>, use optimal algorithms and data structures.</li> 
+   <li>Running high and low priority jobs in a single task causes delays. Split the jobs into multiple tasks.</li> 
+   <li>Do not run heavy calculations in the same thread with your GUI.</li> 
+   <li>Use optimization options provided by toolchains.</li> 
+  </ul> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="da_analysis_result.htm">Using the Analysis Result</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

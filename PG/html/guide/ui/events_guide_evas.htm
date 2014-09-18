@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Evas Events</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Evas Events</h1> 
+
+<p>Evas events happen on a canvas as a whole. While perfectly usable, this kind of event is too low-level for writing applications and is most often used when writing the graphical toolkit itself.</p>  
+
+
+<p>To register a callback to a canvas, use the <span style="font-family: Courier New,Courier,monospace;">evas_event_callback_add()</span> function:</p>
+ 
+<pre class="prettyprint">
+void
+evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
+</pre>
+
+<p>The second parameter defines the Evas event type. The third parameter defines a callback function, such as:</p>
+ 
+<pre class="prettyprint">
+void some_evas_object_event_cb(void *data, Evas *e, void *event_info);
+</pre>
+
+<h2 id="types" name="types">Evas Event Types</h2>
+
+<p>The following values are defined in the <span style="font-family: Courier New,Courier,monospace;">Evas_Callback_Type</span> enumerator and most of them can be used with the <span style="font-family: Courier New,Courier,monospace;">evas_event_callback_add()</span> function:</p>
+
+<ul>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_RENDER_FLUSH_PRE</span>
+<p>Rendering is about to be updated on the canvas.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_RENDER_FLUSH_POST</span>
+<p>Rendering has been updated on the canvas.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_CANVAS_FOCUS_IN</span>
+<p>Canvas has received the focus.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_CANVAS_FOCUS_OUT</span>
+<p>Canvas has lost the focus.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN</span>
+<p>Object on the canvas has received the focus.</p>
+<p>Consider using the <span style="font-family: Courier New,Courier,monospace;"> evas_object_event_callback_add()</span> function and the <span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_FOCUS_IN</span> type instead.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT</span>
+<p>Object on the canvas has lost the focus. </p>
+<p>Consider using the <span style="font-family: Courier New,Courier,monospace;">evas_object_event_callback_add()</span> function and the <span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_FOCUS_OUT</span> type instead.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_RENDER_PRE</span>
+<p>Rendering on the canvas is about to start.</p></li>
+<li><span style="font-family: Courier New,Courier,monospace;">EVAS_CALLBACK_RENDER_POST</span>
+<p>Rendering on the canvas has finished.</p></li>
+</ul>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="events_guide.htm">Event Handling</a></li>   
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

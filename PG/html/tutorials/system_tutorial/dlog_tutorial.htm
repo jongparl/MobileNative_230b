@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Dlog Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Dlog Tutorial</h1> 
+<p>This tutorial demonstrates how to send log messages to a circular log device and check them.</p>
+
+<p>To learn more about the features of the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__DLOG.html">dlog</a> API, see the <a href="../../guide/system/dlog.htm">Dlog Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#init">Initialization and Prerequisites</a></li>
+		<li><a href="#send">Sending a Log Message</a>
+		<p>Send a log message.</p></li>
+		<li><a href="#check">Checking the Output Logs</a>
+		<p>Check the output.</p></li>
+	</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<ul>
+	<li>Dlog library: <span style="font-family: Courier New,Courier,monospace">libdlog.so</span>
+	<p>The Dlog library provides a logging function to send log messages to the kernel log device.</p></li>
+	<li>Dlogutil: <span style="font-family: Courier New,Courier,monospace">dlogutil</span>
+	<p>Dlogutil enables you to view log messages in the log device, and provides filtered message output.</p></li>
+	<li>Requirement: linux-2.6.32 kernel</li>
+</ul>
+ 
+ <h2 id="send" name="send">Sending a Log Message</h2>
+<p>Send a log message with the  <span style="font-family: Courier New,Courier,monospace">MY_APP</span> tag with various priorities.</p>
+
+<pre class="prettyprint">
+#include&lt;dlog.h&gt;
+#define TAG &quot;MY_APP&quot;
+
+int main(void)
+{
+&nbsp;&nbsp;&nbsp;int integer = 21;
+&nbsp;&nbsp;&nbsp;char string[] = &quot;test dlog&quot;;
+
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, TAG, &quot;debug message&quot;);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;info message&quot;);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_WARN, TAG, &quot;warning message&quot;);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_ERROR, TAG, &quot;error message&quot;);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, TAG, &quot;%s, %d&quot;, string, integer); 
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+
+<h2 id="check" name="check">Checking the Output Logs</h2>
+<p>Execute dlogutil on the device sdb shell to check the out log.</p>
+
+<p>Check the sdb guide to connect to a target and use it.</p>
+
+<pre class="prettyprint">
+Desktop:~$ sdb shell
+sh-3.2#
+sh-3.2# dlogutil MY_APP
+arc = 2, optind = 1, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+D/MY_APP  (11097): debug message
+I/MY_APP  (11097): info message
+W/MY_APP  (11097): warning message
+E/MY_APP  (11097): error message
+I/MY_APP  (11097): test dlog, 21
+sh-3.2# dlogutil MY_APP:I
+arc = 2, optind = 1, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+I/MY_APP  (11097): info message
+W/MY_APP  (11097): warning message
+E/MY_APP  (11097): error message
+I/MY_APP  (11097): test dlog, 21
+sh-3.2# dlogutil MY_APP:W
+arc = 2, optind = 1, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+W/MY_APP  (11097): warning message
+E/MY_APP  (11097): error message
+sh-3.2# dlogutil MY_APP:E
+arc = 2, optind = 1, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+E/MY_APP  (11097): error message
+sh-3.2# dlogutil -v time MY_APP  
+arc = 4, optind = 3, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+12-26 07:06:02.084+0000 D/MY_APP  (11097): debug message
+12-26 07:06:02.084+0000 I/MY_APP  (11097): info message
+12-26 07:06:02.084+0000 W/MY_APP  (11097): warning message
+12-26 07:06:02.084+0000 E/MY_APP  (11097): error message
+12-26 07:06:02.084+0000 I/MY_APP  (11097): test dlog, 21
+sh-3.2# dlogutil -v threadtime MY_APP
+arc = 4, optind = 3, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+12-26 07:06:02.084+0000 11097 11097 D MY_APP  : debug message
+12-26 07:06:02.084+0000 11097 11097 I MY_APP  : info message
+12-26 07:06:02.084+0000 11097 11097 W MY_APP  : warning message
+12-26 07:06:02.084+0000 11097 11097 E MY_APP  : error message
+12-26 07:06:02.084+0000 11097 11097 I MY_APP  : test dlog, 21
+sh-3.2# dlogutil -v long MY_APP
+arc = 4, optind = 3, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+[ 12-26 07:06:02.084 11097:11097 D/MY_APP   ]
+debug message
+
+[ 12-26 07:06:02.084 11097:11097 I/MY_APP   ]
+info message
+
+[ 12-26 07:06:02.084 11097:11097 W/MY_APP   ]
+warning message
+
+[ 12-26 07:06:02.084 11097:11097 E/MY_APP   ]
+error message
+
+[ 12-26 07:06:02.084 11097:11097 I/MY_APP   ]
+test dlog, 21
+sh-3.2# dlogutil -v raw MY_APP
+arc = 4, optind = 3, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+debug message
+info message
+warning message
+error message
+test dlog, 21
+sh-3.2# dlogutil -v brief MY_APP
+arc = 4, optind = 3, Kb 0, rotate 4
+--------- beginning of /dev/log_system
+--------- beginning of /dev/log_main
+D/MY_APP  (11097): debug message
+I/MY_APP  (11097): info message
+W/MY_APP  (11097): warning message
+E/MY_APP  (11097): error message
+I/MY_APP  (11097): test dlog, 21
+</pre>
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="system_tutorial.htm">System Tutorials</a></li>
+	<li><a href="../../guide/system/dlog.htm">Dlog Programming Guide</a></li>
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__DLOG.html">dlog API Reference</a></li>    
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

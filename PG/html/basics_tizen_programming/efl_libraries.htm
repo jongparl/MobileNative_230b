@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>EFL Libraries</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  
+
+<h1>EFL Libraries</h1>
+
+<p class="figure">Figure: EFL libraries</p>
+<p style="text-align:center;"><img alt="EFL libraries" src="../images/efl_libraries.png"/></p>
+
+<p>Tizen supports the following EFL libraries:</p>
+
+<ul>
+ <li><strong>Ecore</strong>
+  <p>A clean and tiny event loop library with many convenience modules supporting operating system abstraction and integration. Ecore runs a main loop that is a key feature for event-driven applications and the rest of EFL. The Ecore main loop runs infinitely (or until requested to quit) and handles all registered events, such as touch, mouse, key, timers, animators, idlers, and fd handlers. Ecore also provides modules for handling network connections, files, input methods, and so on. EFL assumes that you run an Ecore main loop at all times (except at application startup and shutdown) and use the main loop to handle all callbacks (unless otherwise documented). ELF also assumes that threads use the Ecore infrastructure to return the results of their work back to the main loop for implementation.</p></li>
+ <li><strong>Edje</strong>
+  <p>A complex graphical design and layout library. Edje supports a separation between layout and logic. Edje was designed as a theme layer for moving the look, feel, and animation of objects into separate data files loaded at runtime, as opposed to being defined in-code. Using a plain text <span style="font-family: Courier New,Courier,monospace">edc</span> file, you can describe your application's layout without writing a line of code.</p></li>
+ <li><strong>Eina</strong>
+  <p>A library for data types and other useful tools. Eina provides data types such as lists, in-line lists, arrays, in-line arrays, hash tables, compact lists, iterator functions, sparse matrices, red-black trees, string buffers, shared string tokens, rectangle regions, generic value storage, and data models. Eina also supports tools such as benchmarking infrastructure, converters, counters, error handlers, basic file handlers, lazy allocators, loggers, magic number handlers, memory pools, modules, rectangles, safety checks, and string handlers.</p></li>
+ <li><strong>Elementary</strong>
+  <p>A widget set library. Elementary is composed of several common UI widgets, such as buttons, check boxes, entries, lists, pop-ups, and windows. Some infrastructure is shipped with Elementary, such as scale configuration handling, finger-size configuration for touch UIs, theme handling, focus handling, accessibility, UI mirroring, and profile handling.</p></li>
+ <li><strong>Evas</strong>
+  <p>A highly optimized scene graph and rendering library. Evas is a stateful canvas scene graph in which you can place objects such as rectangles, lines, polygons, text, text blocks, images, and smart objects. Evas uses a scene graph to keep track of the state of all objects. You do not need to worry about objects repainting or keeping their states. You only need to modify them for the new state and let Evas take care of the rest. Evas supports anti-aliased text, smooth super and sub-sampled scaled images, alpha-blended objects, and more.</p></li>
+</ul>
+
+
+ <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="efl.htm">Developing UI Applications with EFL</a></li> 
+  </ul>  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+   
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+    
+ </body>
+</html>

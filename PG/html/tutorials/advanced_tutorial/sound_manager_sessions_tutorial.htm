@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Sound Manager Session Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Sound Manager Session Tutorial</h1> 
+<p>This tutorial demonstrates how you can obtain and set basic sound session parameters, such as volume and sound type of the actual sound sessions.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;sound_manager.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__MODULE.html">Sound Manager</a> API.
+</p>
+
+<p>To learn about the Sound Manager API features, see the <a href="../../guide/media/media.htm">Multimedia Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#session">Managing Sound Manager Session Parameters</a>
+		<p>Set and get sound manager session parameters.</p></li>
+   </ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>To access the sound manager functionalities, use <span style="font-family: Courier New,Courier,monospace;">#include &lt;sound_manager.h&gt;</span>.</p>
+
+<h2 id="session" name="session">Managing Sound Manager Session Parameters</h2>
+<p>To obtain and modify basic sound session parameters:</p>
+
+<ol>
+<li>Store the parameter data.
+<p>The session parameters are stored in the following enumeration structures:</p>
+
+<ul><li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga125699870d48881ea153a4fce7140958">sound_session_type_e</a></li>
+<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga132bd49bd7d0f5037cc292f9c7ad1c32">sound_session_option_for_during_play_e</a></li>
+<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga26a030df874992a461af04255c6c3eef">sound_session_option_for_starting_e</a></li>
+<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga20d1d7fa84dc322f03b58d42806cd9d9">sound_session_option_for_resumption_e</a></li></ul>
+
+
+</li>
+
+<li>Detect interruptions.
+<ol><li>
+<p>To detect and track session status changes, register a callback function:</p>
+
+<pre class="prettyprint">
+sound_manager_set_session_interrupted_cb(_sound_session_interrupted_cb, NULL);
+</pre></li>
+
+<li><p>Define the callback function content. The <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__SESSION__MODULE.html#ga9d7c723a05f1eab1b1d535bfad527b93">sound_session_interrupted_code_e</a> enumeration defines the available interruption sources.</p>
+
+<pre class="prettyprint">
+void _sound_session_interrupted_cb(sound_session_interrupted_code_e code, void * userdata)
+{
+&nbsp;&nbsp;&nbsp;fprintf(stderr,&quot;Interrupt code: %d\n&quot;, code);
+
+&nbsp;&nbsp;&nbsp;fprintf(stderr,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_COMPLETED %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_MEDIA %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_CALL %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_ALARM %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_EMERGENCY %d | &quot;\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION %d\n\n&quot;,
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_COMPLETED,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_MEDIA,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_CALL,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_ALARM,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_EMERGENCY,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION);
+}
+</pre>
+</li></ol></li>
+
+<li>Manage the session type.
+<p>To get a valid sound session, the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__TONE__PLAYER__MODULE.html">Tone Player</a> API is used in this tutorial. For more information, see <a href="../media_tutorial/tone_tutorial.htm">Tone Player Tutorial</a>.</p>
+<p>To determine and change the session type, use the following functions:</p>
+
+<pre class="prettyprint">
+#include &lt;tone_player.h&gt;
+int id;
+sound_session_type_e type;
+
+tone_player_start(TONE_TYPE_ANSI_DIAL, SOUND_SESSION_TYPE_MEDIA, 10000, &amp;id);
+
+sound_manager_get_session_type(&amp;type);
+
+fprintf(stderr,&quot;-Session type %d :\n &quot;
+&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_TYPE_MEDIA %d | &quot;
+&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_TYPE_ALARM %d | &quot;\
+&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_TYPE_NOTIFICATION %d | &quot;
+&nbsp;&nbsp;&nbsp;&quot;SOUND_SESSION_TYPE_EMERGENCY %d \n&quot;,
+&nbsp;&nbsp;&nbsp;type,
+&nbsp;&nbsp;&nbsp;SOUND_SESSION_TYPE_MEDIA,
+&nbsp;&nbsp;&nbsp;SOUND_SESSION_TYPE_ALARM,
+&nbsp;&nbsp;&nbsp;SOUND_SESSION_TYPE_NOTIFICATION,
+&nbsp;&nbsp;&nbsp;SOUND_SESSION_TYPE_EMERGENCY);
+
+sound_manager_set_session_type(SOUND_SESSION_TYPE_NOTIFICATION);
+</pre>
+</li>
+
+<li>Manage the session options.
+<p>To determine the sound session behavior after an interruption or start, or during the playback, use the following functions:</p>
+
+<pre class="prettyprint">
+sound_session_option_for_starting_e start;
+sound_session_option_for_during_play_e play;
+sound_session_option_for_resumption_e res;
+
+sound_manager_get_media_session_option(&amp;start, &amp;play);
+sound_manager_get_media_session_resumption_option(&amp;res);
+
+sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
+
+sound_manager_set_media_session_resumption_option(SOUND_SESSION_OPTION_RESUMPTION_BY_SYSTEM_OR_MEDIA_PAUSED);
+</pre>
+</li>
+
+<li>Clean up.
+<p>When the interrupt callback is no longer needed, deregister it:</p>
+
+<pre class="prettyprint">
+sound_manager_unset_session_interrupted_cb();
+</pre>
+</li>
+</ol>
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorials</a></li>
+	<li><a href="../../guide/media/media.htm">Multimedia Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__SOUND__MANAGER__MODULE.html">Sound Manager API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Badge Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Badge Tutorial</h1>
+
+<p>This tutorial demonstrates how you can create, manage, and remove a badge for an application. A badge is an image displayed on the application icon, which informs the user about notifications and events.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;badge.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__BADGE__MODULE.html">Badge API</a>.</p>
+
+<p>To learn about the Badge API features, see the <a href="../../guide/app/badge.htm">Badges Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+ <li><a href="#create">Creating a Badge</a>
+  <p>Create a badge for an application.</p>
+ </li>
+ <li><a href="#manage">Managing the Badge</a>
+  <p>Get and set the count and display attributes for the badge.</p>
+ </li>
+ <li><a href="#remove">Removing the Badge</a>
+  <p>Remove the badge from the application.</p>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+
+<p>The badge functionality requires the <span style="font-family: Courier New,Courier,monospace">http://tizen.org/privilege/notification</span> privilege.</p>
+
+<p>Include the necessary header files, and declare the variables for the return value and application (package name):</p>
+
+<pre class="prettyprint">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;badge.h&gt;
+
+static int ret = 0;
+
+#define TEST_PKG &quot;org.tizen.badgeapp&quot;</pre>
+
+<p>To determine if a Badge API function has been correctly executed, check its return value. If the value is different from <span style="font-family: Courier New,Courier,monospace">BADGE_ERROR_NONE</span>, an error has occurred.</p>
+
+<h2 id="create" name="create">Creating a Badge</h2>
+<p>To create a badge for an application, call the <span style="font-family: Courier New,Courier,monospace">badge_new()</span> function:</p>
+<pre class="prettyprint">badge_new(const char *writable_app_id)</pre>
+
+<p>The application that calling the <span style="font-family: Courier New,Courier,monospace">badge_new()</span> function has the ownership of the badge. And the <span style="font-family: Courier New,Courier,monospace">writable_app_id</span> parameter means the application which is to be authorized to change the badge.</p>
+
+<pre class="prettyprint">ret = badge_new(TEST_PKG);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+
+<h2 id="manage" name="manage">Managing the Badge</h2>
+<p>Managing the badge involves getting and setting the count attribute of the badge. The count attribute is displayed in the right corner of the badge and its value must be an integer.</p><p>You must also get and set the display attribute of the badge. The value of the display attribute determines whether the badge is visible. The <span style="font-family: Courier New,Courier,monospace">app_id</span> means the application which is the owner of the badge.</p>
+
+<p>To manage the badge:</p>
+
+<ol>
+<li>Get the count attribute:
+<p>To get the count attribute, call the <span style="font-family: Courier New,Courier,monospace">badge_get_count()</span> function:</p>
+<pre class="prettyprint">badge_get_count(const char *app_id, unsigned int *count)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_id</span>: The name of the application that gets the count of the badge.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[out] count</span>: The value of the count attribute.</li>
+</ul>
+<pre class="prettyprint">unsigned int count = 0;
+ret = badge_get_count(TEST_PKG, &amp;count);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+</li>
+<li>Set the count attribute:
+<p>To set the count attribute, call the <span style="font-family: Courier New,Courier,monospace">badge_set_count()</span> function:</p>
+<pre class="prettyprint">badge_set_count(const char *app_id, unsigned int count)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_id</span>: The name of the application that sets the count of the badge.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] count</span>: The new value for the count attribute.</li>
+</ul>
+<pre class="prettyprint">ret = badge_set_count(TEST_PKG, count+1);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+</li>
+<li>Getting the display attribute:
+<p>You can check whether the badge is visible by getting its display attribute.</p>
+<p>To get the display attribute, call the <span style="font-family: Courier New,Courier,monospace">badge_get_display()</span> function:</p>
+<pre class="prettyprint">badge_get_display(const char *app_id, unsigned int *is_display)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_id</span>: The name of the application that gets the display flag of the badge.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[out] is_display</span>: The value of the display attribute (1 = badge is visible, 0 = badge is hidden).</li>
+</ul>
+
+<pre class="prettyprint">unsigned int is_displayed = false;
+ret = badge_get_display(TEST_PKG, &amp;is_displayed);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+</li>
+<li>Setting the display attribute:
+<p>You can display or hide the badge by setting its display attribute accordingly.</p>
+<p>To set the display attribute, call the <span style="font-family: Courier New,Courier,monospace">badge_set_display()</span> function:</p>
+<pre class="prettyprint">badge_set_display(const char *app_id, unsigned int is_display)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_id</span>: The name of the application that gets the display flag of the badge.</li>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] is_display</span>: The new value for the display attribute (1 = badge is visible, 0 = badge is hidden).</li>
+</ul>
+<pre class="prettyprint">ret = badge_set_display(TEST_PKG, 1);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+</li>
+</ol>
+<h2 id="remove" name="remove">Removing the Badge</h2>
+<p>To remove the badge from the application, call the <span style="font-family: Courier New,Courier,monospace">badge_remove()</span> function:</p>
+<pre class="prettyprint">badge_remove(const char *app_id)</pre>
+<p>The function takes the following parameters:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">[in] app_id</span>: The ID of the application whose badge to remove.</li>
+</ul>
+<pre class="prettyprint">ret = badge_remove(TEST_PKG);
+if (ret != BADGE_ERROR_NONE)
+{
+&nbsp;&nbsp;&nbsp;// Error handling
+}</pre>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/badge.htm">Badges Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__BADGE__MODULE.html">Badge API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

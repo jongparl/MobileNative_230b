@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Bundle Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Bundle Tutorial</h1> 
+ 
+<p>This tutorial demonstrates how you can access and use bundles. A bundle is a key-value dictionary.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;bundle.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CORE__LIB__BUNDLE__MODULE.html">Bundle API</a>.</p>
+
+<p>To learn about the Bundle API features, see the <a href="../../guide/app/bundle.htm">Bundles Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+<ul>
+ <li><a href="#init">Initialization and Prerequisites</a></li>
+  <li><a href="#add">Adding Content to a Bundle</a></li>
+ <li><a href="#manage">Managing and Using the Content of a Bundle</a></li>
+ <li><a href="#iterate">Iterating a Bundle</a></li>
+ <li><a href="#encode">Encoding and Decoding a Bundle</a></li>
+ <li><a href="#cleanup">Cleaning Up a Bundle</a></li>
+ </li>
+</ul>
+
+<h2 id="init" name="init">Initialization and Prerequisites</h2>
+<p>Before you can perform any operations on a bundle, you must create the bundle instance. Each bundle is independent from other bundles and stores its own set of records.</p>
+<pre class="prettyprint">bundle * bund = NULL;
+
+bund = bundle_create();</pre>
+
+<h2 id="add" name="add">Adding Content to a Bundle</h2>
+<p>You can fill a valid bundle instance with content. The content is in the form of key-value pairs. The key is always string. The value can be of the following types:</p>
+
+<table> 
+   <caption>
+     Table: Bundle value types 
+   </caption> 
+   <tbody>
+    <tr> 
+     <th>Value constant</th> 
+     <th>Value type</th> 
+    </tr> 
+    <tr>
+     <td><span style="font-family: Courier New,Courier,monospace">BUNDLE_TYPE_STR</span></td> 
+     <td>String (default)</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">BUNDLE_TYPE_STR_ARRAY</span></td> 
+     <td>String array</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">BUNDLE_TYPE_BYTE</span></td> 
+     <td>Byte</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+	
+<p>Each value type is associated with a function that can operate on it:</p>
+<ul>
+ <li><span style="font-family: Courier New,Courier,monospace">bundle_add_str_array(bundle *b, const char *key, const char **str_array, const int len)</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">bundle_add_str(bundle *b, const char *key, const char *str)</span></li>
+ <li><span style="font-family: Courier New,Courier,monospace">bundle_add_byte(bundle *b, const char *key, const void *byte, const size_t size)</span></li>
+</ul>
+
+<p>When operating on bytes, you must control the length of the given chain:</p>
+
+<pre class="prettyprint">const char * array [3]={&quot;Var1&quot;,&quot;Var2&quot;,&quot;Var3&quot;};
+int array_len=3;
+
+bundle_add_str(bund,&quot;Str&quot;,&quot;String content&quot;); 
+
+bundle_add_str_array(bund,&quot;Array&quot;,array,array_len); 
+
+bundle_add_byte(bund,&quot;Byte&quot;,&quot;Byte content&quot;,12);</pre>
+
+<h2 id="manage" name="manage">Managing and Using the Content of a Bundle</h2>
+<p>You can perform the following operations on a bundle:</p>
+<ul>
+ <li>Adding content: <span style="font-family: Courier New,Courier,monospace">bundle_add_str()</span>, <span style="font-family: Courier New,Courier,monospace">bundle_add_str_array()</span>, and <span style="font-family: Courier New,Courier,monospace">bundle_add_byte()</span> </li>
+ <li>Deleting content: <span style="font-family: Courier New,Courier,monospace">bundle_del()</span></li>
+ <li>Getting values: <span style="font-family: Courier New,Courier,monospace">bundle_get_str()</span>, <span style="font-family: Courier New,Courier,monospace">bundle_get_str_array()</span>, <span style="font-family: Courier New,Courier,monospace">bundle_get_byte()</span>, <span style="font-family: Courier New,Courier,monospace">bundle_get_count()</span>, and <span style="font-family: Courier New,Courier,monospace">bundle_get_type()</span></li>
+
+</ul>
+<pre class="prettyprint">
+void test_bundle_add_del_get(void)
+{
+&nbsp;&nbsp;&nbsp;bundle *b = NULL;
+&nbsp;&nbsp;&nbsp;int count = 0;
+&nbsp;&nbsp;&nbsp;int type = 0;
+&nbsp;&nbsp;&nbsp;char *value;
+
+&nbsp;&nbsp;&nbsp;b = bundle_create();
+
+&nbsp;&nbsp;&nbsp;bundle_add_str(b, &quot;key1&quot;, &quot;val1&quot;);
+&nbsp;&nbsp;&nbsp;bundle_add_str(b, &quot;key2&quot;, &quot;val2&quot;);
+&nbsp;&nbsp;&nbsp;bundle_get_str(b, &quot;key2&quot;, &amp;value);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;the value of key2 : %s&quot;, value);
+
+&nbsp;&nbsp;&nbsp;count = bundle_get_count(b);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;the number of bundle items : %d&quot;, type);
+
+&nbsp;&nbsp;&nbsp;bundle_del(b, &quot;key2&quot;);
+
+&nbsp;&nbsp;&nbsp;count = bundle_get_count(b);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;the number of bundle items : %d&quot;, type);
+
+&nbsp;&nbsp;&nbsp;bundle_free(b);
+}
+</pre>
+
+<h2 id="iterate" name="iterate">Iterating a Bundle</h2>
+
+<p>The <span style="font-family: Courier New,Courier,monospace">bundle_foreach()</span> function requires a callback function to operate. The callback function must first determine the key-value pairs and then perform the specified operations.</p>
+
+<p>After the <span style="font-family: Courier New,Courier,monospace">bundle_foreach()</span> function, the <span style="font-family: Courier New,Courier,monospace">_bundle_iterator_t()</span> function is invoked for each record in the bundle:</p>
+
+<pre class="prettyprint">
+void iterate_bundle_foreach(const char *key, const int type, bundle_keyval_t *kv, void *data)
+{
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;key : %s, type : %d &quot;, key, type);
+    
+&nbsp;&nbsp;&nbsp;// Do something
+}
+
+void test_bundle_foreach(void)
+{
+&nbsp;&nbsp;&nbsp;char *s_arr[] = {&quot;abc&quot;, &quot;bcd&quot;, &quot;cde&quot;};
+&nbsp;&nbsp;&nbsp;bundle *b;
+&nbsp;&nbsp;&nbsp;b = bundle_create();
+
+&nbsp;&nbsp;&nbsp;bundle_add_str(b, &quot;k1&quot;, &quot;v1&quot;);
+&nbsp;&nbsp;&nbsp;bundle_add_byte(b, &quot;k2&quot;, &quot;v2&quot;, 3);  
+&nbsp;&nbsp;&nbsp;bundle_add_str_array(b, &quot;k3&quot;, s_arr, 3);
+  
+&nbsp;&nbsp;&nbsp;bundle_foreach(b, iterate_bundle_foreach, NULL);
+}</pre>
+
+<h2 id="encode" name="encode">Encoding and Decoding a Bundle</h2>
+<p>To store or send a bundle over a serial connection, encode the bundle to <span style="font-family: Courier New,Courier,monospace">bundle_raw</span> (a typedef of <span style="font-family: Courier New,Courier,monospace">unsigned char</span>). To encode the bundle, call the <span style="font-family: Courier New,Courier,monospace">bundle_encode()</span> function.</p>
+
+<p>To store the bundle, write <span style="font-family: Courier New,Courier,monospace">bundle_raw</span> to a file, for example, and then open it with the <span style="font-family: Courier New,Courier,monospace">bundle_decode()</span> function. The encoded data and created bundle must be released when no longer needed.</p>
+
+<pre class="prettyprint">
+void test_bundle_encode_decode(void)
+{
+&nbsp;&nbsp;&nbsp;bundle *b1, *b2;
+&nbsp;&nbsp;&nbsp;bundle_raw *r;
+&nbsp;&nbsp;&nbsp;int size_r;
+&nbsp;&nbsp;&nbsp;char *value;
+
+&nbsp;&nbsp;&nbsp;b1 = bundle_create();
+&nbsp;&nbsp;&nbsp;bundle_add_str(b1, &quot;k1&quot;, &quot;v1&quot;);
+&nbsp;&nbsp;&nbsp;bundle_add_str(b1, &quot;k2&quot;, &quot;v2&quot;);
+
+&nbsp;&nbsp;&nbsp;bundle_encode(b1, &amp;r, &amp;size_r);
+
+&nbsp;&nbsp;&nbsp;b2 = bundle_decode(r, size_r);
+
+&nbsp;&nbsp;&nbsp;bundle_get_str(b1, &quot;k1&quot;, &amp;value);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_DEBUG, LOG_TAG, &quot;value of k1 after decode : %s&quot;, value);
+}
+</pre>
+
+<h2 id="cleanup" name="cleanup">Cleaning Up a Bundle</h2>
+<p>When no longer needed, release the bundle by calling the <span style="font-family: Courier New,Courier,monospace">bundle_free()</span> function.</p>
+<pre class="prettyprint">bundle_free(bund);</pre>
+
+<h2>Where to Go Next</h2>
+<ul>
+ <li><a href="app_tutorial.htm">Application Framework Tutorials</a></li>
+ <li><a href="../../guide/app/bundle.htm">Bundles Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CORE__LIB__BUNDLE__MODULE.html">Bundle API</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Package Management</title> 
+  </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Package Management</h1>
+
+<p>The package management during the porting process requires you to pay attention to the installation process and the actual application package structure.</p>
+<h2>Package Manager Installation Process</h2>
+
+<p>The installation process of the new Native API is very similar to the one in the old API. The following figure shows the scheme.</p>
+
+  <p class="figure">Figure: Installation process</p> 
+  <p><img src="../images/porting_installation_process.png" alt="Installation process" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+ 
+ 
+<p>The installation process looks similar to the one from the 2.2.1 Native API. In the new API, the Package Manager is still responsible for managing packages. Use this API for installing, uninstalling, and updating the packages.</p>
+
+<h2>Application Package</h2>
+<p>In comparison with the 2.2.1 application package, the 2.3 native application package has fewer directories.</p>
+ 
+   <p class="figure">Figure: 2.2.1 package structure</p> 
+  <p><img src="../images/package_structure_old.png" alt="2.2.1 package structure" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+
+   <p class="figure">Figure: 2.3 package structure</p> 
+  <p><img src="../images/package_structure_new.png" alt="2.3 package structure" style="display: block; text-align: center; margin-left: auto; margin-right: auto" /></p> 
+  
+<p>In the current package structure, there are no separate third-level directories. Despite this change, the rest of the directories are the same. The file extension remains <span style="font-family: Courier New,Courier,monospace">.tpk</span>.</p>
+<table>
+<caption>Table: Package directories</caption>
+<tbody>
+<tr>
+ <th>Directory</th>
+ <th>Description</th>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">/opt/usr/apps</span></td>
+ <td>All application packages are installed here.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">com.[vendor].[name]</span></td>
+ <td>Fully qualified name of an application, such as com.samsung.calculator.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">bin</span></td>
+ <td>Executable file of the application.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">lib</span></td>
+ <td>Application library files.</td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">res</span></td>
+ <td>Root directory in which all resource files are located.
+<p>The application cannot write and modify any resource files.</p></td>
+</tr>
+<tr>
+ <td><span style="font-family: Courier New,Courier,monospace">data</span></td>
+ <td>Root directory in which the application's private data is located.
+<p>The application can read and write its own data files in the application 
+data directory.</p></td>
+</tbody>
+</table>
+
+<h2>Where to Go Next</h2>
+<ul>
+<li><a href="porting.htm">Porting Guide</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

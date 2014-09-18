@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Elementary Toolkit</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+<h1>Elementary Toolkit</h1> 
+
+<p>The Elementary library is a simple toolkit. It provides several <a href="ui_widgets.htm">widgets</a>, including <a href="containers.htm">containers</a>, than can be used to compose the user interface of your application. Widgets help you build your application without reinventing basic objects, such as buttons, lists, and text entries. </p>
+
+<p>This guide describes the <a href="#basics">basics of the Elementary library</a> and the concepts of the <a href="#config">Elementary configuration framework</a>.</p>  
+
+<h2 id="basics" name="basics">Elementary Basics</h2>
+
+<p>Elementary widgets are built in a hierarchy. The idea is to factorize as much code as possible between widgets with behavioral similarities, as long as it facilitates the creation of new, custom-made widgets.</p>
+
+<p>Most Elementary widgets inherit from the container and layout widgets. With those widgets, use the containers and layout functions, such as <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_set()</span>, <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_get()</span>, and <span style="font-family: Courier New,Courier,monospace;">elm_object_part_content_unset()</span>.</p>
+
+<p>To add an Elementary widget, use the <span style="font-family: Courier New,Courier,monospace;">elm_&lt;widget_name&gt;_add()</span> function that returns an Evas object (<span style="font-family: Courier New,Courier,monospace;">Evas_Object *</span>). The Evas object is passed to the functions used to configure the widget.</p>
+
+<p>At the end of your application code, use the <span style="font-family: Courier New,Courier,monospace;">elm_shutdown()</span> function to free the allocated Elementary objects, so there is no need to deallocate the widget.</p>
+
+<p>To use the Elementary library:</p>
+<ol>
+<li>Initialize the Elementary library using the <span style="font-family: Courier New,Courier,monospace;">elm_init()</span> function.</li> 
+<li>Start the Elementary main loop using the  <span style="font-family: Courier New,Courier,monospace;">elm_run()</span> function. 
+<p>This call does not return, and constantly loops and runs the event and processing tasks.</p></li>
+<li>Call the <span style="font-family: Courier New,Courier,monospace;">elm_exit()</span> function to tell the main loop to stop and return to the main function.</li>
+<li>Use the <span style="font-family: Courier New,Courier,monospace;">elm_shutdown()</span> function to clean up all resources that were allocated with Elementary in the main loop and shut down Elementary.</li>
+</ol>
+
+<p>The following example shows a minimal Elementary application:</p>
+
+<pre class="prettyprint">
+#include &lt;Elementary.h&gt;
+int main(int argc, char **argv)
+{
+&nbsp;&nbsp;&nbsp;elm_init(argc, argv);
+&nbsp;&nbsp;&nbsp;elm_run();
+&nbsp;&nbsp;&nbsp;elm_shutdown();
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">You can use the <span style="font-family: Courier New,Courier,monospace;">ELM_MAIN()</span> macro, which already calls the <span style="font-family: Courier New,Courier,monospace;">elm_init()</span> function, in an Elementary application. The <a href="../../tutorials/ui_tutorial/helloworld_tutorial.htm">EFL Hello World Tutorial</a> shows a basic Elementary application that uses this macro.</td>
+</tr>
+</tbody>
+</table> 
+
+<h2 id="config" name="config">Elementary Configuration </span></h2>
+<p>You can configure the following Elementary widget properties:</p>
+<ul>
+<li><a href="#scaling">Scaling</a></li>
+<li><a href="#gesture">Gesture Layer</a></li>
+<li><a href="#theme">Theme</a></li>
+<li><a href="#focus">Focus</a></li>
+<li><a href="#scroll">Scrolling</a></li>
+<li><a href="#mirror">Mirroring</a></li>
+</ul>
+<h3 id="scaling" name="scaling">Scaling</h3>
+
+<p>Elementary provides a way to scale widgets with 2 different parameters:</p> 
+<ul>
+<li>The <a href="#finger">finger size</a> parameter can be used when the interactive zones, such as the clickable or editable areas of the widgets need to be scaled in order to be comfortably used with a finger.</li>
+<li>The <a href="#scale">scale</a> parameter is responsible for scaling readable parts of a widget so that it is best visible on the UI.</li>
+</ul>
+
+<h4 id="finger" name="finger">Finger Size</h4>
+
+<p>The finger size parameter is used to scale widgets based on the user&#39;s finger size. This is useful when using a touch screen with a finger rather than with a stylus.</p>
+<p>The finger size parameter is set in pixels and determines the minimum size of a square on the screen that is can be reliably tapped with a finger. The parameter is used to scale the input and interactive areas.</p>
+
+<p>Set the global finger size using the <span style="font-family: Courier New,Courier,monospace;">elm_config_finger_size_set()</span> function. This adjusts the size and tap area of widgets. To retrieve the current value, use the <span style="font-family: Courier New,Courier,monospace;">elm_config_finger_size_get()</span> function.</p>
+
+<h4 id="scale" name="scale">Scale</h4>
+
+<p>The scale parameter only scales the readable widget areas, such as text and icons. Other parts, such as highlights, shading, textures, and decorations, remain unchanged.</p>
+
+<p>To set the global scaling factor that affects all the widgets, use the <span style="font-family: Courier New,Courier,monospace;">elm_config_scale_set()</span> function. You can also use the <span style="font-family: Courier New,Courier,monospace;">elm_object_scale_set()</span> function to set the scaling factor on a given Elementary widget and all its children.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">The scaling factor is multiplicative. If a child widget already has a set scale size, this scale size is multiplied by the parent widget&#39;s scale size.</td>
+</tr>
+</tbody>
+</table> 
+
+<p>The following figure shows the <span style="font-family: Courier New,Courier,monospace;">elementary_config</span> application that enables the user to set the global scale factor and finger size parameter. As the user drags the sliders, the UI is updated, immediately showing the result of the new parameter value.</p>
+
+<p class="figure">Figure: Elementary_config application</p> 
+<p style="text-align:center;"><img alt="Elementary_config application" src="../../images/scale_1_finger_50.png" /></p> 
+
+<p>The following figure shows what happens when the finger size parameter is increased to 1.30. The slider and item texts in the toolbar become bigger and thus more visible.</p>
+
+<p class="figure">Figure: Increased scale</p> 
+<p style="text-align:center;"><img alt="Increased scale" src="../../images/scale_1.3_finger_50.png" /></p> 
+
+<p>The following figure shows an increase from 50 px to 90 px in the finger size. Now, the buttons in the toolbar become bigger, so they can be tapped more reliably with even a large finger.</p>
+
+<p class="figure">Figure: Increased finger size</p> 
+<p style="text-align:center;"><img alt="Increased finger size" src="../../images/scale_1_finger_90.png" /></p> 
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">The theme (Edje file) is used to define the parts that can be scaled. Take this into account when developing a new theme.</td>
+</tr>
+</tbody>
+</table> 
+
+<h3 id="gesture" name="gesture">Gesture Layer</h3>
+
+<p>The <a href="../../../../org.tizen.mobile.native.apireference/group__Elm__Gesture__Layer.html">gesture layer</a> generates actions from gestures drawn on the screen.</p>
+
+
+<p>To use the gesture layer:</p>
+<ol>
+<li>Initialize the gesture layer using the <span style="font-family: Courier New,Courier,monospace;">elm_gesture_layer_add()</span> function.</li>
+<li>Activate the gesture layer using the <span style="font-family: Courier New,Courier,monospace;">elm_gesture_layer_attach()</span> function.</li>
+<li>Register a callback for one or more gesture types using the <span style="font-family: Courier New,Courier,monospace;">elm_gesture_layer_cb_set()</span> function.
+<p>When called, the callback function receives a data structure corresponding to the gesture type it was registered on.</p></li>
+<li>Set the <span style="font-family: Courier New,Courier,monospace;">Elm_Gesture_State</span> to define the gesture state in which the callback is called.</li>
+<li>Implement the callback to execute the desired action.</li>
+</ol>
+
+<h3 id="theme" name="theme">Theme</h3>
+
+<p>Elementary uses <a href="../../../../org.tizen.mobile.native.apireference/edje_main.html">Edje</a> to create widget themes and provides a default theme for all widgets. This theme can be changed for each application using the <span style="font-family: Courier New,Courier,monospace;">ELM_THEME</span> environment variable, or modified globally using the <span style="font-family: Courier New,Courier,monospace;">elementary_config</span> utility.</p>
+
+<h4 id="extension" name="extension">Extensions</h4>
+
+<p>When custom styles are required, use extensions. Extensions enable you to write styles for specific widgets. Once set, the extension completely replaces the default theme of the widget.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">When developing an extension, you must know the widget theme properties to handle the signals emitted and recognize the necessary parts. If something is missing in the extension, it can break the widget behavior.</td>
+</tr>
+</tbody>
+</table>
+
+<p>USe the <span style="font-family: Courier New,Courier,monospace;">elm_theme_extension_add()</span> function to add a new extension to the list of Elementary themes. To apply the style to the widget, use the <span style="font-family: Courier New,Courier,monospace;">elm_object_style_set()</span> function.</p>
+
+<h4 id="overlay" name="overlay">Overlays</h4>
+
+<p>You can also modify Elementary themes with overlays. Overlays can replace the appearance of all widgets by overriding the default style. Like with extensions, you can write the theme for the widgets. When applying a theme, Elementary first checks the list of overlays, then the set theme, and finally the list of extensions, so with overlays you can replace the default view.</p>
+
+<p>Add an overlay using the <span style="font-family: Courier New,Courier,monospace;">elm_theme_overlay_add()</span> function. Remove it using the <span style="font-family: Courier New,Courier,monospace;">elm_theme_overlay_del()</span> function.</p> 
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Using overlays can contradict the end-user options and result in inconsistent style within the application. Therefore, be cautious when using overlays.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+<h3 id="focus" name="focus">Focus</h3>
+
+<p>When an Elementary object is in focus, input events are directly passed to this object in the application window. The focused object can also change its decoration to show the focus.</p>
+<p>The focus can be set for an Elementary object at any time using the <span style="font-family: Courier New,Courier,monospace;">elm_object_focus_set()</span> function. The function moves the focus to the desired object. An Elementary application has, at all times, only one focused object.</p>
+<p>You can set an object unfocusable using the <span style="font-family: Courier New,Courier,monospace;">elm_object_focus_allow_set()</span> function.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Only visible objects can get the focus.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Elementary also provides a focus chain. You can go through all focusable objects in a window. By default, the focus chain is defined by the order in which the widgets were added to the code.</p>
+
+<p>You can also define custom focus chains by creating an <span style="font-family: Courier New,Courier,monospace;">Eina_List</span> widget and adding Elementary objects to it in the desired focus order. When all the objects are inserted in the <span style="font-family: Courier New,Courier,monospace;">Eina_List</span>, call the <span style="font-family: Courier New,Courier,monospace;">elm_object_focus_custom_chain_set()</span> function to set this list as the custom focus chain of the upper object.</p>
+<p>In the following example, <span style="font-family: Courier New,Courier,monospace;">container_object</span> is the top object:</p>
+
+<pre class="prettyprint">
+Eina_List *obj_list = NULL;
+list = eina_list_append(list, obj1); list = eina_list_append(list, obj4);
+list = eina_list_append(list, obj2); list = eina_list_append(list, obj3);
+elm_object_focus_custom_chain_set(container_object,list);
+</pre>
+
+<p>To remove the custom focus chain and use the default focus chain, use the <span style="font-family: Courier New,Courier,monospace;">elm_object_focus_custom_chain_unset()</span> function.</p>
+
+<p>To programmatically go through the focus chain of an object, use the <span style="font-family: Courier New,Courier,monospace;">elm_object_focus_next()</span> function.</p>
+
+<h3 id="scroll" name="scroll">Scrolling</h3>
+
+<p>The Elementary configuration provides several functions to configure scrolling in widgets.</p>
+
+<p>You can enable bouncing using the <span style="font-family: Courier New,Courier,monospace;">elm_config_scroll_bounce_enabled_set()</span> function. The function makes the scroller bounce when it reaches its viewport&#39;s edge when scrolling. Bounce animation inertia can be controlled using the <span style="font-family: Courier New,Courier,monospace;">elm_config_scroll_bounce_friction_set()</span> function. You can also set friction for page scrolling and bring in and zoom animations.</p>
+
+<p>Set the scroller as draggable using the <span style="font-family: Courier New,Courier,monospace;">elm_config_scroll_thumbscroll_enabled_set()</span> function. You can configure several drag options, such as friction, sensitivity, acceleration, and momentum.</p>
+
+<h3 id="mirror" name="mirror">Mirroring</h3>
+
+<p>Elementary allows UI mirroring on an object or on the whole interface. When the mirroring is activated using the <span style="font-family: Courier New,Courier,monospace;">elm_object_mirrored_set()</span> function, Elementary widgets are displayed as if there was a vertical mirror in the middle.</p>
+
+<table class="note">
+<tbody>
+<tr>
+<th class="note">Note</th>
+</tr>
+<tr>
+<td class="note">Only the controls and the disposition of the widgets are mirrored. Text elements are not mirrored. </td>
+</tr>
+</tbody>
+</table>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="ui.htm">UI Programming Guide</a></li>  
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

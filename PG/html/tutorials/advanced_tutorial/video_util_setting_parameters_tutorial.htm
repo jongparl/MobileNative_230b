@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Video Util Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Video Util Tutorial</h1> 
+<p>This tutorial demonstrates how you can set basic video util parameters.</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;video_util.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__VIDEO__UTIL__MODULE.html">Video Util API</a>.</p>
+
+<p>To learn about the Video Util API features, see the <a href="../../guide/media/video_util.htm">Video Util Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#initialize">Initialization and Prerequisites</a></li>
+		<li><a href="#set">Setting Parameters</a>
+		<p>Set basic parameters for the video util.</p></li>
+		<li><a href="#get">Getting Transcoding Progress</a>
+		<p>Get progress information about the transcoding process.</p></li>
+   </ul>
+
+<h2 id="initialize" name="initialize">Initialization and Prerequisites</h2>
+<p>The functions presented in this tutorial require an instance of <span style="font-family: Courier New,Courier,monospace;">video_util_h</span>. Before using the functions, create the handle:</p>
+
+<pre class="prettyprint">
+video_util_h handle;
+int error_code = video_util_create(&amp;handle);
+</pre>
+
+<p>When the handle is no longer needed, free the memory: </p>
+
+<pre class="prettyprint">
+error_code = video_util_destroy(handle);
+</pre>
+
+<h2 id="set" name="set">Setting Parameters</h2>
+<p>To set the basic parameters of the video util:</p>
+
+<ol>
+<li>Check the supported file format.
+<ol><li><p>To check the supported file formats:</p>
+
+<pre class="prettyprint">
+error_code = video_util_foreach_supported_file_format(handle, video_util_file_supported, NULL);
+</pre>
+
+<p>The first parameter refers to the handle of the video util, and the second parameter to the callback function to be invoked.</p></li>
+
+
+
+<li><p>Define the callback function:</p>
+
+<pre class="prettyprint">
+static bool video_util_file_supported(video_util_file_format_e format, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;format %s\n&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format == VIDEO_UTIL_FILE_FORMAT_3GP? &quot;VIDEO_UTIL_FILE_FORMAT_3GP&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format == VIDEO_UTIL_FILE_FORMAT_MP4? &quot;VIDEO_UTIL_FILE_FORMAT_MP4&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;VIDEO_UTIL_FILE_FORMAT_MAX&quot;);
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre></li></ol>
+</li>
+
+<li>Check the supported codecs.
+<ol><li><p>To check the supported audio and video codecs:</p>
+
+<pre class="prettyprint">
+video_util_foreach_supported_video_codec(handle, video_util_video_supported, NULL);
+
+video_util_foreach_supported_audio_codec(handle, video_util_audio_supported, NULL);
+</pre>
+
+<p>The first parameter refers to the handle of the video util, and the second parameter to the callback function to be invoked.</p></li>
+
+<li>
+
+<p>Define the callback functions:</p>
+
+<pre class="prettyprint">
+static bool video_util_video_supported(video_util_video_codec_e codec, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;video codec %s\n&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codec == VIDEO_UTIL_VIDEO_CODEC_MPEG4? &quot;VIDEO_UTIL_VIDEO_CODEC_MPEG4&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codec == VIDEO_UTIL_VIDEO_CODEC_H263? &quot;VIDEO_UTIL_VIDEO_CODEC_H263&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codec == VIDEO_UTIL_VIDEO_CODEC_H264? &quot;VIDEO_UTIL_VIDEO_CODEC_H264": 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;VIDEO_UTIL_VIDEO_CODEC_NONE&quot;);
+&nbsp;&nbsp;&nbsp;return 0;
+}
+
+static bool video_util_audio_supported(video_util_audio_codec_e codec, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;printf(&quot;audio codec %s\n&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codec==VIDEO_UTIL_AUDIO_CODEC_AAC? &quot;VIDEO_UTIL_AUDIO_CODEC_AAC&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;codec==VIDEO_UTIL_AUDIO_CODEC_AMRNB? &quot;VIDEO_UTIL_AUDIO_CODEC_AMRNB&quot;: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;VIDEO_UTIL_AUDIO_CODEC_NONE&quot;);
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre></li></ol>
+
+<p>To check the support for a specified codec, such as <span style="font-family: Courier New,Courier,monospace;">VIDEO_UTIL_VIDEO_CODEC_MPEG4</span>:</p>
+
+<pre class="prettyprint">
+static bool video_util_video_supported(video_util_video_codec_e codec, void *user_data)
+{
+&nbsp;&nbsp;&nbsp;if (codec == VIDEO_UTIL_VIDEO_CODEC_MPEG4)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user_data = true;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;return 0;
+}
+
+bool supported = false;
+video_util_foreach_supported_video_codec(handle, video_util_video_supported, &amp;supported);
+printf(&quot;MPEG4 codec %s&quot;, supported?&quot;supported&quot;:&quot;not supported&quot;);
+</pre>
+</li>
+
+<li>Set codecs.
+<p>To set the audio and video codecs:</p>
+
+<pre class="prettyprint">
+error_code = video_util_set_audio_codec(handle, VIDEO_UTIL_AUDIO_CODEC_AAC);
+
+error_code = video_util_set_video_codec(handle, VIDEO_UTIL_VIDEO_CODEC_MPEG4);
+</pre>
+</li>
+
+<li>Set the resolution.
+<p>To set the video resolution:</p>
+
+<p>The first parameter refers to the handle of the video util, the second to the media width (if the width is 0, it is set to the original size where the minimum value is 128), and the third to the height of the media (if the height is 0, it is set to its original size, the minimum value being 96).</p>
+
+<pre class="prettyprint">
+int error_code = video_util_set_resolution(handle, 640, 480);
+</pre>
+</li>
+
+<li>Set the FPS.
+<p>To set the frames per second (FPS):</p>
+
+<p>The first parameter refers to the handle of the video util and the second to the frame rate. The frame rate minimum value is 5 and the maximum value is 30.</p>
+
+<pre class="prettyprint">
+int error_code = video_util_set_fps(handle, 25);
+</pre>
+</li>
+</ol>
+
+<h2 id="get" name="get">Getting Transcoding Progress</h2>
+<p>To get the progress of the video util:</p>
+<ol>
+<li>Execute the transcoding first.
+<p>Check whether the transcoding is working normally:</p>
+
+<pre class="prettyprint">
+error_code = video_util_start_transcoding(video_util_h handle, unsigned long start, unsigned long duration, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const char *out_path, video_util_transcoding_progress_cb progress_cb, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;video_util_transcoding_completed_cb completed_cb, void *user_data);
+</pre>
+
+<p>The first parameter refers to the handle of the video util, the second and third parameter to the argument for seek, the fourth parameter to the output path, and the fifth and sixth parameter to the callback function to be invoked and its parameter.</p></li>
+
+<li>To get the transcoding progress, execute the <span style="font-family: Courier New,Courier,monospace;">video_util_get_progress_transcoding</span> function within the <span style="font-family: Courier New,Courier,monospace;">progress_cb</span> callback of the <span style="font-family: Courier New,Courier,monospace;">video_util_start_transcoding()</span> function:</p>
+
+<pre class="prettyprint">
+video_util_get_progress_transcoding(video_util_h handle, unsigned long *current_position, unsigned long *duration);
+</pre>
+</li>
+
+
+</ol>
+
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorials</a></li>
+	<li><a href="../../guide/media/video_util.htm">Video Util Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__VIDEO__UTIL__MODULE.html">Video Util  API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

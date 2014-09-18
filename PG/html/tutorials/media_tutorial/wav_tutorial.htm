@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>WAV Player Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>WAV Player Tutorial</h1> 
+
+<p>This tutorial demonstrates how you can play the Waveform Audio File Format (WAV).</p>
+
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace">&lt;wav_player.h&gt;</span> and <span style="font-family: Courier New,Courier,monospace">&lt;sound_manager.h&gt;</span> headers files, which have to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__WAV__PLAYER__MODULE.html">WAV Player</a> API.</p>
+
+<p>To learn about the WAV Player API features, see the <a href="../../guide/media/wav.htm">WAV Player Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following part:</p>
+
+<ul>
+	<li><a href="#start">Starting and Stopping the WAV Player</a>
+	 <p>Start and stop playing a WAV file.</p></li>
+</ul>
+
+<h2 id="start" name="start">Starting and Stopping the WAV Player</h2>
+
+<p>To start and stop the WAV player:</p>
+<ol>
+<li>Start the WAV player.
+
+<p>Implement a callback function that is called when the WAV file is no longer being played.</p>
+
+<p>Declare a variable which keeps the return value of the function. Then invoke the <span style="font-family: Courier New,Courier,monospace">wav_player_start()</span> function to play the WAV file:</p>
+
+
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;wav_player.h&gt;
+#include &lt;sound_manager.h&gt;
+
+static void _playback_completed_cb(int id, void *user_data) 
+{
+&nbsp;&nbsp;&nbsp;const char* path = (const char*)user_data;
+&nbsp;&nbsp;&nbsp;printf(&quot;Completed! [id:%d, path:%s]&quot;, id, path);
+}
+
+void main() 
+{
+&nbsp;&nbsp;&nbsp;int wav_player_id;
+&nbsp;&nbsp;&nbsp;wav_player_error_e ret;
+&nbsp;&nbsp;&nbsp;const char* wav_path = &quot;/tmp/test.wav&quot;;
+
+&nbsp;&nbsp;&nbsp;ret = wav_player_start(wav_path, SOUND_TYPE_MEDIA, _playback_completed_cb, (void*)wav_path, &amp;wav_player_id);
+}
+</pre>
+</li>
+
+<li>Stop the WAV player.
+<p>To stop the WAV player, use the <span style="font-family: Courier New,Courier,monospace">wav_player_stop()</span> function with the ID of a given WAV player as an argument:</p>
+
+<pre class="prettyprint">
+void my_stop()
+{
+&nbsp;&nbsp;&nbsp;wav_player_error_e ret;
+&nbsp;&nbsp;&nbsp;ret = wav_player_stop(wav_player_id);
+}
+</pre>
+</li>
+</ol>
+
+<h2>Where to Go Next</h2>
+
+<ul>
+ <li><a href="media_tutorial.htm">Multimedia Tutorials</a></li>
+ <li><a href="../../guide/media/wav.htm">WAV Player Programming Guide</a></li>
+ <li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__MEDIA__WAV__PLAYER__MODULE.html">WAV Player API Reference</a></li>
+</ul>
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

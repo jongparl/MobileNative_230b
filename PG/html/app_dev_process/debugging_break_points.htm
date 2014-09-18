@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Break Points</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <h1>Break Points</h1> 
+  <p>A break point suspends the execution of a program at the location where the break point is set.</p> 
+  <p>To set or unset a break point, right-click in the marker bar area on the left side of the editor, and select <strong>Toggle Breakpoint</strong>.</p> 
+<!--
+  <p class="figure">Figure: Setting break points</p> 
+  <p style="text-align:center;"><img align="center" alt="Setting break points" src="../images/breakpoint_set.png" /></p> 
+-->
+  <p>You can view and manage the existing break points in the <strong>Breakpoints</strong> view:</p> 
+  <ul> 
+   <li>To remove a break point, right-click it and select <strong>Remove</strong>. <p>When you remove a break point, the corresponding icon is removed from the marker bar are in the editor too.</p> </li> 
+   <li>To enable or disable a break point, toggle the check box of the break point, or right-click the break point and select <strong>Enable</strong> or <strong>Disable</strong>. <p>This allows you to temporarily disable a break point without losing the information it contains.</p> </li> 
+  </ul> 
+  <h2 id="properties" name="properties">Break Point Properties</h2> 
+  <p>You can set break point properties for actions that are executed along with the break point code.</p> 
+  <p>To edit the properties:</p> 
+  <ol> 
+   <li>Right-click in the marker bar area and select <strong>Breakpoint Properties</strong>.</li> 
+   <li>To define actions, select <strong>Actions</strong> in the left side menu.</li> 
+   <li>Click <strong>New</strong> and select an action type. The available action types are: 
+    <ul> 
+     <li>Sound Action <p>You can make sound when the break point stops.</p> </li> 
+     <li>Log Action <p>You can see log messages in the <strong>Console</strong> view.</p> </li> 
+     <li>Resume Action <p>The program execution continues after a specified time.</p> </li> 
+     <li>External Tool Action <p>You can make your own action.</p> </li> 
+    </ul></li> 
+   <li>To define common properties where the break point stops, select <strong>Common</strong> in the left side menu. <p>For example, you can specify a condition using an expression. The break point stops the execution only if the condition is matched. The <strong>Ignore count</strong> field defines the count where the break point stops.</p></li> 
+  </ol> 
+  <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="debugging_overview.htm">Debugging Overview</a></li> 
+  </ul> 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

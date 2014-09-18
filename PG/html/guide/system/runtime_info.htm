@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Runtime Information</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Runtime Information</h1> 
+  <p>The <span style="font-family: Courier New,Courier,monospace">capi-system-runtime-info</span> enables your application to get various runtime information.</p> 
+  <p>To obtain the information, query a runtime info key. The keys are listed in the following table.
+</p> 
+  <table id="runtime information keys" border="1"> 
+   <caption>
+     Table: Runtime information keys 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Key</th> 
+     <th>Type</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_FLIGHT_MODE_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the device is in the flight mode.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_WIFI_STATUS</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">int</span></td> 
+     <td>Indicates the current status of Wi-Fi.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_BLUETOOTH_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether Bluetooth is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_WIFI_HOTSPOT_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether a Wi-Fi hotspot is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_BLUETOOTH_TETHERING_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether Bluetooth tethering is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_USB_TETHERING_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether USB tethering is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_LOCATION_SERVICE_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the location service is allowed to use location data from GPS satellites.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_LOCATION_ADVANCED_GPS_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the location service is allowed to download location data for GPS operations.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_LOCATION_NETWORK_POSITION_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the location service is allowed to use location data from cellular and Wi-Fi.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_PACKET_DATA_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the packet data through 3G network is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_DATA_ROAMING_ENABLE</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether data roaming is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_SILENT_MODE_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the device is in the silent mode.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_VIBRATION_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether vibration is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_24HOUR_CLOCK_FORMAT_ENABLE</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the 24-hour clock is enabled.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_FIRST_DAY_OF_WEEK</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">int</span></td> 
+     <td>Indicates the first day of week.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_LANGUAGE</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span></td> 
+     <td>Indicates the current language setting.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_REGION</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">String</span></td> 
+     <td>Indicates the current region setting.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_AUDIO_JACK_CONNECTED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether an audio jack is connected.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_GPS_STATUS</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">int</span></td> 
+     <td>Indicates the current status of GPS.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_BATTERY_IS_CHARGING</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether the battery is currently charging.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_TV_OUT_CONNECTED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether TV out is connected.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_AUDIO_JACK_STATUS</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">int</span></td> 
+     <td>Indicates the current status of the audio jack.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_SLIDING_KEYBOARD_OPENED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether a sliding keyboard is opened.</td> 
+    </tr>	
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_USB_CONNECTED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether USB is connected.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_CHARGER_CONNECTED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether a charger is connected.</td> 
+    </tr>
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_VIBRATION_LEVEL_HAPTIC_FEEDBACK</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">int</span></td> 
+     <td>Indicates the current vibration level of the haptic feedback.</td> 
+    </tr>	
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">RUNTIME_INFO_KEY_AUTO_ROTATION_ENABLED</span></td> 
+     <td><span style="font-family: Courier New,Courier,monospace">bool</span></td> 
+     <td>Indicates whether auto-rotation is enabled.</td> 
+    </tr> 	
+   </tbody> 
+  </table> 
+ 
+   <h2>Where to Go Next</h2> 
+  <ul> 
+   <li><a href="system.htm">System Programming Guide</a></li> 
+   <li><a href="../../tutorials/system_tutorial/runtime_info_tutorial.htm">Runtime Information Tutorial</a></li>    
+  </ul>
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

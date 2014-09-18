@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Content MIME Type Tutorial</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Content MIME Type Tutorial</h1> 
+
+  <p>This tutorial demonstrates how you can map MIME types to file extensions and vice versa.</p>
+  
+<p>API functions and data types are defined in the <span style="font-family: Courier New,Courier,monospace;">&lt;mime_type.h&gt;</span> header file, which has to be included in all applications that use the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MIME__TYPE__MODULE.html">MIME Type</a> API.
+</p>
+
+<p>To learn about the MIME Type API features, see the <a href="../../guide/content/content.htm">Content Programming Guide</a>.</p>
+
+<p>This tutorial consists of the following parts:</p>
+	<ul>
+		<li><a href="#get_file_ext">Getting the MIME Type for a File Extension</a>
+		<p>Get a MIME type when an extension is known.</p></li>
+		<li><a href="#get_mime">Getting Extensions for a MIME Type</a>
+		<p>Get extensions mapped to certain MIME types.</p></li>
+   </ul>
+ 
+ <h2 id="get_file_ext" name="get_file_ext">Getting the MIME Type for a File Extension</h2>
+ <p>To get the MIME types of all files in a directory when the extensions are known:</p>
+ <ol><li><p>To get a MIME type for a file extension, use the <span style="font-family: Courier New,Courier,monospace;">mime_type_get_mime_type()</span> function. The first parameter is the file extension without the leading dot and the second parameter is the MIME type for the given file extension.</p>
+ 
+<p>The MIME type is <span style="font-family: Courier New,Courier,monospace;">&#39;application/octet-stream&#39;</span> if the given file extension is not associated with any specific file format.</p>
+
+<pre class="prettyprint">
+#include &lt;dirent.h&gt;
+#include &lt;string.h&gt;
+#include &lt;mime_type.h&gt;
+
+char *mime_type;
+int error = mime_type_get_mime_type(&quot;jpg&quot;, &amp;mime_type);
+</pre></li>
+
+<li><p>Get the extensions of all files in a <span style="font-family: Courier New,Courier,monospace;">/tmp</span> directory and get their MIME types. To get the directory content, use the dirent structure available in <span style="font-family: Courier New,Courier,monospace;">&lt;dirent.h&gt;</span>:</p>
+
+<pre class="prettyprint">
+struct dirent *pDirent = NULL;
+DIR *dir;
+dir = opendir(&quot;/tmp/&quot;);
+if (dir) 
+{
+&nbsp;&nbsp;&nbsp;while ((pDirent = readdir(dir)) != NULL) 
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (pDirent-&gt;d_type != DT_REG) // Only regular files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+</pre></li>
+
+<li><p>Get the extension from a file name using the <span style="font-family: Courier New,Courier,monospace;">strrchr()</span> function available in the <span style="font-family: Courier New,Courier,monospace;">&lt;string.h&gt;</span> header. Incrementing the pointer address is necessary, so use the extension without a dot:</p>
+
+<pre class="prettyprint">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *extension = strrchr(pDirent-&gt;d_name, &#39;.&#39;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!extension)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extension++;
+</pre></li>
+
+<li><p>Use the <span style="font-family: Courier New,Courier,monospace;">mime_type_get_mime_type()</span> function to get the MIME type of each file using the extension pointer as an extension:</p>
+<pre class="prettyprint">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mime_type_get_mime_type(extension, &amp;mime_type);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Here you have a mime type in its variable
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(mime_type);
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;closedir(dir);
+}
+</pre></li></ol>
+
+<h2 id="get_mime" name="get_mime">Get Extensions For a MIME Type</h2>
+
+<p>To get a list of extensions associated, for example, with an image or jpeg MIME type, use the <span style="font-family: Courier New,Courier,monospace;">mime_type_get_file_extension()</span> function. The parameters are the MIME type, the array of file extensions, and the length of the array of the file extensions (marked as zero if there are none).</p>
+
+<pre class="prettyprint">
+char **extension;
+int length;
+int error = mime_type_get_file_extension(&quot;image/jpeg&quot;, &amp;extension, &amp;length);
+
+int i;
+for (i=0; i &lt; length; i++)
+&nbsp;&nbsp;&nbsp;//use extension[i]
+
+for (i=0; i &lt; length; i++)
+&nbsp;&nbsp;&nbsp;free(extension[i]);
+free(extension);
+</pre>
+
+  <h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="advanced_tutorial.htm">Advanced Tutorial</a></li>
+	<li><a href="../../guide/content/content.htm">Content Programming Guide</a></li> 
+	<li><a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__CONTENT__MIME__TYPE__MODULE.html">MIME Type API Reference</a></li>    
+  </ul> 
+ 
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+ 
+ </body>
+</html>

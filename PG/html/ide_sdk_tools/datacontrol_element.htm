@@ -1,0 +1,100 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<script type="text/javascript" src="../snippet.js"></script><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="../styles.css" rel="StyleSheet" type="text/css">
+<link href="../snippet.css" rel="StyleSheet" type="text/css">
+<title>&lt;datacontrol&gt; Element</title>
+</head>
+<body onload="prettyPrint()"> 
+  <h1>&lt;datacontrol&gt; Element</h1> 
+<p>The <span style="font-family: Courier New,Courier,monospace">&lt;datacontrol&gt;</span> element represents configuration information for the Tizen data controls.</p>
+
+<table border="1"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">&lt;datacontrol&gt;</span> element</th> 
+    </tr>
+<tr>
+<td> <p>Set of configuration information for the Tizen data controls.</p> 
+<p>For more information on the relationship between the elements, see the <a href="manifest_element_hierarchy.htm">element hierarchy</a>.</p> <p><strong>Occurrences:</strong> </p> 
+      <ul>
+<li>1 or more (optional)</li> 
+      </ul>
+	  <p><strong>Attributes:</strong> </p>      
+	  <ul>
+       <li><a href="#providerid"><span style="font-family: Courier New,Courier,monospace">providerid</span></a></li>
+       <li><a href="#access"><span style="font-family: Courier New,Courier,monospace">access</span></a></li>
+       <li><a href="#type"><span style="font-family: Courier New,Courier,monospace">type</span></a></li>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="providerid"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">providerid</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>ID of the data control provider.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+	  <li>String</li>
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="access"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">access</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Access mode of the data control.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li>String</li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<table border="1" id="type"><tbody>
+<tr>
+<th style="text-align:left;margin-left:auto;margin-right:auto;">
+<span style="font-family: Courier New,Courier,monospace">type</span> attribute</th> 
+    </tr>
+<tr>
+<td> <p>Type of the data control.</p>
+	  <p><strong>Expected value:</strong> </p>      
+	  <ul>
+<li>String</li> 
+      </ul>
+</td> 
+    </tr>
+</tbody></table>
+<p><strong>For example:</strong></p>
+<pre class="prettyprint">&lt;datacontrol access=&quot;WriteOnly&quot; providerid=&quot;http://uiapp.com/datacontrol/provider/uiapp&quot; type=&quot;Sql&quot;/&gt;
+</pre>
+  
+  <h2>Where to Go Next</h2> 
+  <ul>
+<li><a href="uiapp_element.htm">&lt;ui-application&gt; Element</a></li>
+    <li><a href="serviceapp_element.htm">&lt;service-application&gt; Element</a></li>
+  </ul>
+<div id="footer"> 
+   <hr size="1">
+<font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><!--end-->
+</body>
+</html>

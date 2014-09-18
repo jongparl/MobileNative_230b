@@ -1,0 +1,526 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="snippet.js"></script> 
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <link href="styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Tizen Mobile Native Application Programming</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1><a href="cover_page.htm">Tizen Mobile Native Application Programming</a></h1> 
+ 
+    <h2><a href="basics_tizen_programming/basics_tizen_programming.htm">Basics of Native App Programming</a></h2>
+    <ul>
+    	<li><a href="basics_tizen_programming/native_app_architecture.htm">Native Application Architecture</a></li>
+    	<li><a href="basics_tizen_programming/native_app_api.htm">Native Application API</a></li>
+		<li><a href="basics_tizen_programming/nonbound_privileges.htm">Non-API Bound Privileges</a></li> 
+    	<li><a href="basics_tizen_programming/native_app_model.htm">Native Application Model</a>
+		<ul><li><a href="basics_tizen_programming/package_app_id.htm">Package ID and Application ID</a></li>
+		<li><a href="basics_tizen_programming/app_directory_policy.htm">Application Directory Policy</a></li>
+		<li><a href="basics_tizen_programming/app_manifest.htm">Application Manifest</a></li>
+		<li><a href="basics_tizen_programming/signature.htm">Signature</a></li>
+		<li><a href="basics_tizen_programming/installer_smack.htm">Installer and SMACK</a></li>
+		<li><a href="basics_tizen_programming/commands_package.htm">Package Commands</a></li>
+		</ul></li>
+    	<li><a href="basics_tizen_programming/efl.htm">Developing UI Applications with EFL</a></li>
+    	   <ul>
+    	       <li><a href="basics_tizen_programming/efl_overview.htm">EFL Overview</a></li>
+    	       <li><a href="basics_tizen_programming/efl_libraries.htm">EFL Libraries</a></li>
+    	       <li><a href="basics_tizen_programming/efl_native_app.htm">Using EFL in Tizen Native Applications</a></li>
+    	       <li><a href="basics_tizen_programming/efl_app_layout.htm">Application Layout</a></li>
+    	       <li><a href="basics_tizen_programming/efl_clock_simple.htm">Clock Sample: Simple View</a></li>
+    	       <li><a href="basics_tizen_programming/efl_clock_complex.htm">Clock Sample: Complex View</a></li>
+    	   </ul>
+    	<li><a href="basics_tizen_programming/multi_language.htm">Creating Multilingual Applications</a></li>
+		  <li><a href="basics_tizen_programming/helloworld.htm">Creating a Hello World Application</a></li>
+    </ul>        
+	
+<h2><a href="ide_sdk_tools/ide_sdk_tools.htm">IDE and Tools</a></h2>
+    	  <ul>
+    	      <li><a href="ide_sdk_tools/native_ide.htm">Native IDE</a>	
+    	      	<ul>
+					<li><a href="ide_sdk_tools/api_privilege_checker.htm">API and Privilege Checker</a></li>
+					<li><a href="ide_sdk_tools/call_stack_view.htm">Call Stack View</a> </li> 
+					<li><a href="ide_sdk_tools/content_assist.htm">Content Assist</a> </li> 
+					<li><a href="ide_sdk_tools/manifest_text_editor.htm">Manifest Text Editor</a>
+	 <ul>
+		<li><a href="ide_sdk_tools/manifest_element_hierarchy.htm">Manifest Element Hierarchy</a></li>
+		<li><a href="ide_sdk_tools/manifest_element.htm">&lt;manifest&gt; Element</a>
+		<ul>
+			<li><a href="ide_sdk_tools/author_element.htm">&lt;author&gt; Element</a></li>
+			<li><a href="ide_sdk_tools/description_element.htm">&lt;description&gt; Element</a></li>
+			<li><a href="ide_sdk_tools/serviceapp_element.htm">&lt;service-application&gt; Element</a></li>
+			<li><a href="ide_sdk_tools/uiapp_element.htm">&lt;ui-application&gt; Element</a></li>
+			<li><a href="ide_sdk_tools/privileges_element.htm">&lt;privileges&gt; Element</a></li>
+			<li><a href="ide_sdk_tools/feature_element.htm">&lt;feature&gt; Element</a></li>
+		</ul></li>
+	</ul></li>
+    	      	    <li><a href="ide_sdk_tools/app_wizard.htm">Tizen Native Project Wizard</a>
+    	      	    	  <ul>
+    	      	    	  	<li><a href="ide_sdk_tools/project_components.htm">Project Component</a></li>
+    	      	    	  	<li><a href="ide_sdk_tools/project_settings.htm">Project Setting</a></li>
+    	      	    	  </ul>
+    	      	    </li>
+					<li><a href="ide_sdk_tools/snippets.htm">Snippets</a></li> 
+    	      	    <li><a href="ide_sdk_tools/valgrind.htm">Valgrind</a></li>		
+    	      	</ul>
+    	      </li>
+    	      <!--dynamic analyzer -->
+    	      <li><a href="ide_sdk_tools/da_overview.htm">Dynamic Analyzer</a> 
+            <ul> 
+		           <li><a href="ide_sdk_tools/da_timeline.htm">Timeline</a> 
+               <ul> 
+                  <li><a href="ide_sdk_tools/da_timeline_chart.htm">Timeline Chart</a></li> 
+                  <li><a href="ide_sdk_tools/da_timeline_editchart.htm">Chart Configuration</a></li> 
+                  <li><a href="ide_sdk_tools/da_timeline_calltrace.htm">Call Trace</a></li>                   
+               </ul> 
+               </li>      
+	             <li><a href="ide_sdk_tools/da_summary.htm">Summary</a> 
+               <ul> 
+                  <li><a href="ide_sdk_tools/da_summary_leak.htm">Leaks View</a></li> 
+                  <li><a href="ide_sdk_tools/da_summary_function_usage.htm">Function Usage Profiling View</a></li> 
+               </ul> </li>
+			   <li><a href="ide_sdk_tools/da_thread.htm">Thread Analysis</a> 
+				<ul> 
+				<li><a href="ide_sdk_tools/da_thread_chart.htm">Thread Chart</a></li> 
+				<li><a href="ide_sdk_tools/da_thread_api.htm">Thread API List</a></li> 
+				<li><a href="ide_sdk_tools/da_thread_details.htm">Thread Details</a></li> 
+				</ul> </li>
+			   	<li><a href="ide_sdk_tools/da_file.htm">File Analysis</a> 
+				<ul> 
+				 <li><a href="ide_sdk_tools/da_file_chart.htm">File Chart</a></li> 
+				 <li><a href="ide_sdk_tools/da_file_api_list.htm">File API List</a></li> 
+				 <li><a href="ide_sdk_tools/da_file_detail.htm">File Details</a></li> 
+				</ul> </li>
+
+	             <li><a href="ide_sdk_tools/da_network.htm">Network Analysis</a> 
+               <ul> 
+                  <li><a href="ide_sdk_tools/da_network_chart.htm">Network Chart</a></li> 
+				  <li><a href="ide_sdk_tools/da_network_api_list.htm">Network API List</a></li> 
+				  <li><a href="ide_sdk_tools/da_network_details.htm">Network Details</a></li> 
+               </ul> </li>
+	             <li><a href="ide_sdk_tools/da_opengl.htm">OpenGL Analysis</a> 
+               <ul> 
+                  <li><a href="ide_sdk_tools/da_opengl_chart.htm">OpenGL Chart</a></li> 
+				  <li><a href="ide_sdk_tools/da_opengl_statistics.htm">OpenGL Statistics</a></li>
+				  <li><a href="ide_sdk_tools/da_opengl_api_list.htm">OpenGL API List</a></li> 
+                  <li><a href="ide_sdk_tools/da_opengl_redundant.htm">OpenGL Redundant List</a></li>
+				  <li><a href="ide_sdk_tools/da_opengl_context.htm">OpenGL Context List</a></li>
+				  <li><a href="ide_sdk_tools/da_opengl_program.htm">OpenGL Program List</a></li>				  
+				  <li><a href="ide_sdk_tools/da_opengl_texture.htm">OpenGL Texture List</a></li>
+               </ul> </li>			   
+	             <li><a href="ide_sdk_tools/da_range_info.htm">Range View</a></li> 
+	             <li><a href="ide_sdk_tools/da_info_snapshot.htm">Snapshot View</a></li> 
+               <li><a href="ide_sdk_tools/da_info_callstack.htm">Callstack View</a></li> 
+	             <li><a href="ide_sdk_tools/da_info_configuration.htm">Settings</a></li> 
+	          </ul></li>
+    	   
+    	  </ul>
+	
+  
+<h2><a href="app_dev_process/overview_of_app_dev.htm">Application Development Process</a></h2> 
+	<ul> 
+		<li><a href="app_dev_process/planning_and_designing_your_app.htm">Planning and Designing Applications</a></li> 
+		<li><a href="app_dev_process/creating_app_project.htm">Creating the Application Project</a> 
+			<ul> 
+				<li><a href="app_dev_process/project_components.htm">Project Components</a></li> 
+				<li><a href="app_dev_process/project_settings.htm">Project Settings</a></li> 	
+				<li><a href="app_dev_process/setting_app_properties.htm">Setting Project Properties</a></li> 
+     <li><a href="app_dev_process/setting_app_manifest.htm">Setting Application Manifest</a> 
+      <ul> 
+       <li><a href="app_dev_process/manifest_overview.htm">Overview</a></li> 
+       <li><a href="app_dev_process/manifest_advanced.htm">Advanced</a></li> 
+       <li><a href="app_dev_process/manifest_features.htm">Application Features</a></li> 
+      </ul> </li> 
+			</ul>
+		</li> 
+		<li><a href="app_dev_process/implementing_app.htm">Designing the Application UI and Implementing Code</a> 
+		</li>    
+		<li><a href="app_dev_process/building_app.htm">Building Applications</a> 
+			<ul> 
+				<li><a href="app_dev_process/building_properties.htm">Build Properties</a></li> 
+			</ul> 
+		</li> 
+		<li><a href="app_dev_process/debugging_app.htm">Running and Debugging Applications</a> 
+			<ul> 
+				<li><a href="app_dev_process/running_app_emulator.htm">Running Applications on the Emulator</a></li> 
+
+				<li><a href="app_dev_process/debugging_overview.htm">Debugging Overview</a> 
+					<ul> 
+						<li><a href="app_dev_process/debugging_app_methods.htm">Application Debugging Methods</a></li> 
+						<li><a href="app_dev_process/debugging_remote.htm">Remote Debugging</a></li> 
+						<li><a href="app_dev_process/debugging_logs.htm">Debugging with Logs</a></li> 
+						<li><a href="app_dev_process/debugging_break_points.htm">Break Points</a></li> 
+						<li><a href="app_dev_process/debugging_watch_points.htm">Watch Points</a> 
+							<ul> 
+								<li><a href="app_dev_process/expression_view.htm">Expressions View</a></li> 
+							</ul> 
+						</li> 
+					</ul> 
+				</li> 
+				<li><a href="app_dev_process/debugging_app_emulator.htm">Debugging Applications on the Emulator</a></li> 
+
+				<li><a href="app_dev_process/improving_application_performance.htm">Improving Application Performance</a>
+					<ul>
+						<li><a href="app_dev_process/da_analysis_core.htm">Dynamic Analysis of Native Applications</a> 
+							<ul>
+								<li><a href="app_dev_process/da_running.htm">Running Dynamic Analyzer</a></li>
+								<li><a href="app_dev_process/da_analysis_result.htm">Using the Analysis Result</a>
+									<ul> 
+										<li><a href="app_dev_process/da_performance.htm">Performance Analysis</a>
+										<ul>
+											<li><a href="app_dev_process/da_user_function_profiling.htm">User Function Profiling</a></li> 
+											<li><a href="app_dev_process/da_timeline_cpu_chart.htm">Timeline CPU Chart</a></li> 
+											<li><a href="app_dev_process/da_thread_load.htm">Thread Load</a></li>
+										</ul></li>
+										<li><a href="app_dev_process/da_detecting.htm">Detecting Leaks</a></li> 
+										<li><a href="app_dev_process/da_multithread_sync.htm">Multi-threaded Application and Synchronization Analysis</a></li> 
+									</ul> 
+								</li> 
+								
+							</ul>
+						</li>
+						<li><a href="app_dev_process/valgrind_analysis_core.htm">Valgrind Analysis of Native Applications</a>
+					<ul>
+						<li><a href="app_dev_process/running_valgrind.htm">Running Valgrind</a></li>
+						<li><a href="app_dev_process/valgrind_result.htm">Viewing Valgrind Result</a></li>
+					</ul>
+				</li>
+				<li><a href="app_dev_process/rapid_dev_support.htm">Rapid Development Support</a> </li>
+					</ul>
+				</li>
+
+				
+			</ul>
+		</li>            
+		<li><a href="app_dev_process/packaging_app.htm">Packaging Applications</a></li> 
+		<li><a href="app_dev_process/multiple_project_dev_package.htm">Developing Multiple Projects as a Package</a></li> 
+  </ul> 
+  
+  <!-- Programming Guide -->
+ 
+<h2><a href="guide/prog_guide.htm">Native Programming Guide</a></h2> 
+    <ul> 
+ 	
+		<li><a href="guide/app/application.htm">Application Framework: Controlling Your Application</a> 
+			<ul> 
+				<li><a href="guide/app/fundamentals.htm">Application Fundamentals</a>
+					<ul>
+						<li><a href="guide/app/state_transitions.htm">Application States and Transitions</a></li>
+						<li><a href="guide/app/app_controls.htm">Launching Applications</a>
+						<ul>
+							<li><a href="guide/app/exporting_application_service_functionality.htm">Exporting Application Service Functionality</a></li>
+					</ul></li>
+					</ul>
+				</li>
+				<li><a href="guide/app/badge.htm">Badges</a></li>
+				<li><a href="guide/app/bundle.htm">Bundles</a></li>
+				<li><a href="guide/app/data_controls.htm">Data Controls</a>
+				    <ul> 
+					<li><a href="guide/app/exporting_datacontrol_functionality.htm">Exporting Data Control Functionality</a></li> 
+				</ul></li>
+				<li><a href="guide/app/message_port.htm">Message Port Communication</a></li>
+				<li><a href="guide/app/notification.htm">Notifications</a></li>
+				<li><a href="guide/app/package.htm">Package Management</a></li>
+				<li><a href="guide/app/service_applications.htm">Service Applications</a></li>				
+				<li><a href="guide/app/shortcut.htm">Shortcuts</a></li>  
+			</ul> 
+		</li>     
+		<li><a href="guide/base/base.htm">Base: Providing Fundamental Classes</a> 
+			<ul> 
+				<li><a href="guide/base/i18n.htm">i18n</a></li>  
+			</ul> 
+		</li> 
+		<li><a href="guide/content/content.htm">Content: Managing Content</a>
+			<ul><li><a href="guide/content/download.htm">Download Management</a> </li> 
+			</ul>
+		</li>  
+		<li><a href="guide/context/context.htm">Context: Managing Contextual Data</a></li> 		
+		<li><a href="guide/location/location.htm">Location: Using Location Information and Services</a></li> 
+
+		<li><a href="guide/messaging/messaging.htm">Messaging: SMS, MMS, Email, and Push</a> 
+			<ul> 
+				<li><a href="guide/messaging/email.htm">Email Messaging</a></li> 
+				<li><a href="guide/messaging/push_messaging.htm">Push Messaging</a></li> 
+			</ul> 
+		</li> 		
+		
+		<li><a href="guide/media/media.htm">Multimedia: Handling Audio, Video, Camera, and Images</a> 
+			<ul> 
+				<li><a href="guide/media/player.htm">Audio and Video Player</a></li> 
+				<li><a href="guide/media/play_pcm.htm">PCM Audio Output</a></li>
+				<li><a href="guide/media/tones.htm">Tone Player</a></li>				
+				<li><a href="guide/media/wav.htm">WAV Player</a></li>
+				<li><a href="guide/media/camera.htm">Camera</a></li> 
+				<li><a href="guide/media/recorder.htm">Audio and Video Recorder</a></li> 
+				<li><a href="guide/media/record_pcm.htm">PCM Audio Input</a></li> 
+				<li><a href="guide/media/image_util.htm">Image Util</a></li> 
+				<li><a href="guide/media/video_util.htm">Video_Util</a></li> 
+				<li><a href="guide/media/metadata_extractor.htm">Metadata Extractor</a></li> 
+			</ul></li> 
+
+		<li><a href="guide/net/network.htm">Network: Managing Network Connections and Communication</a>
+			<ul> 
+				<li><a href="guide/net/bluetooth.htm">Bluetooth</a></li> 
+				<li><a href="guide/net/connection.htm">Connection</a></li>
+				<li><a href="guide/net/wi-fi.htm">Wi-Fi</a></li>
+			</ul> 
+		</li>
+   <li><a href="guide/security/security.htm">Security: Providing Security Functions and Secure Repository</a>
+		<ul>
+			<li><a href="guide/security/key_manager.htm">Key Manager</a></li>
+		</ul>
+	</li>
+   
+   <li><a href="guide/social/social.htm">Social: Managing Personal Data</a> 
+    <ul>  
+		<li><a href="guide/social/account.htm">Account Management</a></li> 
+		<li><a href="guide/social/calendar.htm">Calendar</a> </li>
+		<li><a href="guide/social/contact.htm">Contacts</a></li> 
+    </ul></li> 
+   
+ 
+   <li><a href="guide/system/system.htm">System: Getting System Information and Managing Devices</a> 
+    <ul>  
+     <li><a href="guide/system/dlog.htm">Dlog</a></li>
+	 <li><a href="guide/system/runtime_info.htm">Runtime Information</a></li> 
+	 <li><a href="guide/system/sensor.htm">Sensor</a></li> 
+	 <li><a href="guide/system/storage.htm">Storage</a></li> 
+     <li><a href="guide/system/sysinfo.htm">System Information</a></li> 
+    </ul> </li> 
+    
+   <li><a href="guide/telephony/telephony.htm">Telephony: Handling Phone Call, SIM Card, and Network Information</a></li> 
+   <li><a href="guide/ui/ui.htm">UI: Creating the Application UI</a>
+     <ul>
+	 <li><a href="guide/ui/basic_efl_guide.htm">EFL Basics</a></li>
+	 <li><a href="guide/ui/data_types_guide.htm">Eina Data Types</a>
+		<ul>
+			<li><a href="guide/ui/data_type_structures.htm">Using Data Types</a></li>
+			<li><a href="guide/ui/data_type_tools.htm">Eina Tools</a></li>
+		</ul>
+	 </li>	 
+	 <li><a href="guide/ui/evas_guide.htm">Evas Rendering</a>
+		<ul>
+			<li><a href="guide/ui/evas_cairo_guide.htm">Using Cairo</a></li>
+			<li><a href="guide/ui/evas_guide_clipping.htm">Clipping Objects</a></li>
+			<li><a href="guide/ui/evas_guide_image.htm">Image Objects</a></li>
+			<li><a href="guide/ui/evas_guide_textblock.htm">TextBlock Objects</a></li>
+			<li><a href="guide/ui/ui_rendering.htm">UI Rendering Mode</a></li>			
+		</ul>
+	 </li>
+	 <li><a href="guide/ui/widgets_guide.htm">Elementary Toolkit</a>
+		<ul>
+			<li><a href="guide/ui/ui_widgets.htm">UI Widgets</a></li>
+			<li><a href="guide/ui/containers.htm">Container Widgets</a></li>
+		</ul>
+	 </li>	 
+	 <li><a href="guide/ui/events_guide.htm">Event Handling</a>
+		<ul>
+			<li><a href="guide/ui/events_guide_ecore.htm">Ecore Events</a></li>
+			<li><a href="guide/ui/events_guide_evas.htm">Evas Events</a></li>
+			<li><a href="guide/ui/events_guide_evas_objects.htm">Evas Object Events</a></li>
+			<li><a href="guide/ui/events_guide_evas_smart_objects.htm">Evas Smart Object Events</a></li>
+		</ul>
+	 </li>
+	  <li><a href="guide/ui/efl_util.htm">EFL UTIL</a></li>
+	  <li><a href="guide/ui/tbm.htm">TBM Surface</a></li></ul></li>
+   <li><a href="guide/web/web.htm">Web: Managing Web Pages and Web Content</a>
+	<ul>
+		<li><a href="guide/web/webview.htm">WebView</a></li>
+	</ul>
+	</li>
+  </ul> 
+  
+  <h2><a href="porting/porting.htm">Porting Guide</a></h2> 
+    <ul>  
+     <li><a href="porting/app_life_cycle.htm">Application Life-cycle</a></li>
+	 <li><a href="porting/app_package.htm">Package Management</a></li> 
+	 <li><a href="porting/app_model.htm">Application Model Details</a></li> 
+     <li><a href="porting/logs.htm">Logs and Exceptions</a></li> 
+	 <li><a href="porting/api_comparison.htm">API Comparison</a></li> 
+    </ul>
+
+	<!-- Tutorials -->
+
+  <h2><a href="tutorials/tutorials_cover.htm">Native Tutorials</a></h2>
+  
+  <ul>
+	<li><a href="tutorials/app_tutorial/app_tutorial.htm">Application Framework Tutorials</a>
+		<ul>
+			<li><a href="tutorials/app_tutorial/alarm_tutorial.htm">Alarm Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/app_start_tutorial.htm">App Control Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/setting_preference_tutorial.htm">Preference Tutorial</a></li>		
+			<li><a href="tutorials/app_tutorial/badge_tutorial.htm">Badge Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/bundle_tutorial.htm">Bundle Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/data_control_tutorial.htm">Data Control Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/message_port_tutorial.htm">Message Port Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/ui_notification_tutorial.htm">Notification Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/package_manager_tutorial.htm">Package Manager Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/service_app_tutorial.htm">Service Application Tutorial</a></li>
+			<li><a href="tutorials/app_tutorial/shortcut_tutorial.htm">Shortcut Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/base_tutorial/base_tutorial.htm">Base Tutorials</a>
+		<ul>
+			<li><a href="tutorials/base_tutorial/i18n_tutorial.htm">i18n Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/content_tutorial/content_tutorial.htm">Content Tutorials</a>
+		<ul>
+			<li><a href="tutorials/content_tutorial/web_download_tutorial.htm">Download Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/media_content_tutorial.htm">Media Content Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/album_tutorial.htm">Album Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/bookmark_tutorial.htm">Bookmark Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/filter_tutorial.htm">Filter Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/folder_tutorial.htm">Folder Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/media_info_tutorial.htm">Media Information Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/playlist_tutorial.htm">Playlist Tutorial</a></li>
+			<li><a href="tutorials/content_tutorial/tag_tutorial.htm">Tag Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/context_tutorial/context_tutorial.htm">Context Tutorials</a>
+		<ul>
+			<li><a href="tutorials/context_tutorial/activity_recognition_tutorial.htm">Activity Recognition Tutorial</a></li>
+			<li><a href="tutorials/context_tutorial/gesture_recognition_tutorial.htm">Gesture Recognition Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/location_tutorial/location_tutorial.htm">Location Tutorials</a>
+		<ul>
+			<li><a href="tutorials/location_tutorial/location_manager_tutorial.htm">Location Manager Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/messaging_tutorial/messaging_tutorial.htm">Messaging Tutorials</a>
+		<ul>
+			<li><a href="tutorials/messaging_tutorial/email_tutorial.htm">Email Tutorial</a></li>
+			<li><a href="tutorials/messaging_tutorial/push_tutorial.htm">Push Tutorial</a></li>
+			<li><a href="tutorials/messaging_tutorial/sms_mms_tutorial.htm">Message Box Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/media_tutorial/media_tutorial.htm">Multimedia Tutorials</a>
+		<ul>
+			<li><a href="tutorials/media_tutorial/pcmaudio_tutorial.htm">Audio I/O Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/camera_tutorial.htm">Camera Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/camcorder_tutorial.htm">Camcorder Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/image_util_tutorial.htm">Image Util Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/player_tutorial.htm">Player Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/play_files_simultaneous_tutorial.htm">Multi-player Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/audiorecorder_tutorial.htm">Audio Recorder Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/video_recorder_tutorial.htm">Video Recorder Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/soundmanager_tutorial.htm">Sound ManagerTutorial</a></li>
+			<li><a href="tutorials/media_tutorial/tone_tutorial.htm">Tone Player Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/video_util_tutorial.htm">Video Util Tutorial</a></li>
+			<li><a href="tutorials/media_tutorial/wav_tutorial.htm">WAV Player Tutorial</a></li>
+		</ul>	
+	</li>
+	<li><a href="tutorials/net_tutorial/net_tutorial.htm">Network Tutorials</a>
+		<ul>
+			<li><a href="tutorials/net_tutorial/bluetooth_tutorial.htm">Bluetooth Tutorial</a></li>
+			<li><a href="tutorials/net_tutorial/connection_tutorial.htm">Connection Tutorial</a></li>
+			<li><a href="tutorials/net_tutorial/nfc_tutorial.htm">NFC Tutorial</a></li>
+			<li><a href="tutorials/net_tutorial/nfc_p2p_bump_tutorial.htm">NFC P2P Bump Tutorial</a></li>
+			<li><a href="tutorials/net_tutorial/wifi_tutorial.htm">Wi-Fi Tutorial</a></li>
+		</ul>	
+	</li>
+	<li><a href="tutorials/security_tutorial/security_tutorial.htm">Security Tutorials</a>
+		<ul>
+			<li><a href="tutorials/security_tutorial/security_key_manager_tutorial.htm">Key Manager Tutorial</a></li>
+			<li><a href="tutorials/security_tutorial/privilege_tutorial.htm">Privilege Tutorial</a></li>
+		</ul>	
+	</li>
+	<li><a href="tutorials/social_tutorial/social_tutorial.htm">Social Tutorials</a>
+		<ul>
+			<li><a href="tutorials/social_tutorial/account_tutorial.htm">Account Tutorial</a></li>
+			<li><a href="tutorials/social_tutorial/calendar_tutorial.htm">Calendar Tutorial</a></li>
+			<li><a href="tutorials/social_tutorial/contact_tutorial.htm">Contacts Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/system_tutorial/system_tutorial.htm">System Tutorials</a>
+		<ul>
+			<li><a href="tutorials/system_tutorial/device_tutorial.htm">Device Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/dlog_tutorial.htm">Dlog Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/runtime_info_tutorial.htm">Runtime Information Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/sensor_tutorial.htm">Sensor Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/storage_tutorial.htm">Storage Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/system_info_tutorial.htm">System Information Tutorial</a></li>
+			<li><a href="tutorials/system_tutorial/system_setting_tutorial.htm">System Setting Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/telephony_tutorial/telephony_tutorial.htm">Telephony Tutorials</a>
+		<ul>
+			<li><a href="tutorials/telephony_tutorial/telephony_info_tutorial.htm">Telephony Information Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/ui_tutorial/ui_tutorial.htm">UI Tutorials</a>
+		<ul>
+			<li><a href="tutorials/ui_tutorial/app_tutorial.htm">Application Framework Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/helloworld_tutorial.htm">EFL Hello World Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/form_tutorial.htm">Form Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/panes_tutorial.htm">Panes Widget Tutorial</a></li>			
+			<li><a href="tutorials/ui_tutorial/efl_optimization_tutorial.htm">EFL Optimization Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/efl_util_tutorial.htm">EFL UTIL Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/tbm_tutorial.htm">TBM Surface Tutorial</a></li>			
+			<li><a href="tutorials/ui_tutorial/gesture_detector_tutorial.htm">Gesture Detector Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/graphics_tutorial.htm">Creating Graphics Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/multipoint_touch_tutorial.htm">Multipoint Touch Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/transit_effect_tutorial.htm">Transit Effect Tutorial</a></li>
+			<li><a href="tutorials/ui_tutorial/uilayout_tutorial.htm">UI Layout Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/web_tutorial/web_tutorial.htm">Web Tutorials</a>
+		<ul>
+			<li><a href="tutorials/web_tutorial/webview_tutorial.htm">WebView Tutorial</a></li>
+		</ul>
+	</li>
+	<li><a href="tutorials/opensource_tutorial/opensource_tutorial.htm">Open Source Tutorials</a>
+		<ul>
+			<li><a href="tutorials/opensource_tutorial/opensource_encrypted_db_tutorial.htm">Encrypted Database Tutorial</a></li>
+		</ul>
+	</li>	
+	
+	<li><a href="tutorials/advanced_tutorial/advanced_tutorial.htm">Advanced Tutorials</a>
+		<ul>
+  <li><a href="tutorials/advanced_tutorial/account_manager_features_tutorial.htm">Account Manager Features Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/app_mgr_tutorial.htm">Application Manager Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/manage_contact_records_tutorial.htm">Contact Record Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/contact_settings_tutorial.htm">Contact Setting and SIM Tutorial</a></li>   
+  <li><a href="tutorials/advanced_tutorial/content_groups_tutorial.htm">Content Group Tutorial</a></li>  
+  <li><a href="tutorials/advanced_tutorial/mime_type_tutorial.htm">Content MIME Type Tutorial</a></li> 
+  <li><a href="tutorials/advanced_tutorial/player_set_display_parameters_tutorial.htm">Display Parameter Tutorial</a></li>   
+  <li><a href="tutorials/advanced_tutorial/tracking_tutorial.htm">Location Tracking Tutorial</a></li>  
+  <li><a href="tutorials/advanced_tutorial/metadata_extractor_tutorial.htm">Metadata Extractor Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/notification_tutorial.htm">Notification Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/shortcut_tutorial.htm">Shortcut Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/sound_manager_sessions_tutorial.htm">Sound Manager Session Tutorial</a></li>  
+  <li><a href="tutorials/advanced_tutorial/player_get_stream_info_tutorial.htm">Stream Information Tutorial</a></li>
+  <li><a href="tutorials/advanced_tutorial/player_insert_subtitles_tutorial.htm">Subtitle Tutorial</a></li> 
+  <li><a href="tutorials/advanced_tutorial/contact_import_export_tutorial.htm">vCard Tutorial</a></li>  
+  <li><a href="tutorials/advanced_tutorial/video_util_setting_parameters_tutorial.htm">Video Util Tutorial</a></li>   
+  </ul></li>
+	</ul>
+  
+  
+  <h2><a href="../../org.tizen.mobile.native.apireference/index.html">API Reference</a></h2>
+  <h2><a href="sample_descriptions/sample_descriptions.htm">Sample Applications</a></h2> 
+  
+  
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>

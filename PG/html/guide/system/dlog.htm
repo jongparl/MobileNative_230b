@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head> 
+  <script type="text/javascript" src="../../snippet.js"></script> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <link href="../../styles.css" rel="StyleSheet" type="text/css" /> 
+  <link href="../../snippet.css" rel="StyleSheet" type="text/css" /> 
+  <title>Dlog</title> 
+ </head> 
+ <body onload="prettyPrint()"> 
+  <!--<div id="banner">
+Tizen</div>--> 
+  <h1>Dlog</h1> 
+
+<p>The Dlog logging service consists of the dlogutil dlog library, and it supports sending log messages to a circular log device using the <a href="../../../../org.tizen.mobile.native.apireference/group__CAPI__SYSTEM__DLOG.html">dlog API</a>. The log device is a circular buffer used to collect log messages from various applications and the system.</p>
+
+<p class="figure">Figure: Architecture</p>
+
+<p style="text-align:center;"><img alt="Architecture" src="../../images/dlog_architecture.png" /></p> 
+
+
+<h2 id="dlog" name="dlog">Dlog</h2>
+<p>Dlog sends a log message to the circular buffer with APIs, including <strong>Priority</strong> and <strong>Tag</strong> information.</p>
+
+<p>With this information, it is easy to filter and check the messages with dlogutil.</p>
+
+<p>Before using dlog, you should know which priorities and tags to use and where to write (format, buffer).</p>
+
+<h3>Priority</h3>
+<p>The priority level indicates the urgency of the log message.</p>
+
+<table> 
+   <caption>
+     Table: Priority levels 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Priority</th> 
+     <th>Description</th>  	 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_DEBUG</span></td> 
+     <td>Log message which the developer wants to check</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_INFO</span></td> 
+     <td>Normal operational message</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_WARN</span></td> 
+     <td>Not an error, but a warning that an error will occur if action is not taken	
+	</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_ERROR</span></td> 
+     <td>An error</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+<h3>Tag</h3>
+<p>A tag is used to identify the source of the log message.</p>
+
+<p>There are no naming limitations, but do not forget that the tag is an identification of a module.</p>
+
+<p>Each tag must be unique.</p>
+
+<h3>Error Type</h3>
+<table> 
+   <caption>
+     Table: Dlog error types 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Numerator</th> 
+     <th>Description</th>  	 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_ERROR_NONE</span></td> 
+     <td>Successful</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_ERROR_INVALID_PARAMETER</span></td> 
+     <td>Invalid parameter</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">DLOG_ERROR_NOT_PERMITTED</span></td> 
+     <td>Operation not permitted</td> 
+    </tr> 
+   </tbody> 
+  </table> 
+
+
+
+<p>To send a log message:</p>
+
+<pre class="prettyprint">
+#include&lt;dlog.h&gt;
+int main(void)
+{
+&nbsp;&nbsp;&nbsp;int integer = 21;
+&nbsp;&nbsp;&nbsp;char string[] = &quot;test dlog&quot;;
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, &quot;USR_TAG&quot;, &quot;test dlog&quot;);
+&nbsp;&nbsp;&nbsp;dlog_print(DLOG_INFO, &quot;USR_TAG&quot;, &quot;%s, %d&quot;, string, integer);
+&nbsp;&nbsp;&nbsp;return 0;
+}</pre>
+
+<pre class="prettyprint">
+#include&lt;dlog.h&gt;
+void my_debug_print(char *format, ...)
+{
+&nbsp;&nbsp;&nbsp;va_list ap;
+&nbsp;&nbsp;&nbsp;va_start(ap, format);
+&nbsp;&nbsp;&nbsp;dlog_vprint(DLOG_INFO, &quot;USR_TAG&quot;, format, ap);
+&nbsp;&nbsp;&nbsp;va_end(ap);
+}
+int main(void)
+{
+&nbsp;&nbsp;&nbsp;my_debug_print(&quot;%s&quot;, &quot;test dlog&quot;);
+&nbsp;&nbsp;&nbsp;my_debug_print(&quot;%s, %d&quot;, &quot;test dlog&quot;, 21);
+&nbsp;&nbsp;&nbsp;return 0;
+}
+</pre>
+
+<h2 id="dlogutil" name="dlogutil">Dlogutil</h2>
+<p>You can collect and print out logs with logutil. Logutil supports filtering, and managing the log device.
+
+<h3>Using Logutil Commands</h3>
+<p>You can use a logutil command to view and follow the content of the log buffers. The general usage is:</p>
+
+<pre class="prettyprint">
+dlogutil [&lt;option&gt;] … [&lt;filter-spec&gt;] …
+</pre>
+
+<h3>Filtering Log Output</h3>
+<p>Every log message has a tag and a priority associated with it.</p>
+
+<p>The filter expression follows the <span style="font-family: Courier New,Courier,monospace">tag:priority</span> format, where the tag indicates the tag of interest and the priority indicates the minimum level of priority to report for that tag. You can add any number of <span style="font-family: Courier New,Courier,monospace">tag:priority</span> specifications in a single filter expression.</p>
+
+<p>The tag of a log message is a short name indicating the system component from which the message originates.</p>
+<p>The priority is one of the following character values, ordered from the lowest to the highest priority:</p>
+<ul><li>D – debug</li>
+<li>I – info</li>
+<li>W – warning</li>
+<li>E – Error</li></ul>
+
+<p>For example, if you want to see all log messages with the MyApp tag that are above the debug priority:</p>
+
+<pre class="prettyprint"># dlogutil MyApp:D</pre>
+
+<p>If you want to see all log messages above the info priority:</p>
+
+<pre class="prettyprint"># dlogutil *:I</pre>
+
+<h3>Controlling Log Output Format</h3>
+<p>The log messages contain a number of metadata fields in addition to tag and priority. You can modify the output format for messages so that they display a specific metadata field. To do so, use the <span style="font-family: Courier New,Courier,monospace">–v</span> option when starting dlogutil and specify one of the supported output formats:</p>
+
+<ul>
+	<li>brief: Displays the priority/tag and PID of the originating process (the default format)</li>
+	<li>process: Displays the PID only</li> 
+	<li>tag: Displays the priority/tag only</li>
+	<li>thread: Displays the process:thread and priority/tag only</li> 
+	<li>raw: Displays the raw log message, with no other metadata fields</li> 
+	<li>time: Displays the date, invocation time, priority/tag, and PID of the originating process</li> 
+	<li>long: Displays all metadata fields and separates messages with blank lines</li>
+</ul>
+
+<pre class="prettyprint"># dlogutil [-v &lt;format&gt;]</pre>
+
+<h3>List of Logutil Command Options</h3>
+<table> 
+   <caption>
+     Table: Logutil command options 
+   </caption> 
+   <tbody> 
+    <tr> 
+     <th>Option</th> 
+     <th>Description</th> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-b &lt;buffer&gt;</span></td> 
+     <td>Alternates the log buffer. The main buffer is used by the default buffer.</td> 
+    </tr> 
+     <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-c</span></td> 
+     <td>Clears the entire log and exits</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-d</span></td> 
+     <td>Dumps the log and exits</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-f &lt;filename&gt;</span></td> 
+     <td>Writes the log to &lt;filename&gt;. The default filename is stdout.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-g</span></td> 
+     <td>Prints the size of the specified log buffer and exits</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-n &lt;count&gt;</span></td> 
+     <td>Sets the maximum number of rotated logs to &lt;count&gt;. The default value is 4. Requires the <span style="font-family: Courier New,Courier,monospace">–r</span> option.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-r &lt;Kbytes&gt;</span></td> 
+     <td>Rotates the log file every &lt;Kbytes&gt; of output. The default value is 16. Requires the <span style="font-family: Courier New,Courier,monospace">–f</span> option.</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-s</span></td> 
+     <td>Sets the default filter spec to silent</td> 
+    </tr> 
+    <tr> 
+     <td><span style="font-family: Courier New,Courier,monospace">-v &lt;format&gt;</span></td> 
+     <td>Sets the output format for log messages. The default format is brief.</td> 
+    </tr> 	
+   </tbody> 
+  </table> 
+
+<h2>Where to Go Next</h2> 
+  <ul> 
+	<li><a href="system.htm">System Programming Guide</a></li>    
+   <li><a href="../../tutorials/system_tutorial/dlog_tutorial.htm">Dlog Tutorial</a></li> 	
+  </ul> 
+
+  <div id="footer"> 
+   <hr size="1" /> 
+   <font size="1">Except as noted, this content - excluding the Code Examples - is licensed under <a href="http://creativecommons.org/licenses/by/3.0/legalcode" target="_blank">Creative Commons Attribution 3.0</a> and all of the Code Examples contained herein are licensed under <a href="https://www.tizen.org/bsd-3-clause-license" target="_blank">BSD-3-Clause</a>.<br>For details, see the <a href="https://www.tizen.org/content-license" target="_blank">Content License</a>.</font> 
+  </div> 
+  <!--start--> 
+  <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25976949-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script> 
+  <!--end-->  
+ </body>
+</html>
